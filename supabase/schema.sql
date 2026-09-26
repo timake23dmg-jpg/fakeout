@@ -1,0 +1,538 @@
+-- Fakeout — Supabase schema (tables, RLS, RPCs, realtime).
+-- Run this once in the Supabase SQL editor, then run questions.sql.
+-- Safe to re-run: everything is create-if-not-exists / create-or-replace.
+--
+-- Everything lives in its own `fakeout` schema, so it can share a Supabase
+-- project with another app (e.g. Song Wars, which has its own `games` and
+-- `players` tables in `public`) without touching it. After running this,
+-- add `fakeout` under Project Settings → Data API → Exposed schemas.
+--
+-- Authority model: the host TV tab is the "server". It owns the room
+-- (games.host_user_id) and is the only writer of games.state (via
+-- host_set_state). Phones only write through guarded RPCs and their own
+-- likes/commands rows. The truth and lie authors never reach a phone
+-- before REVEAL: questions and game_secrets are host-only, and lies/picks
+-- rows are readable only by their author and the host.
+
+create extension if not exists pgcrypto;
+
+create schema if not exists fakeout;
+-- Unqualified names below are created in (and resolve to) the fakeout schema.
+set search_path = fakeout, public;
+
+-- ---------------------------------------------------------------- tables
+
+create table if not exists games (
+  code text primary key,
+  host_user_id uuid not null default auth.uid(),
+  phase text not null default 'LOBBY',
+  question_no int not null default 0,
+  state jsonb not null default '{}'::jsonb,
+  used_question_ids text[] not null default '{}',
+  deadline timestamptz,
+  phase_started_at timestamptz,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create table if not exists game_secrets (
+  code text primary key references games(code) on delete cascade,
+  data jsonb not null default '{}'::jsonb,
+  question jsonb,
+  given_suggestions text[] not null default '{}'
+);
+
+create table if not exists players (
+  id uuid primary key default gen_random_uuid(),
+  game_code text not null references games(code) on delete cascade,
+  user_id uuid not null default auth.uid(),
+  slot int not null check (slot >= 0),
+  name text not null check (char_length(name) between 1 and 16),
+  avatar text not null default '🦊',
+  is_audience boolean not null default false,
+  created_at timestamptz not null default now(),
+  unique (game_code, slot),
+  unique (game_code, user_id)
+);
+
+create table if not exists questions (
+  id text primary key,
+  category text not null,
+  prompt text not null,
+  answer text not null,
+  alternate_spellings text[] not null default '{}',
+  suggested_lies text[] not null default '{}',
+  is_final boolean not null default false
+);
+
+create table if not exists lies (
+  game_code text not null references games(code) on delete cascade,
+  question_no int not null,
+  player_id uuid not null references players(id) on delete cascade,
+  text text not null check (char_length(text) between 1 and 40),
+  norm text not null,
+  created_at timestamptz not null default now(),
+  primary key (game_code, question_no, player_id)
+);
+
+create table if not exists picks (
+  game_code text not null references games(code) on delete cascade,
+  question_no int not null,
+  player_id uuid not null references players(id) on delete cascade,
+  option_id text not null,
+  created_at timestamptz not null default now(),
+  primary key (game_code, question_no, player_id)
+);
+
+create table if not exists likes (
+  game_code text not null references games(code) on delete cascade,
+  question_no int not null,
+  player_id uuid not null references players(id) on delete cascade,
+  option_id text not null,
+  primary key (game_code, question_no, player_id, option_id)
+);
+
+create table if not exists commands (
+  id bigint generated always as identity primary key,
+  game_code text not null references games(code) on delete cascade,
+  player_id uuid not null references players(id) on delete cascade,
+  cmd text not null,
+  payload jsonb not null default '{}'::jsonb,
+  created_at timestamptz not null default now()
+);
+
+-- Technical ceiling on room size (players + audience); the 8-player game
+-- rule is enforced in join_game.
+create or replace function enforce_max_players()
+returns trigger language plpgsql security definer set search_path = fakeout, public as $$
+declare v_max constant int := 40;
+begin
+  if (select count(*) from players where game_code = new.game_code) >= v_max then
+    raise exception 'Room % is already full', new.game_code;
+  end if;
+  return new;
+end; $$;
+
+drop trigger if exists trg_enforce_max_players on players;
+create trigger trg_enforce_max_players before insert on players
+  for each row execute function enforce_max_players();
+
+-- ------------------------------------------------------ RLS helper funcs
+
+create or replace function my_player_ids()
+returns setof uuid language sql security definer stable set search_path = fakeout, public as $$
+  select id from players where user_id = auth.uid();
+$$;
+
+create or replace function my_game_codes()
+returns setof text language sql security definer stable set search_path = fakeout, public as $$
+  select game_code from players where user_id = auth.uid();
+$$;
+
+create or replace function my_hosted_codes()
+returns setof text language sql security definer stable set search_path = fakeout, public as $$
+  select code from games where host_user_id = auth.uid();
+$$;
+
+-- ------------------------------------------------------------------ RLS
+
+alter table games enable row level security;
+alter table game_secrets enable row level security;
+alter table players enable row level security;
+alter table questions enable row level security;  -- no policies: RPC-only
+alter table lies enable row level security;
+alter table picks enable row level security;
+alter table likes enable row level security;
+alter table commands enable row level security;
+
+drop policy if exists "games readable by anyone signed in" on games;
+create policy "games readable by anyone signed in" on games
+  for select using (auth.uid() is not null);
+
+drop policy if exists "host owns secrets" on game_secrets;
+create policy "host owns secrets" on game_secrets
+  for all using (code in (select my_hosted_codes()))
+  with check (code in (select my_hosted_codes()));
+
+drop policy if exists "room members and host see players" on players;
+create policy "room members and host see players" on players
+  for select using (game_code in (select my_game_codes()) or game_code in (select my_hosted_codes()));
+
+drop policy if exists "own lie or host" on lies;
+create policy "own lie or host" on lies
+  for select using (player_id in (select my_player_ids()) or game_code in (select my_hosted_codes()));
+
+drop policy if exists "own pick or host" on picks;
+create policy "own pick or host" on picks
+  for select using (player_id in (select my_player_ids()) or game_code in (select my_hosted_codes()));
+
+drop policy if exists "own likes or host" on likes;
+create policy "own likes or host" on likes
+  for select using (player_id in (select my_player_ids()) or game_code in (select my_hosted_codes()));
+drop policy if exists "like as yourself" on likes;
+create policy "like as yourself" on likes
+  for insert with check (player_id in (select my_player_ids()) and game_code in (select my_game_codes()));
+drop policy if exists "unlike as yourself" on likes;
+create policy "unlike as yourself" on likes
+  for delete using (player_id in (select my_player_ids()));
+
+drop policy if exists "own commands or host" on commands;
+create policy "own commands or host" on commands
+  for select using (player_id in (select my_player_ids()) or game_code in (select my_hosted_codes()));
+drop policy if exists "command as yourself" on commands;
+create policy "command as yourself" on commands
+  for insert with check (player_id in (select my_player_ids()) and game_code in (select my_game_codes()));
+
+-- ------------------------------------------------------ lie rule helpers
+-- Mirrors src/lib/rules.js.
+
+create or replace function fakeout_normalize(t text)
+returns text language sql immutable set search_path = fakeout, public as $$
+  select regexp_replace(
+    btrim(regexp_replace(regexp_replace(lower(coalesce(t, '')), '[[:punct:]]', '', 'g'), '\s+', ' ', 'g')),
+    '^(a|an|the) ', '')
+$$;
+
+create or replace function fakeout_levenshtein(a text, b text)
+returns int language plpgsql immutable set search_path = fakeout, public as $$
+declare
+  la int := char_length(a);
+  lb int := char_length(b);
+  prev int[];
+  cur int[];
+  cost int;
+begin
+  if la = 0 then return lb; end if;
+  if lb = 0 then return la; end if;
+  prev := array(select generate_series(0, lb));   -- prev[j+1] = distance at column j
+  for i in 1..la loop
+    cur := array[i];
+    for j in 1..lb loop
+      cost := case when substr(a, i, 1) = substr(b, j, 1) then 0 else 1 end;
+      cur := cur || least(prev[j + 1] + 1, cur[j] + 1, prev[j] + cost);
+    end loop;
+    prev := cur;
+  end loop;
+  return prev[lb + 1];
+end; $$;
+
+create or replace function fakeout_is_truth(p_text text, p_question jsonb)
+returns boolean language plpgsql immutable set search_path = fakeout, public as $$
+declare
+  n text := fakeout_normalize(p_text);
+  t text;
+begin
+  for t in
+    select fakeout_normalize(x)
+    from jsonb_array_elements_text(
+      jsonb_build_array(p_question->>'answer') || coalesce(p_question->'alternateSpellings', '[]'::jsonb)) x
+  loop
+    if n = t or (char_length(t) >= 5 and fakeout_levenshtein(n, t) <= 1) then
+      return true;
+    end if;
+  end loop;
+  return false;
+end; $$;
+
+create or replace function fakeout_is_profane(p_text text)
+returns boolean language sql immutable set search_path = fakeout, public as $$
+  select exists (
+    select 1 from unnest(string_to_array(fakeout_normalize(p_text), ' ')) w
+    where w = any (array['fuck','fucking','fucker','motherfucker','shit','bullshit','cunt','bitch',
+      'bastard','asshole','arsehole','dick','dickhead','cock','pussy','whore','slut','twat','wanker',
+      'prick','fag','faggot','nigger','nigga','retard','spastic'])
+      or w like 'fuck%' or w like 'shit%')
+$$;
+
+create or replace function fakeout_ms(t timestamptz)
+returns bigint language sql immutable set search_path = fakeout, public as $$
+  select (extract(epoch from t) * 1000)::bigint
+$$;
+
+-- ------------------------------------------------------------------ RPCs
+
+create or replace function server_now()
+returns bigint language sql stable set search_path = fakeout, public as $$
+  select fakeout_ms(clock_timestamp())
+$$;
+
+create or replace function create_game(p_settings jsonb default '{}'::jsonb)
+returns text language plpgsql security definer set search_path = fakeout, public as $$
+declare
+  v_charset constant text := 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  v_code text;
+begin
+  if auth.uid() is null then raise exception 'Not signed in'; end if;
+  delete from games where created_at < now() - interval '1 day';
+  for attempt in 1..20 loop
+    v_code := '';
+    for i in 1..4 loop
+      v_code := v_code || substr(v_charset, 1 + floor(random() * length(v_charset))::int, 1);
+    end loop;
+    begin
+      insert into games (code, host_user_id, state)
+      values (v_code, auth.uid(),
+              jsonb_build_object('phase', 'LOBBY', 'settings', coalesce(p_settings, '{}'::jsonb)));
+      insert into game_secrets (code) values (v_code);
+      return v_code;
+    exception when unique_violation then
+      -- code collision: try another
+    end;
+  end loop;
+  raise exception 'Could not generate a free room code - try again.';
+end; $$;
+
+create or replace function join_game(p_code text, p_name text, p_avatar text, p_audience boolean default false)
+returns players language plpgsql security definer set search_path = fakeout, public as $$
+declare
+  g games;
+  v players;
+  v_name text := btrim(coalesce(p_name, ''));
+  v_count int;
+begin
+  if auth.uid() is null then raise exception 'Not signed in'; end if;
+  select * into g from games where code = upper(btrim(p_code));
+  if not found then raise exception 'Room not found'; end if;
+
+  perform pg_advisory_xact_lock(hashtext('fakeout:' || g.code));
+
+  -- Reconnect: same browser session gets its existing row back.
+  select * into v from players where game_code = g.code and user_id = auth.uid();
+  if found then
+    if v_name <> '' then
+      update players set name = left(v_name, 16), avatar = coalesce(p_avatar, avatar)
+      where id = v.id returning * into v;
+    end if;
+    return v;
+  end if;
+
+  if char_length(v_name) not between 1 and 16 then
+    raise exception 'Name must be 1-16 characters';
+  end if;
+
+  select count(*) into v_count from players where game_code = g.code and not is_audience;
+
+  insert into players (game_code, user_id, slot, name, avatar, is_audience)
+  values (g.code, auth.uid(),
+          (select coalesce(max(slot) + 1, 0) from players where game_code = g.code),
+          v_name, coalesce(p_avatar, '🦊'),
+          coalesce(p_audience, false) or g.phase <> 'LOBBY' or v_count >= 8)
+  returning * into v;
+  return v;
+end; $$;
+
+-- The host publishes the public (filtered) state. Deadlines are stamped
+-- with the database clock so every device counts down to the same moment.
+create or replace function host_set_state(
+  p_code text, p_phase text, p_question_no int, p_state jsonb,
+  p_duration_ms int default null, p_keep_timer boolean default false)
+returns jsonb language plpgsql security definer set search_path = fakeout, public as $$
+declare
+  g games;
+  v_deadline timestamptz;
+  v_started timestamptz;
+begin
+  select * into g from games where code = p_code for update;
+  if not found or g.host_user_id is distinct from auth.uid() then
+    raise exception 'Only the host can do that';
+  end if;
+  if p_keep_timer then
+    v_deadline := g.deadline;
+    v_started := g.phase_started_at;
+  else
+    v_started := now();
+    v_deadline := case when p_duration_ms is null then null
+                       else now() + make_interval(secs => p_duration_ms / 1000.0) end;
+  end if;
+  update games set
+    phase = p_phase,
+    question_no = p_question_no,
+    deadline = v_deadline,
+    phase_started_at = v_started,
+    updated_at = now(),
+    state = p_state || jsonb_build_object('deadline', fakeout_ms(v_deadline), 'startedAt', fakeout_ms(v_started))
+  where code = p_code;
+  return jsonb_build_object('deadline', fakeout_ms(v_deadline), 'startedAt', fakeout_ms(v_started));
+end; $$;
+
+create or replace function host_draw_categories(p_code text)
+returns text[] language plpgsql security definer set search_path = fakeout, public as $$
+declare
+  g games;
+  v_cats text[];
+begin
+  select * into g from games where code = p_code;
+  if not found or g.host_user_id is distinct from auth.uid() then
+    raise exception 'Only the host can do that';
+  end if;
+  select array_agg(category) into v_cats from (
+    select category from questions
+    where not is_final and not (id = any (g.used_question_ids))
+    group by category order by random() limit 3) c;
+  if coalesce(array_length(v_cats, 1), 0) < 3 then
+    -- Bank running low: forget which regular questions were used.
+    update games set used_question_ids = array(
+      select u from unnest(used_question_ids) u
+      where u in (select id from questions where is_final))
+    where code = p_code;
+    select array_agg(category) into v_cats from (
+      select category from questions where not is_final
+      group by category order by random() limit 3) c;
+  end if;
+  return v_cats;
+end; $$;
+
+create or replace function host_draw_question(p_code text, p_category text, p_final boolean default false)
+returns jsonb language plpgsql security definer set search_path = fakeout, public as $$
+declare
+  g games;
+  q questions;
+  v_json jsonb;
+begin
+  select * into g from games where code = p_code;
+  if not found or g.host_user_id is distinct from auth.uid() then
+    raise exception 'Only the host can do that';
+  end if;
+  select * into q from questions
+  where is_final = p_final and (p_final or p_category is null or category = p_category)
+    and not (id = any (g.used_question_ids))
+  order by random() limit 1;
+  if not found then
+    select * into q from questions
+    where is_final = p_final and (p_final or p_category is null or category = p_category)
+    order by random() limit 1;
+  end if;
+  if not found then raise exception 'No questions available'; end if;
+
+  update games set used_question_ids = array_append(array_remove(used_question_ids, q.id), q.id)
+  where code = p_code;
+
+  v_json := jsonb_build_object(
+    'id', q.id, 'category', q.category, 'prompt', q.prompt, 'answer', q.answer,
+    'alternateSpellings', to_jsonb(q.alternate_spellings),
+    'suggestedLies', to_jsonb(q.suggested_lies), 'isFinal', q.is_final);
+  update game_secrets set question = v_json, given_suggestions = '{}' where code = p_code;
+  return v_json;
+end; $$;
+
+create or replace function submit_lie(p_code text, p_question_no int, p_text text)
+returns jsonb language plpgsql security definer set search_path = fakeout, public as $$
+declare
+  g games;
+  p players;
+  v_q jsonb;
+  v_text text := btrim(regexp_replace(coalesce(p_text, ''), '\s+', ' ', 'g'));
+begin
+  select * into g from games where code = p_code;
+  if not found then raise exception 'Room not found'; end if;
+  select * into p from players where game_code = p_code and user_id = auth.uid();
+  if not found then raise exception 'You are not in this room'; end if;
+  if p.is_audience then return jsonb_build_object('ok', false, 'reason', 'audience'); end if;
+  if g.phase <> 'LIE_ENTRY' or g.question_no <> p_question_no then
+    return jsonb_build_object('ok', false, 'reason', 'closed');
+  end if;
+  if v_text = '' or fakeout_normalize(v_text) = '' then
+    return jsonb_build_object('ok', false, 'reason', 'empty');
+  end if;
+  if char_length(v_text) > 40 then
+    return jsonb_build_object('ok', false, 'reason', 'tooLong');
+  end if;
+  select question into v_q from game_secrets where code = p_code;
+  if v_q is not null and fakeout_is_truth(v_text, v_q) then
+    return jsonb_build_object('ok', false, 'reason', 'isTruth');
+  end if;
+  if coalesce((g.state->'settings'->>'profanityFilter')::boolean, true) and fakeout_is_profane(v_text) then
+    return jsonb_build_object('ok', false, 'reason', 'profanity');
+  end if;
+  insert into lies (game_code, question_no, player_id, text, norm)
+  values (p_code, p_question_no, p.id, v_text, fakeout_normalize(v_text))
+  on conflict do nothing;
+  return jsonb_build_object('ok', true);
+end; $$;
+
+create or replace function lie_for_me(p_code text, p_question_no int)
+returns text language plpgsql security definer set search_path = fakeout, public as $$
+declare
+  g games;
+  s game_secrets;
+  v_pick text;
+begin
+  select * into g from games where code = p_code;
+  if not found then raise exception 'Room not found'; end if;
+  if not exists (select 1 from players where game_code = p_code and user_id = auth.uid() and not is_audience) then
+    raise exception 'You are not a player in this room';
+  end if;
+  if g.phase <> 'LIE_ENTRY' or g.question_no <> p_question_no then return null; end if;
+  select * into s from game_secrets where code = p_code for update;
+  if s.question is null then return null; end if;
+
+  -- Prefer a suggestion nobody has submitted or been handed yet.
+  select x into v_pick from jsonb_array_elements_text(s.question->'suggestedLies') x
+  where fakeout_normalize(x) not in (select norm from lies where game_code = p_code and question_no = p_question_no)
+    and not (x = any (s.given_suggestions))
+  order by random() limit 1;
+  if v_pick is null then
+    select x into v_pick from jsonb_array_elements_text(s.question->'suggestedLies') x
+    where fakeout_normalize(x) not in (select norm from lies where game_code = p_code and question_no = p_question_no)
+    order by random() limit 1;
+  end if;
+  if v_pick is not null then
+    update game_secrets set given_suggestions = array_append(given_suggestions, v_pick) where code = p_code;
+  end if;
+  return v_pick;
+end; $$;
+
+create or replace function submit_pick(p_code text, p_question_no int, p_option_id text)
+returns jsonb language plpgsql security definer set search_path = fakeout, public as $$
+declare
+  g games;
+  p players;
+begin
+  select * into g from games where code = p_code;
+  if not found then raise exception 'Room not found'; end if;
+  select * into p from players where game_code = p_code and user_id = auth.uid();
+  if not found then raise exception 'You are not in this room'; end if;
+  if g.phase <> 'PICK_TRUTH' or g.question_no <> p_question_no then
+    return jsonb_build_object('ok', false, 'reason', 'closed');
+  end if;
+  if not exists (select 1 from jsonb_array_elements(coalesce(g.state->'options', '[]'::jsonb)) o
+                 where o->>'id' = p_option_id) then
+    return jsonb_build_object('ok', false, 'reason', 'badOption');
+  end if;
+  insert into picks (game_code, question_no, player_id, option_id)
+  values (p_code, p_question_no, p.id, p_option_id)
+  on conflict do nothing;
+  return jsonb_build_object('ok', true);
+end; $$;
+
+revoke execute on function create_game(jsonb), join_game(text, text, text, boolean),
+  host_set_state(text, text, int, jsonb, int, boolean), host_draw_categories(text),
+  host_draw_question(text, text, boolean), submit_lie(text, int, text), lie_for_me(text, int),
+  submit_pick(text, int, text) from public, anon;
+grant execute on function server_now(), create_game(jsonb), join_game(text, text, text, boolean),
+  host_set_state(text, text, int, jsonb, int, boolean), host_draw_categories(text),
+  host_draw_question(text, text, boolean), submit_lie(text, int, text), lie_for_me(text, int),
+  submit_pick(text, int, text) to authenticated;
+
+-- ------------------------------------------------------------- realtime
+
+do $$
+declare t text;
+begin
+  foreach t in array array['games', 'players', 'lies', 'picks', 'commands'] loop
+    if not exists (select 1 from pg_publication_tables
+                   where pubname = 'supabase_realtime' and schemaname = 'fakeout' and tablename = t) then
+      execute format('alter publication supabase_realtime add table fakeout.%I', t);
+    end if;
+  end loop;
+end $$;
+
+-- --------------------------------------------------- API access to schema
+-- `public` gets these grants automatically in Supabase; a custom schema
+-- needs them spelled out. RLS policies above still decide row access.
+
+grant usage on schema fakeout to anon, authenticated, service_role;
+grant select, insert, update, delete on all tables in schema fakeout to authenticated, service_role;
+grant usage, select on all sequences in schema fakeout to authenticated, service_role;
+alter default privileges in schema fakeout grant select, insert, update, delete on tables to authenticated, service_role;
+alter default privileges in schema fakeout grant usage, select on sequences to authenticated, service_role;
