@@ -12,7 +12,10 @@ import { join } from 'node:path'
 
 const root = new URL('..', import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, '$1')
 const dist = join(root, 'dist')
-const run = (cmd, args, cwd = root) => execFileSync(cmd, args, { cwd, stdio: 'inherit', shell: process.platform === 'win32' })
+// npm is a .cmd shim on Windows and needs a shell; git must NOT go through one
+// (the shell would split arguments like the commit message).
+const run = (cmd, args, cwd = root) =>
+  execFileSync(cmd, args, { cwd, stdio: 'inherit', shell: cmd === 'npm' && process.platform === 'win32' })
 const out = (cmd, args, cwd = root) => execFileSync(cmd, args, { cwd, encoding: 'utf8' }).trim()
 
 if (!existsSync(join(root, '.env'))) {
