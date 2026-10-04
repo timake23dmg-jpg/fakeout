@@ -31,6 +31,7 @@ export default function PhoneApp({ initialCode }) {
   const [state, setState] = useState(null)
   const [error, setError] = useState(null)
   const [checking, setChecking] = useState(true)
+  const [prefill, setPrefill] = useState(initialCode)
 
   useEffect(() => {
     let cancelled = false
@@ -74,16 +75,37 @@ export default function PhoneApp({ initialCode }) {
 
   // Lobby song loops from the join screen through the waiting lobby, and
   // ends when the game starts. (A reconnecting player mid-game hears nothing.)
-  const inLobby = !checking && (!me || state?.phase === 'LOBBY')
+  const inLobby = !checking && (!me || state?.phase === 'LOBBY' || state?.phase === 'ENDED')
   useEffect(() => {
     setLobbyMusic(inLobby)
   }, [inLobby])
 
+  // Keep the URL's ?code= in step with the room we're in, so a reload
+  // doesn't land back in an old (ended) room.
+  const setUrlCode = (c) => {
+    try {
+      window.history.replaceState(null, '', `#/play${c ? `?code=${c}` : ''}`)
+    } catch {
+      // URL just stays as it was
+    }
+  }
+
   const leave = () => {
     localStorage.removeItem(CODE_KEY)
+    setUrlCode('')
+    setPrefill('')
     setMe(null)
     setCode(null)
     setState(null)
+  }
+
+  const joined = (player) => {
+    localStorage.setItem(CODE_KEY, player.gameCode)
+    setUrlCode(player.gameCode)
+    setPrefill(player.gameCode)
+    setState(null)
+    setMe(player)
+    setCode(player.gameCode)
   }
 
   if (checking) return <div className="phone center-fill"><div className="spinner" /></div>
@@ -91,17 +113,16 @@ export default function PhoneApp({ initialCode }) {
     return (
       <JoinForm
         transport={transport}
-        initialCode={initialCode || localStorage.getItem(CODE_KEY) || ''}
+        initialCode={prefill || localStorage.getItem(CODE_KEY) || ''}
         error={error}
-        onJoined={(player) => {
-          localStorage.setItem(CODE_KEY, player.gameCode)
-          setMe(player)
-          setCode(player.gameCode)
-        }}
+        onJoined={joined}
       />
     )
   }
   if (!state) return <div className="phone center-fill"><p>Connecting to room {code}…</p><div className="spinner" /></div>
+  if (state.phase === 'ENDED') {
+    return <GameEnded transport={transport} me={meLive || me} nextCode={state.nextCode} onJoined={joined} onLeave={leave} />
+  }
 
   return (
     <div className="phone">
@@ -179,6 +200,42 @@ function JoinForm({ transport, initialCode, error: initError, onJoined }) {
         </button>
       </div>
     </form>
+  )
+}
+
+// The host ended the room. Offer their new room (same name and avatar).
+function GameEnded({ transport, me, nextCode, onJoined, onLeave }) {
+  const [busy, setBusy] = useState(false)
+  const [error, setError] = useState(null)
+  const rejoin = async () => {
+    primeLobbyMusic()
+    setBusy(true)
+    setError(null)
+    try {
+      const player = await transport.joinGame(nextCode, me.name, me.avatar, false)
+      onJoined(player)
+    } catch (err) {
+      setError(err.message)
+      setBusy(false)
+    }
+  }
+  return (
+    <div className="phone">
+      <main className="phone-main">
+        <Waiting title="Game over!" sub={nextCode ? 'The host opened a new room.' : 'The host ended the game.'}>
+          {nextCode && <div className="room-code-big">{nextCode}</div>}
+          {error && <p className="error">{error}</p>}
+          <div className="bottom-actions">
+            {nextCode && (
+              <button className="btn btn-pink btn-block" disabled={busy} onClick={rejoin}>
+                {busy ? 'Joining…' : `Join new room as ${me.name}`}
+              </button>
+            )}
+            <button className="btn btn-ghost btn-block" onClick={onLeave}>{nextCode ? 'Use a different code' : 'Back'}</button>
+          </div>
+        </Waiting>
+      </main>
+    </div>
   )
 }
 

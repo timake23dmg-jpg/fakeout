@@ -4,6 +4,8 @@ import confetti from 'canvas-confetti'
 import QRCode from 'qrcode'
 import { Avatar, Prompt, TimerRing, colorFor, fmt, signed, useNow } from '../components/shared.jsx'
 import { sfx, setVolumes, getVolumes } from '../lib/audio.js'
+import { narrate } from '../lib/narrator.js'
+import { revealLines, winnerLines, awardLine, THANKS_LINE } from './narration.js'
 import { TIMERS, MIN_PLAYERS, SHORT_GAME_MIN_PLAYERS } from '../engine/constants.js'
 
 const spring = { type: 'spring', stiffness: 420, damping: 22 }
@@ -60,7 +62,7 @@ export function LobbyScreen({ pub, code, engine, joinUrl, backend }) {
   const players = gamePlayers(pub)
   const audience = pub.players.filter((p) => p.isAudience)
   const s = pub.settings || {}
-  const toggle = (key) => engine.updateSettings({ [key]: !s[key] })
+  const toggle = (key) => engine.updateSettings({ [key]: key === 'tts' ? s.tts === false : !s[key] })
   const changeVol = (key, v) => {
     const next = { ...vol, [key]: v }
     setVol(next)
@@ -113,10 +115,11 @@ export function LobbyScreen({ pub, code, engine, joinUrl, backend }) {
             Short game (2 + 2 + 1, needs 5+ players)
           </label>
           <label><input type="checkbox" checked={s.profanityFilter !== false} onChange={() => toggle('profanityFilter')} /> Profanity filter</label>
-          <label><input type="checkbox" checked={!!s.tts} onChange={() => toggle('tts')} /> Read questions aloud</label>
+          <label><input type="checkbox" checked={s.tts !== false} onChange={() => toggle('tts')} /> Narrator (reads each round aloud)</label>
           <label><input type="checkbox" checked={!!s.reducedMotion} onChange={() => toggle('reducedMotion')} /> Reduced motion</label>
           <label className="slider">Music <input type="range" min="0" max="1" step="0.05" value={vol.music} onChange={(e) => changeVol('music', +e.target.value)} /></label>
           <label className="slider">SFX <input type="range" min="0" max="1" step="0.05" value={vol.sfx} onChange={(e) => changeVol('sfx', +e.target.value)} /></label>
+          <label className="slider">Voice <input type="range" min="0" max="1" step="0.05" value={vol.voice ?? 1} onChange={(e) => changeVol('voice', +e.target.value)} /></label>
         </div>
 
         <div className="lobby-start">
@@ -333,6 +336,7 @@ export function RevealScreen({ pub, serverNow, rm }) {
             players={byId(pub.players)}
             nobodyFound={pub.reveal.nobodyFound}
             rm={rm}
+            narrating={pub.settings?.tts !== false}
           />
         )}
       </AnimatePresence>
@@ -340,7 +344,7 @@ export function RevealScreen({ pub, serverNow, rm }) {
   )
 }
 
-function RevealStep({ step, elapsed, players, nobodyFound, rm }) {
+function RevealStep({ step, elapsed, players, nobodyFound, rm, narrating }) {
   const fire = useConfetti(rm)
   const isTruth = step.kind === 'truth'
   const verdictAt = isTruth ? 1000 : 1500
@@ -354,11 +358,16 @@ function RevealStep({ step, elapsed, players, nobodyFound, rm }) {
     }
   }
 
+  const lines = narrating ? revealLines(step, players, nobodyFound) : {}
   useEffect(() => {
-    if (isTruth) once('start', () => (nobodyFound ? null : sfx('drumroll')))
-    else once('start', () => sfx('riser'))
+    once('start', () => {
+      if (isTruth) nobodyFound || sfx('drumroll')
+      else sfx('riser')
+      if (lines.start) narrate(lines.start)
+    })
     if (showVerdict) {
       once('verdict', () => {
+        if (lines.verdict) narrate(lines.verdict, { queue: isTruth && !nobodyFound })
         if (isTruth && nobodyFound) {
           sfx('sadTrombone')
           fire({ colors: ['#777', '#999', '#555'], particleCount: 60, gravity: 1.6 })
@@ -502,7 +511,10 @@ export function WinnerScreen({ pub, rm }) {
   const players = byId(pub.players)
   const winners = (pub.winners || []).map((id) => players[id]).filter(Boolean)
   useEffect(() => {
+    const lines = pub.settings?.tts !== false && winners.length ? winnerLines(winners) : null
+    if (lines) narrate(lines.start)
     const t = setTimeout(() => {
+      if (lines) narrate(lines.verdict, { queue: true })
       sfx('cheer')
       fire({ particleCount: 300, spread: 160, origin: { y: 0.4 } })
     }, rm ? 0 : 1400)
@@ -550,9 +562,13 @@ export function AwardsScreen({ pub, serverNow, engine, rm }) {
   const idx = Math.floor((now - pub.startedAt) / TIMERS.AWARD_CARD)
   const done = idx >= awards.length
   const award = awards[Math.min(idx, awards.length - 1)]
+  const narrating = pub.settings?.tts !== false
   useEffect(() => {
-    if (!done && award) sfx('chime')
-  }, [idx])
+    if (!done && award) {
+      sfx('chime')
+      if (narrating) narrate(awardLine(award, players))
+    } else if (narrating) narrate(THANKS_LINE)
+  }, [idx >= awards.length ? -1 : idx])
 
   if (done || !award) {
     const ranked = [...gamePlayers(pub)].sort((a, b) => b.score - a.score)

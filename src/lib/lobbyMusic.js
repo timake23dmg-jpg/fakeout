@@ -2,7 +2,7 @@
 // waiting screens, and fades out the moment the game starts. The mute choice
 // is per device, remembered, and on the TV also silences all game audio.
 
-import { setMasterMuted, getVolumes, onVolumesChange } from './audio.js'
+import { setMasterMuted, musicLevel, onVolumesChange } from './audio.js'
 
 const SRC = `${import.meta.env.BASE_URL}lobby-music.m4a`
 const MUTE_KEY = 'fakeout.muted'
@@ -23,7 +23,7 @@ const listeners = new Set()
 
 setMasterMuted(muted)
 
-const songVolume = () => Math.min(1, getVolumes().music * 2)
+const songVolume = () => Math.min(1, musicLevel() * 2)
 onVolumesChange(() => {
   if (audio && !fadeTimer) audio.volume = songVolume()
 })

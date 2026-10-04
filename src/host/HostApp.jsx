@@ -2,9 +2,11 @@ import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from
 import { AnimatePresence, MotionConfig, motion } from 'framer-motion'
 import { createHostTransport, BACKEND } from '../lib/transport/index.js'
 import { HostEngine } from '../engine/hostEngine.js'
-import { unlockAudio, sfx, playMusic, stopMusic, setVolumes, speak } from '../lib/audio.js'
+import { unlockAudio, sfx, playMusic, stopMusic, setVolumes } from '../lib/audio.js'
+import { narrate, stopNarration } from '../lib/narrator.js'
 import { prefersReducedMotion, MuteButton } from '../components/shared.jsx'
 import { setLobbyMusic, primeLobbyMusic } from '../lib/lobbyMusic.js'
+import { phaseLine } from './narration.js'
 import {
   LobbyScreen, IntroScreen, RoundTitleScreen, CategoryPickScreen, QuestionScreen, LieEntryScreen,
   PickTruthScreen, RevealScreen, ScoreboardScreen, WinnerScreen, AwardsScreen,
@@ -58,9 +60,13 @@ export default function HostApp() {
     return () => document.removeEventListener('visibilitychange', onVis)
   }, [])
 
-  const startEngine = useCallback(async (t, roomCode, saved) => {
+  const startEngine = useCallback(async (t, roomCode, saved, settings) => {
     engineRef.current?.stop()
-    const engine = new HostEngine({ transport: t, code: roomCode, saved, onPublic: setPub })
+    const engine = new HostEngine({
+      transport: t, code: roomCode, saved, settings,
+      // Ignore a replaced engine's last publishes (e.g. the ENDED state).
+      onPublic: (p) => engineRef.current === engine && setPub(p),
+    })
     engineRef.current = engine
     setCode(roomCode)
     await engine.start()
@@ -93,8 +99,34 @@ export default function HostApp() {
       engineRef.current?.stop()
       created?.close?.()
       stopMusic()
+      stopNarration()
     }
   }, [startEngine])
+
+  // End the current room (mid-game or not) and open a fresh one with a new
+  // code. Phones in the old room are offered the new code to rejoin.
+  const [confirmEnd, setConfirmEnd] = useState(false)
+  const endAndNewRoom = async () => {
+    unlockAudio()
+    setConfirmEnd(false)
+    setBusy(true)
+    setError(null)
+    const old = engineRef.current
+    try {
+      const newCode = await transport.createGame({ profanityFilter: true })
+      engineRef.current = null
+      stopMusic()
+      stopNarration()
+      await old?.endGame(newCode)
+      localStorage.setItem(HOST_CODE_KEY, newCode)
+      await startEngine(transport, newCode, null, old ? { ...old.s.settings } : undefined)
+    } catch (err) {
+      if (!engineRef.current) engineRef.current = old
+      setError(err.message)
+    } finally {
+      setBusy(false)
+    }
+  }
 
   const createRoom = async () => {
     unlockAudio()
@@ -124,14 +156,30 @@ export default function HostApp() {
 
   // Phase-level sound and music.
   const phaseKey = pub ? `${pub.phase}:${pub.questionNo}:${pub.round}` : null
+  const narrating = pub?.settings?.tts !== false
   useEffect(() => {
     if (!pub) return
     if (pub.phase !== 'LOBBY') sfx('whoosh')
     if (pub.phase === 'LIE_ENTRY') playMusic('chill')
     else if (pub.phase === 'PICK_TRUTH') playMusic('tense')
     else stopMusic()
-    if (pub.phase === 'QUESTION' && pub.settings?.tts) speak(pub.question.prompt)
+    if (!narrating) return
+    const line = phaseLine(pub, { code })
+    // The lie prompt waits for the question to finish being read.
+    if (line) narrate(line, { queue: pub.phase === 'LIE_ENTRY' })
+    else if (pub.phase !== 'REVEAL' && pub.phase !== 'WINNER' && pub.phase !== 'AWARDS') stopNarration()
   }, [phaseKey])
+
+  // "Ten seconds left!" while players are still writing or picking.
+  const waitingOn = pub?.phase === 'LIE_ENTRY' ? pub.submitted : pub?.phase === 'PICK_TRUTH' ? pub.picked : null
+  const allIn = !!waitingOn && pub.players.filter((p) => !p.isAudience && p.connected).every((p) => waitingOn.includes(p.id))
+  useEffect(() => {
+    if (!narrating || !waitingOn || allIn || pub.deadline == null) return
+    const ms = pub.deadline - 10000 - transport.serverNow()
+    if (ms < 0) return
+    const id = setTimeout(() => narrate('Ten seconds left!'), ms)
+    return () => clearTimeout(id)
+  }, [phaseKey, allIn, narrating])
 
   if (error && !pub) {
     return (
@@ -215,16 +263,21 @@ export default function HostApp() {
           🔊 Click to enable sound
         </button>
       )}
-      {(phase === 'LOBBY' || phase === 'AWARDS') && <button
-        className="new-room"
-        onClick={() => {
-          localStorage.removeItem(HOST_CODE_KEY)
-          engineRef.current?.stop()
-          window.location.reload()
-        }}
-      >
-        New room
-      </button>}
+      {confirmEnd ? (
+        <div className="end-confirm" role="dialog" aria-label="End game">
+          <p>{phase === 'LOBBY' ? 'Close this room and open a new one?' : 'End this game for everyone?'}</p>
+          <p className="hint">You'll get a new room code. Phones will be offered the new code to rejoin.</p>
+          <div className="end-confirm-buttons">
+            <button className="btn btn-pink" onClick={endAndNewRoom}>{phase === 'LOBBY' ? 'New room' : 'End game'}</button>
+            <button className="btn btn-ghost" onClick={() => setConfirmEnd(false)}>Keep playing</button>
+          </div>
+        </div>
+      ) : (
+        <button className={`new-room ${phase === 'LOBBY' || phase === 'AWARDS' ? '' : 'end'}`} disabled={busy} onClick={() => setConfirmEnd(true)}>
+          {busy ? 'Opening new room…' : phase === 'LOBBY' || phase === 'AWARDS' ? 'New room' : '⏹ End game'}
+        </button>
+      )}
+      {error && <p className="host-error">{error}</p>}
     </MotionConfig>
   )
 }

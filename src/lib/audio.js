@@ -1,19 +1,37 @@
 // Procedural sound for the host screen (Web Audio, no asset files).
-// SFX and music have separate volumes, plus a master mute (the mute button).
+// SFX, music and the narrator voice have separate volumes, plus a master mute
+// (the mute button). Music ducks while the narrator speaks (narrator.js).
 // The lobby song itself is a real audio file: see lobbyMusic.js.
 
 let ctx = null
 let sfxGain = null
 let musicGain = null
-let volumes = { music: 0.35, sfx: 0.8 }
+let volumes = { music: 0.35, sfx: 0.8, voice: 1 }
 let masterMuted = false
+let ducked = false
 let musicTimer = null
 let currentLoop = null
+let loopGain = null
 const volumeListeners = new Set()
+const DUCK_LEVEL = 0.3
+
+// Effective music level (after ducking), also used by the lobby song.
+export const musicLevel = () => volumes.music * (ducked ? DUCK_LEVEL : 1)
 
 function applyGains() {
   if (sfxGain) sfxGain.gain.value = masterMuted ? 0 : volumes.sfx
-  if (musicGain) musicGain.gain.value = masterMuted ? 0 : volumes.music
+  if (musicGain) musicGain.gain.setTargetAtTime(masterMuted ? 0 : musicLevel(), ctx.currentTime, 0.08)
+}
+
+function emitVolumes() {
+  for (const fn of volumeListeners) fn(volumes)
+}
+
+export function setDucked(value) {
+  if (ducked === value) return
+  ducked = value
+  applyGains()
+  emitVolumes()
 }
 
 export function unlockAudio() {
@@ -33,10 +51,11 @@ export function unlockAudio() {
 export function setVolumes(v) {
   volumes = { ...volumes, ...v }
   applyGains()
-  for (const fn of volumeListeners) fn(volumes)
+  emitVolumes()
 }
 
 export const getVolumes = () => volumes
+export const isMasterMuted = () => masterMuted
 
 export function onVolumesChange(fn) {
   volumeListeners.add(fn)
@@ -154,42 +173,48 @@ const LOOPS = {
   tense: { bpm: 132, bass: [110, 110, 116.5, 110], arp: [440, 523, 466, 523], type: 'square' },
 }
 
+// Notes are scheduled a little ahead on the audio clock (not by setInterval
+// timing), so the loop stays in time even when timers jitter. Each loop has
+// its own gain node so stopping it silences notes already scheduled.
+const LOOKAHEAD = 0.6 // seconds
+
 export function playMusic(name) {
   if (currentLoop === name) return
   stopMusic()
   if (!ctx || !LOOPS[name]) return
   currentLoop = name
   const loop = LOOPS[name]
-  const beat = 60 / loop.bpm
+  const half = 60 / loop.bpm / 2
+  const out = ctx.createGain()
+  out.connect(musicGain)
+  loopGain = out
   let step = 0
-  const scheduleBar = () => {
-    for (let i = 0; i < 8; i++) {
-      const s = step + i
-      tone({ freq: loop.arp[s % loop.arp.length], type: loop.type, dur: beat * 0.4, vol: 0.05, at: i * beat * 0.5, out: musicGain })
-      if (i % 2 === 0) {
-        tone({ freq: loop.bass[Math.floor(s / 2) % loop.bass.length], type: 'sine', dur: beat * 0.9, vol: 0.18, at: i * beat * 0.5, out: musicGain })
+  let next = ctx.currentTime + 0.05
+  const fill = () => {
+    // After a long timer stall (hidden tab), skip ahead instead of bunching notes.
+    if (next < ctx.currentTime) next = ctx.currentTime + 0.05
+    while (next < ctx.currentTime + LOOKAHEAD) {
+      const at = next - ctx.currentTime
+      tone({ freq: loop.arp[step % loop.arp.length], type: loop.type, dur: half * 0.8, vol: 0.05, at, out })
+      if (step % 2 === 0) {
+        tone({ freq: loop.bass[Math.floor(step / 2) % loop.bass.length], type: 'sine', dur: half * 1.8, vol: 0.18, at, out })
       }
+      step++
+      next += half
     }
-    step += 8
   }
-  scheduleBar()
-  musicTimer = setInterval(scheduleBar, beat * 4 * 1000)
+  fill()
+  musicTimer = setInterval(fill, 150)
 }
 
 export function stopMusic() {
   clearInterval(musicTimer)
   musicTimer = null
   currentLoop = null
-}
-
-export function speak(text) {
-  try {
-    if (masterMuted || !('speechSynthesis' in window)) return
-    window.speechSynthesis.cancel()
-    const u = new SpeechSynthesisUtterance(text.replace(/_{2,}/g, 'blank'))
-    u.rate = 1
-    window.speechSynthesis.speak(u)
-  } catch {
-    // TTS unavailable: the question is on screen anyway
+  if (loopGain && ctx) {
+    const g = loopGain
+    g.gain.setTargetAtTime(0, ctx.currentTime, 0.05)
+    setTimeout(() => g.disconnect(), 400)
   }
+  loopGain = null
 }

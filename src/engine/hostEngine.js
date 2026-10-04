@@ -15,7 +15,7 @@ import { normalize, matchesTruth } from '../lib/rules.js'
 const DEFAULT_SETTINGS = {
   shortGame: false,
   profanityFilter: true,
-  tts: false,
+  tts: true, // the narrator
   reducedMotion: false,
 }
 
@@ -238,6 +238,7 @@ export class HostEngine {
       pub.winners = s.winners
       pub.awards = s.awards
     }
+    if (s.phase === 'ENDED') pub.nextCode = s.nextCode ?? null
     return pub
   }
 
@@ -282,6 +283,22 @@ export class HostEngine {
   backToLobby() {
     return this.enqueue(async () => {
       if (this.s.phase === 'AWARDS' || this.s.phase === 'WINNER') await this.goLobby()
+    })
+  }
+
+  // Close this room for good, from any phase. Phones see phase ENDED and are
+  // offered `nextCode` (the host's new room) to rejoin with one tap.
+  endGame(nextCode = null) {
+    return this.enqueue(async () => {
+      const s = this.s
+      s.phase = 'ENDED'
+      s.current = null
+      s.nextCode = nextCode
+      try {
+        await this.publish(null)
+      } finally {
+        this.stop()
+      }
     })
   }
 
