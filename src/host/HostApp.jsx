@@ -3,10 +3,11 @@ import { AnimatePresence, MotionConfig, motion } from 'framer-motion'
 import { createHostTransport, BACKEND } from '../lib/transport/index.js'
 import { HostEngine } from '../engine/hostEngine.js'
 import { unlockAudio, sfx, playMusic, stopMusic, setVolumes } from '../lib/audio.js'
-import { narrate, stopNarration } from '../lib/narrator.js'
+import { narrate, prepareLines, stopNarration } from '../lib/narrator.js'
+import { loadAiVoice, subscribeAiVoice } from '../lib/aiVoice.js'
 import { prefersReducedMotion, MuteButton } from '../components/shared.jsx'
 import { setLobbyMusic, primeLobbyMusic } from '../lib/lobbyMusic.js'
-import { phaseLine } from './narration.js'
+import { phaseLine, revealLines, winnerLines, awardLine, FIXED_LINES, TEN_SECONDS } from './narration.js'
 import {
   LobbyScreen, IntroScreen, RoundTitleScreen, CategoryPickScreen, QuestionScreen, LieEntryScreen,
   PickTruthScreen, RevealScreen, ScoreboardScreen, WinnerScreen, AwardsScreen,
@@ -70,6 +71,13 @@ export default function HostApp() {
     engineRef.current = engine
     setCode(roomCode)
     await engine.start()
+  }, [])
+
+  // The AI narrator voice downloads in the background (cached after the first
+  // time). Once it's ready, or the voice changes, pre-generate the stock lines.
+  useEffect(() => {
+    loadAiVoice()
+    return subscribeAiVoice(() => prepareLines(FIXED_LINES))
   }, [])
 
   useEffect(() => {
@@ -164,6 +172,19 @@ export default function HostApp() {
     else if (pub.phase === 'PICK_TRUTH') playMusic('tense')
     else stopMusic()
     if (!narrating) return
+    // Lines that will be needed shortly, generated now so they're on time.
+    if (pub.phase === 'REVEAL') {
+      const players = Object.fromEntries(pub.players.map((p) => [p.id, p]))
+      for (const step of pub.reveal.steps) {
+        const l = revealLines(step, players, pub.reveal.nobodyFound)
+        prepareLines([l.start, l.verdict])
+      }
+    } else if (pub.phase === 'WINNER') {
+      const players = Object.fromEntries(pub.players.map((p) => [p.id, p]))
+      const winners = (pub.winners || []).map((id) => players[id]).filter(Boolean)
+      if (winners.length) prepareLines([winnerLines(winners).verdict])
+      prepareLines((pub.awards || []).map((a) => awardLine(a, players)))
+    }
     const line = phaseLine(pub, { code })
     // The lie prompt waits for the question to finish being read.
     if (line) narrate(line, { queue: pub.phase === 'LIE_ENTRY' })
@@ -177,7 +198,7 @@ export default function HostApp() {
     if (!narrating || !waitingOn || allIn || pub.deadline == null) return
     const ms = pub.deadline - 10000 - transport.serverNow()
     if (ms < 0) return
-    const id = setTimeout(() => narrate('Ten seconds left!'), ms)
+    const id = setTimeout(() => narrate(TEN_SECONDS), ms)
     return () => clearTimeout(id)
   }, [phaseKey, allIn, narrating])
 

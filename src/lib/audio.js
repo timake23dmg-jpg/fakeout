@@ -6,6 +6,7 @@
 let ctx = null
 let sfxGain = null
 let musicGain = null
+let voiceGain = null
 let volumes = { music: 0.35, sfx: 0.8, voice: 1 }
 let masterMuted = false
 let ducked = false
@@ -21,6 +22,7 @@ export const musicLevel = () => volumes.music * (ducked ? DUCK_LEVEL : 1)
 function applyGains() {
   if (sfxGain) sfxGain.gain.value = masterMuted ? 0 : volumes.sfx
   if (musicGain) musicGain.gain.setTargetAtTime(masterMuted ? 0 : musicLevel(), ctx.currentTime, 0.08)
+  if (voiceGain) voiceGain.gain.value = masterMuted ? 0 : volumes.voice
 }
 
 function emitVolumes() {
@@ -41,9 +43,11 @@ export function unlockAudio() {
     ctx = new AC()
     sfxGain = ctx.createGain()
     musicGain = ctx.createGain()
+    voiceGain = ctx.createGain()
     applyGains()
     sfxGain.connect(ctx.destination)
     musicGain.connect(ctx.destination)
+    voiceGain.connect(ctx.destination)
   }
   if (ctx.state === 'suspended') ctx.resume()
 }
@@ -55,6 +59,32 @@ export function setVolumes(v) {
 }
 
 export const getVolumes = () => volumes
+export const audioReady = () => !!ctx && ctx.state === 'running'
+
+// Play generated speech (the AI narrator) on the voice channel. Returns a
+// handle whose `ended` promise settles when it finishes or is stopped.
+export function playVoice(samples, sampleRate) {
+  if (!ctx) return null
+  const buf = ctx.createBuffer(1, samples.length, sampleRate)
+  buf.copyToChannel(samples, 0)
+  const src = ctx.createBufferSource()
+  src.buffer = buf
+  src.connect(voiceGain)
+  const ended = new Promise((resolve) => {
+    src.onended = resolve
+  })
+  src.start()
+  return {
+    ended,
+    stop: () => {
+      try {
+        src.stop()
+      } catch {
+        // already stopped
+      }
+    },
+  }
+}
 export const isMasterMuted = () => masterMuted
 
 export function onVolumesChange(fn) {

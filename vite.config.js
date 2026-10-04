@@ -7,4 +7,6 @@ export default defineConfig({
   // or under a sub-path (GitHub Pages: /fakeout/).
   base: './',
   server: { host: true, port: 5173 },
+  // The AI-voice worker (src/lib/tts.worker.js) imports code-split modules.
+  worker: { format: 'es' },
 })

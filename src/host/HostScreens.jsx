@@ -5,6 +5,7 @@ import QRCode from 'qrcode'
 import { Avatar, Prompt, TimerRing, colorFor, fmt, signed, useNow } from '../components/shared.jsx'
 import { sfx, setVolumes, getVolumes } from '../lib/audio.js'
 import { narrate } from '../lib/narrator.js'
+import { AUTO, BROWSER_VOICE, VOICE_GROUPS, getAiVoiceState, setVoiceChoice, subscribeAiVoice } from '../lib/aiVoice.js'
 import { revealLines, winnerLines, awardLine, THANKS_LINE } from './narration.js'
 import { TIMERS, MIN_PLAYERS, SHORT_GAME_MIN_PLAYERS } from '../engine/constants.js'
 
@@ -119,6 +120,7 @@ export function LobbyScreen({ pub, code, engine, joinUrl, backend }) {
           <label><input type="checkbox" checked={!!s.reducedMotion} onChange={() => toggle('reducedMotion')} /> Reduced motion</label>
           <label className="slider">Music <input type="range" min="0" max="1" step="0.05" value={vol.music} onChange={(e) => changeVol('music', +e.target.value)} /></label>
           <label className="slider">SFX <input type="range" min="0" max="1" step="0.05" value={vol.sfx} onChange={(e) => changeVol('sfx', +e.target.value)} /></label>
+          <VoicePicker />
           <label className="slider">Voice <input type="range" min="0" max="1" step="0.05" value={vol.voice ?? 1} onChange={(e) => changeVol('voice', +e.target.value)} /></label>
         </div>
 
@@ -131,6 +133,29 @@ export function LobbyScreen({ pub, code, engine, joinUrl, backend }) {
           </span>
         </div>
       </div>
+    </div>
+  )
+}
+
+function VoicePicker() {
+  const [ai, setAi] = useState(getAiVoiceState)
+  useEffect(() => subscribeAiVoice(setAi), [])
+  return (
+    <div className="voice-picker">
+      <label className="slider">
+        Narrator voice
+        <select value={ai.choice} onChange={(e) => setVoiceChoice(e.target.value)}>
+          <option value={AUTO}>Auto (best for this computer)</option>
+          {VOICE_GROUPS.map((g) => (
+            <optgroup key={g.engine} label={g.label}>
+              {g.voices.map((v) => <option key={v.id} value={`${g.engine}:${v.id}`}>{v.label}</option>)}
+            </optgroup>
+          ))}
+          <option value={BROWSER_VOICE}>Browser voice (robotic)</option>
+        </select>
+        <button type="button" className="btn btn-ghost voice-test" onClick={() => narrate("Hi! I'm your Fakeout host. Let's play!")}>▶ Test</button>
+      </label>
+      {ai.text && <span className={`voice-status ${ai.tone}`}>{ai.text}</span>}
     </div>
   )
 }

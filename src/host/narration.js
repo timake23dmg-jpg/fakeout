@@ -4,6 +4,14 @@
 
 const pick = (lines) => lines[Math.floor(Math.random() * lines.length)]
 
+const INTRO_LINE = 'Welcome to Fakeout! Write a lie that sounds true, spot the real answer, and fool your friends for points.'
+const ROUND_ONE = ['Round one! Let the lying begin.', "Round one! Let's get lying."]
+const ROUND_TWO = ['Round two! Everything is worth double.', 'Round two! Double points!']
+const FINAL_LINE = 'The Final Fakeout! One question, triple points.'
+const LIE_LINES = ['Now write a believable lie!', 'Type a lie that sounds true!', 'Time to lie. Make it convincing!']
+const PICK_LINES = ["Pens down! Now, which one's the truth?", 'Find the truth! Pick it on your phone.', 'One of these is real. Which one?']
+export const TEN_SECONDS = 'Ten seconds left!'
+
 export function listNames(names) {
   if (names.length <= 1) return names[0] ?? ''
   return `${names.slice(0, -1).join(', ')} and ${names[names.length - 1]}`
@@ -22,13 +30,11 @@ export function phaseLine(pub, { code } = {}) {
         ? `Welcome to Fakeout! Grab your phones and join with room code ${spell(code)}.`
         : null
     case 'INTRO':
-      return 'Welcome to Fakeout! Write a lie that sounds true, spot the real answer, and fool your friends for points.'
+      return INTRO_LINE
     case 'ROUND_TITLE':
-      return pub.round === 2
-        ? pick(['Round two! Everything is worth double.', 'Round two! Double points!'])
-        : pick(['Round one! Let the lying begin.', "Round one! Let's get lying."])
+      return pick(pub.round === 2 ? ROUND_TWO : ROUND_ONE)
     case 'FINAL_TITLE':
-      return 'The Final Fakeout! One question, triple points.'
+      return FINAL_LINE
     case 'CATEGORY_PICK': {
       const n = pub.questionIndex + 1
       const picker = nameOf(pub, pub.pickerId)
@@ -38,9 +44,9 @@ export function phaseLine(pub, { code } = {}) {
     case 'QUESTION':
       return `${pub.question.category}. ${pub.question.prompt}`
     case 'LIE_ENTRY':
-      return pick(['Now write a believable lie!', 'Type a lie that sounds true!', 'Time to lie. Make it convincing!'])
+      return pick(LIE_LINES)
     case 'PICK_TRUTH':
-      return pick(["Pens down! Now, which one's the truth?", 'Find the truth! Pick it on your phone.', 'One of these is real. Which one?'])
+      return pick(PICK_LINES)
     case 'SCOREBOARD':
       return leaderLine(pub)
     default:
@@ -84,3 +90,11 @@ export function awardLine(award, players) {
 }
 
 export const THANKS_LINE = 'Thanks for playing Fakeout! Play again, or head back to the lobby.'
+
+// Every line that doesn't depend on names or questions, so the AI voice can
+// generate them all in the lobby and play them instantly during the game.
+export const FIXED_LINES = [
+  INTRO_LINE, ...ROUND_ONE, ...ROUND_TWO, FINAL_LINE, ...LIE_LINES, ...PICK_LINES,
+  TEN_SECONDS, THANKS_LINE, 'A house lie!', 'And the truth is…', 'And the winner is…', "It's a tie!",
+  'Nobody has any points yet!',
+]
