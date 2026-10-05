@@ -41,6 +41,10 @@ create table if not exists game_secrets (
   question jsonb,
   given_suggestions text[] not null default '{}'
 );
+-- "Lie for me" suggestions handed out in the current question, by player:
+-- { "<player id>": ["text", ...] }. The host charges for them.
+alter table game_secrets add column if not exists lie_handouts jsonb not null default '{}'::jsonb;
+alter table game_secrets add column if not exists handouts_question_no int;
 
 create table if not exists players (
   id uuid primary key default gen_random_uuid(),
@@ -191,6 +195,13 @@ returns text language sql immutable set search_path = fakeout, public as $$
   select regexp_replace(
     btrim(regexp_replace(regexp_replace(lower(coalesce(t, '')), '[[:punct:]]', '', 'g'), '\s+', ' ', 'g')),
     '^(a|an|the) ', '')
+$$;
+
+-- "Lie for me" price for a player who has already had n this game: the
+-- first is free, then 100, 200, 300, 400, then 500 points each.
+create or replace function fakeout_lie_price(n int)
+returns int language sql immutable set search_path = fakeout, public as $$
+  select case when n <= 0 then 0 else least(500, 100 * n) end
 $$;
 
 create or replace function fakeout_levenshtein(a text, b text)
@@ -355,7 +366,10 @@ begin
   return jsonb_build_object('deadline', fakeout_ms(v_deadline), 'startedAt', fakeout_ms(v_started));
 end; $$;
 
-create or replace function host_draw_categories(p_code text)
+-- p_exclude: questions this TV played recently (in earlier rooms). They're
+-- avoided while fresher ones remain. The older signatures are dropped.
+drop function if exists host_draw_categories(text);
+create or replace function host_draw_categories(p_code text, p_exclude text[] default '{}')
 returns text[] language plpgsql security definer set search_path = fakeout, public as $$
 declare
   g games;
@@ -367,8 +381,14 @@ begin
   end if;
   select array_agg(category) into v_cats from (
     select category from questions
-    where not is_final and not (id = any (g.used_question_ids))
+    where not is_final and not (id = any (g.used_question_ids)) and not (id = any (coalesce(p_exclude, '{}')))
     group by category order by random() limit 3) c;
+  if coalesce(array_length(v_cats, 1), 0) < 3 then
+    select array_agg(category) into v_cats from (
+      select category from questions
+      where not is_final and not (id = any (g.used_question_ids))
+      group by category order by random() limit 3) c;
+  end if;
   if coalesce(array_length(v_cats, 1), 0) < 3 then
     -- Bank running low: forget which regular questions were used.
     update games set used_question_ids = array(
@@ -382,7 +402,9 @@ begin
   return v_cats;
 end; $$;
 
-create or replace function host_draw_question(p_code text, p_category text, p_final boolean default false)
+drop function if exists host_draw_question(text, text, boolean);
+create or replace function host_draw_question(p_code text, p_category text, p_final boolean default false,
+  p_exclude text[] default '{}')
 returns jsonb language plpgsql security definer set search_path = fakeout, public as $$
 declare
   g games;
@@ -393,15 +415,11 @@ begin
   if not found or g.host_user_id is distinct from auth.uid() then
     raise exception 'Only the host can do that';
   end if;
+  -- Freshest first: not played in this room, then not recently on this TV.
   select * into q from questions
   where is_final = p_final and (p_final or p_category is null or category = p_category)
-    and not (id = any (g.used_question_ids))
-  order by random() limit 1;
-  if not found then
-    select * into q from questions
-    where is_final = p_final and (p_final or p_category is null or category = p_category)
-    order by random() limit 1;
-  end if;
+  order by (id = any (g.used_question_ids)), (id = any (coalesce(p_exclude, '{}'))), random()
+  limit 1;
   if not found then raise exception 'No questions available'; end if;
 
   update games set used_question_ids = array_append(array_remove(used_question_ids, q.id), q.id)
@@ -450,36 +468,72 @@ begin
   return jsonb_build_object('ok', true);
 end; $$;
 
+-- Hands out a suggested lie: { ok, text, cost } or { ok: false, reason[, cost] }.
+-- The first per game is free; after that it costs points, checked against
+-- the score and purchase count the host published (state.players). The host
+-- charges for every handout when lie entry closes.
+drop function if exists lie_for_me(text, int);
 create or replace function lie_for_me(p_code text, p_question_no int)
-returns text language plpgsql security definer set search_path = fakeout, public as $$
+returns jsonb language plpgsql security definer set search_path = fakeout, public as $$
 declare
   g games;
+  p players;
   s game_secrets;
   v_pick text;
+  v_mine jsonb;
+  v_had int;
+  v_bought int;
+  v_score int;
+  v_spent int := 0;
+  v_cost int;
 begin
   select * into g from games where code = p_code;
   if not found then raise exception 'Room not found'; end if;
-  if not exists (select 1 from players where game_code = p_code and user_id = auth.uid() and not is_audience) then
-    raise exception 'You are not a player in this room';
+  select * into p from players where game_code = p_code and user_id = auth.uid() and not is_audience;
+  if not found then raise exception 'You are not a player in this room'; end if;
+  if g.phase <> 'LIE_ENTRY' or g.question_no <> p_question_no then
+    return jsonb_build_object('ok', false, 'reason', 'closed');
   end if;
-  if g.phase <> 'LIE_ENTRY' or g.question_no <> p_question_no then return null; end if;
   select * into s from game_secrets where code = p_code for update;
-  if s.question is null then return null; end if;
+  if s.question is null then return jsonb_build_object('ok', false, 'reason', 'closed'); end if;
+  if s.handouts_question_no is distinct from p_question_no then
+    s.lie_handouts := '{}'::jsonb;
+  end if;
+
+  v_mine := coalesce(s.lie_handouts -> (p.id::text), '[]'::jsonb);
+  v_had := jsonb_array_length(v_mine);
+  select coalesce((x ->> 'lieBuys')::int, 0), coalesce((x ->> 'score')::int, 0) into v_bought, v_score
+  from jsonb_array_elements(coalesce(g.state -> 'players', '[]'::jsonb)) x
+  where x ->> 'id' = p.id::text;
+  v_bought := coalesce(v_bought, 0);
+  v_score := coalesce(v_score, 0);
+  for i in 0 .. v_had - 1 loop
+    v_spent := v_spent + fakeout_lie_price(v_bought + i);
+  end loop;
+  v_cost := fakeout_lie_price(v_bought + v_had);
+  if v_score - v_spent < v_cost then
+    return jsonb_build_object('ok', false, 'reason', 'broke', 'cost', v_cost);
+  end if;
 
   -- Prefer a suggestion nobody has submitted or been handed yet.
   select x into v_pick from jsonb_array_elements_text(s.question->'suggestedLies') x
   where fakeout_normalize(x) not in (select norm from lies where game_code = p_code and question_no = p_question_no)
-    and not (x = any (s.given_suggestions))
+    and not (x = any (s.given_suggestions)) and not (v_mine ? x)
   order by random() limit 1;
   if v_pick is null then
     select x into v_pick from jsonb_array_elements_text(s.question->'suggestedLies') x
     where fakeout_normalize(x) not in (select norm from lies where game_code = p_code and question_no = p_question_no)
+      and not (v_mine ? x)
     order by random() limit 1;
   end if;
-  if v_pick is not null then
-    update game_secrets set given_suggestions = array_append(given_suggestions, v_pick) where code = p_code;
-  end if;
-  return v_pick;
+  if v_pick is null then return jsonb_build_object('ok', false, 'reason', 'empty'); end if;
+
+  update game_secrets set
+    given_suggestions = array_append(given_suggestions, v_pick),
+    lie_handouts = jsonb_set(s.lie_handouts, array[p.id::text], v_mine || to_jsonb(v_pick)),
+    handouts_question_no = p_question_no
+  where code = p_code;
+  return jsonb_build_object('ok', true, 'text', v_pick, 'cost', v_cost);
 end; $$;
 
 create or replace function submit_pick(p_code text, p_question_no int, p_option_id text)
@@ -506,12 +560,12 @@ begin
 end; $$;
 
 revoke execute on function create_game(jsonb), join_game(text, text, text, boolean),
-  host_set_state(text, text, int, jsonb, int, boolean), host_draw_categories(text),
-  host_draw_question(text, text, boolean), submit_lie(text, int, text), lie_for_me(text, int),
+  host_set_state(text, text, int, jsonb, int, boolean), host_draw_categories(text, text[]),
+  host_draw_question(text, text, boolean, text[]), submit_lie(text, int, text), lie_for_me(text, int),
   submit_pick(text, int, text) from public, anon;
 grant execute on function server_now(), create_game(jsonb), join_game(text, text, text, boolean),
-  host_set_state(text, text, int, jsonb, int, boolean), host_draw_categories(text),
-  host_draw_question(text, text, boolean), submit_lie(text, int, text), lie_for_me(text, int),
+  host_set_state(text, text, int, jsonb, int, boolean), host_draw_categories(text, text[]),
+  host_draw_question(text, text, boolean, text[]), submit_lie(text, int, text), lie_for_me(text, int),
   submit_pick(text, int, text) to authenticated;
 
 -- ------------------------------------------------------------- realtime

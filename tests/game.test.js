@@ -5,6 +5,7 @@ import { readFileSync } from 'node:fs'
 import { HostEngine } from '../src/engine/hostEngine.js'
 import { LocalServer } from '../src/lib/transport/localServer.js'
 import { createLocalHostTransport } from '../src/lib/transport/localTransport.js'
+import { liePrice } from '../src/lib/rules.js'
 
 const questions = JSON.parse(readFileSync(new URL('../src/data/questions.json', import.meta.url), 'utf8'))
 const wait = (ms) => new Promise((r) => setTimeout(r, ms))
@@ -47,6 +48,7 @@ test('full game: phases, scoring, truth hidden until reveal, awards', async () =
   await until(engine, (s) => s.phase === 'ROUND_TITLE' && s.round === 1)
 
   let questionsPlayed = 0
+  const seen = new Set()
   for (;;) {
     const s = await until(engine, (x) => ['CATEGORY_PICK', 'FINAL_TITLE', 'WINNER'].includes(x.phase), 20000)
     if (s.phase === 'WINNER') break
@@ -58,6 +60,8 @@ test('full game: phases, scoring, truth hidden until reveal, awards', async () =
     const q = await until(engine, (x) => x.phase === 'QUESTION')
     const qn = q.questionNo
     const secret = engine.s.current.question
+    assert.ok(!seen.has(secret.id), 'no question repeats within a game')
+    seen.add(secret.id)
     if (s.phase === 'CATEGORY_PICK') assert.equal(secret.category, s.categoryOptions[1])
     assert.equal(q.question.answer, undefined, 'answer must not be in public state')
 
@@ -65,9 +69,12 @@ test('full game: phases, scoring, truth hidden until reveal, awards', async () =
     assert.equal(server.submitLie(ana.userId, code, qn, secret.answer).reason, 'isTruth')
     assert.ok(server.submitLie(ana.userId, code, qn, 'zzfake one').ok)
     assert.ok(server.submitLie(ben.userId, code, qn, 'ZZFake One!').ok) // duplicate after normalising
-    const suggestion = server.lieForMe(cat.userId, code, qn)
-    assert.ok(secret.suggestedLies.includes(suggestion))
-    assert.ok(server.submitLie(cat.userId, code, qn, suggestion).ok)
+    // Cat buys a lie every question: the first is free, then 100, 200, ... 500.
+    const bought = server.lieForMe(cat.userId, code, qn)
+    assert.ok(bought.ok, `lie for me refused: ${bought.reason}`)
+    assert.equal(bought.cost, liePrice(questionsPlayed))
+    assert.ok(secret.suggestedLies.includes(bought.text))
+    assert.ok(server.submitLie(cat.userId, code, qn, bought.text).ok)
 
     const pick = await until(engine, (x) => x.phase === 'PICK_TRUTH') // advanced early
     const json = JSON.stringify(pick)
@@ -89,7 +96,9 @@ test('full game: phases, scoring, truth hidden until reveal, awards', async () =
     assert.equal(rev.reveal.steps.at(-1).kind, 'truth')
     assert.equal(engine.s.scores[ana.id].score - before[ana.id], 1000 * m + 500 * m) // truth + fooled Cat
     assert.equal(engine.s.scores[ben.id].score - before[ben.id], 500 * m) // co-author of the lie Cat picked
-    assert.equal(engine.s.scores[cat.id].score - before[cat.id], 500 * m) // fooled Ben
+    assert.equal(engine.s.scores[cat.id].score - before[cat.id], 500 * m - bought.cost) // fooled Ben, paid for the lie
+    assert.deepEqual(rev.reveal.steps.find((x) => x.optionId === catOpt.id).bought, [cat.id])
+    assert.equal(rev.players.find((p) => p.id === cat.id).lieBuys, questionsPlayed + 1)
     await until(engine, (x) => x.phase === 'SCOREBOARD')
     questionsPlayed++
   }
@@ -190,4 +199,38 @@ test('end game mid-round: phones see ENDED + the new code, players can join the 
   const rejoined = server.joinGame(players[0].userId, newCode, 'Ana', '🦊')
   assert.equal(rejoined.gameCode, newCode)
   assert.equal(rejoined.isAudience, false, 'joins the new lobby as a player, not audience')
+})
+
+test('"Lie for me": first is free, then it costs points you must have', async () => {
+  const { server, engine, code, players } = await setup(['Ana', 'Ben'])
+  const [ana, ben] = players
+  server.sendCommand(ana.userId, code, ana.id, 'start')
+  await until(engine, (s) => s.phase === 'INTRO')
+  server.sendCommand(ana.userId, code, ana.id, 'skipIntro')
+  const s = await until(engine, (x) => x.phase === 'CATEGORY_PICK')
+  const picker = players.find((p) => p.id === s.pickerId)
+  server.sendCommand(picker.userId, code, picker.id, 'pickCategory', { category: s.categoryOptions[0] })
+  const { questionNo: qn } = await until(engine, (x) => x.phase === 'LIE_ENTRY')
+
+  const first = server.lieForMe(ana.userId, code, qn)
+  assert.deepEqual([first.ok, first.cost], [true, 0])
+  const second = server.lieForMe(ana.userId, code, qn) // 100 pts, but Ana has 0
+  assert.deepEqual([second.ok, second.reason, second.cost], [false, 'broke', 100])
+  assert.notEqual(server.lieForMe(ben.userId, code, qn).text, undefined, 'Ben still gets his free one')
+  engine.stop()
+})
+
+test('a TV avoids questions it played recently, even in a new room', () => {
+  const server = new LocalServer({ questions })
+  const code = server.createGame('host')
+  const regular = questions.filter((q) => !q.isFinal)
+  const exclude = regular.slice(0, -5).map((q) => q.id)
+  for (let i = 0; i < 5; i++) {
+    const q = server.drawQuestion('host', code, null, false, exclude)
+    assert.ok(!exclude.includes(q.id))
+  }
+  // Everything excluded or used: still returns a question rather than failing.
+  assert.ok(server.drawQuestion('host', code, null, false, regular.map((q) => q.id)))
+  const cats = server.drawCategories('host', code, exclude)
+  assert.equal(cats.length, 3)
 })

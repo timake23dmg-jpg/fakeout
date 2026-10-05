@@ -130,11 +130,11 @@ export function createLocalHostTransport({ userId, questions, server = null, cha
       srv.saveSecrets(userId, code, data)
       persist()
     },
-    async drawCategories(code) {
-      return srv.drawCategories(userId, code)
+    async drawCategories(code, exclude) {
+      return srv.drawCategories(userId, code, exclude)
     },
-    async drawQuestion(code, category, isFinal) {
-      return srv.drawQuestion(userId, code, category, isFinal)
+    async drawQuestion(code, category, isFinal, exclude) {
+      return srv.drawQuestion(userId, code, category, isFinal, exclude)
     },
     async fetchRoundRows(code, questionNo) {
       return srv.fetchRoundRows(userId, code, questionNo)

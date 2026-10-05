@@ -93,6 +93,14 @@ async function main() {
     const answer = engine.s.current.question.answer
     const rejected = ok(await ana.sb.rpc('submit_lie', { p_code: code, p_question_no: qn, p_text: `The ${answer}!` }))
     assert.equal(rejected.reason, 'isTruth')
+    const buyer = players.at(-1)
+    if (n === 0) {
+      // "Lie for me": the first is free, the next costs 100 points nobody has yet.
+      const free = ok(await buyer.sb.rpc('lie_for_me', { p_code: code, p_question_no: qn }))
+      assert.ok(free.ok && free.cost === 0 && free.text, JSON.stringify(free))
+      const paid = ok(await buyer.sb.rpc('lie_for_me', { p_code: code, p_question_no: qn }))
+      assert.deepEqual([paid.ok, paid.reason, paid.cost], [false, 'broke', 100])
+    }
     for (const p of players) {
       const r = ok(await p.sb.rpc('submit_lie', { p_code: code, p_question_no: qn, p_text: `${p.name} lie ${n}` }))
       assert.ok(r.ok, JSON.stringify(r))
@@ -106,7 +114,8 @@ async function main() {
       const opt = pick.options.find((o) => o.text.toLowerCase() !== own)
       ok(await p.sb.rpc('submit_pick', { p_code: code, p_question_no: qn, p_option_id: opt.id }))
     }
-    await until((x) => x.phase === 'REVEAL')
+    const rev = await until((x) => x.phase === 'REVEAL')
+    if (n === 0) assert.equal(rev.players.find((p) => p.id === buyer.id).lieBuys, 1, 'host counted the bought lie')
     n++
     console.log(`question ${n} ok`)
   }

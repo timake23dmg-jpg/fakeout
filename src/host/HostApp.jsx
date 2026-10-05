@@ -14,6 +14,29 @@ import {
 } from './HostScreens.jsx'
 
 const HOST_CODE_KEY = 'fakeout.hostCode'
+const PLAYED_KEY = 'fakeout.playedQuestions'
+const PLAYED_MAX = 250 // most of the bank: older questions come back eventually
+
+// Questions this TV has played, newest last, across rooms and sessions, so a
+// new room doesn't serve the same questions again.
+const questionHistory = {
+  recent() {
+    try {
+      const list = JSON.parse(localStorage.getItem(PLAYED_KEY) || '[]')
+      return Array.isArray(list) ? list : []
+    } catch {
+      return []
+    }
+  },
+  add(id) {
+    try {
+      const list = [...this.recent().filter((x) => x !== id), id].slice(-PLAYED_MAX)
+      localStorage.setItem(PLAYED_KEY, JSON.stringify(list))
+    } catch {
+      // history just won't persist
+    }
+  },
+}
 
 function loadVolumes() {
   try {
@@ -64,7 +87,7 @@ export default function HostApp() {
   const startEngine = useCallback(async (t, roomCode, saved, settings) => {
     engineRef.current?.stop()
     const engine = new HostEngine({
-      transport: t, code: roomCode, saved, settings,
+      transport: t, code: roomCode, saved, settings, history: questionHistory,
       // Ignore a replaced engine's last publishes (e.g. the ENDED state).
       onPublic: (p) => engineRef.current === engine && setPub(p),
     })

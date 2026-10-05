@@ -56,6 +56,20 @@ export function validateLie(text, question, { profanityFilter = true } = {}) {
   return null
 }
 
+// "Lie for me": each player's first one per game is free, then each one costs
+// more (100, 200, 300, 400, then 500 points). `bought` = how many this player
+// has already had this game. Mirrored in SQL by fakeout_lie_price().
+export const LIE_PRICE_STEP = 100
+export const LIE_PRICE_MAX = 500
+export const liePrice = (bought) => (bought <= 0 ? 0 : Math.min(LIE_PRICE_MAX, LIE_PRICE_STEP * bought))
+
+// Total cost of the next `count` lies for a player who has already had `bought`.
+export function lieCost(bought, count) {
+  let total = 0
+  for (let i = 0; i < count; i++) total += liePrice(bought + i)
+  return total
+}
+
 export const REJECT_MESSAGES = {
   isTruth: "That's actually the truth! Try another lie.",
   tooLong: `Keep it under ${LIE_MAX} characters.`,

@@ -156,21 +156,27 @@ export function createSupabaseHostTransport({ url, anonKey }) {
     async saveSecrets(code, data) {
       unwrap(await supabase.from('game_secrets').update({ data }).eq('code', code))
     },
-    async drawCategories(code) {
-      return unwrap(await supabase.rpc('host_draw_categories', { p_code: code }))
+    async drawCategories(code, exclude = []) {
+      return unwrap(await supabase.rpc('host_draw_categories', { p_code: code, p_exclude: exclude }))
     },
-    async drawQuestion(code, category, isFinal) {
-      return unwrap(await supabase.rpc('host_draw_question', { p_code: code, p_category: category, p_final: !!isFinal }))
+    async drawQuestion(code, category, isFinal, exclude = []) {
+      return unwrap(await supabase.rpc('host_draw_question', {
+        p_code: code, p_category: category, p_final: !!isFinal, p_exclude: exclude,
+      }))
     },
     async fetchRoundRows(code, questionNo) {
       const q = (table, cols) => supabase.from(table).select(cols).eq('game_code', code).eq('question_no', questionNo)
-      const [lies, picks, likes] = await Promise.all([
+      const [lies, picks, likes, secrets] = await Promise.all([
         q('lies', 'player_id, text'), q('picks', 'player_id, option_id'), q('likes', 'player_id, option_id'),
+        supabase.from('game_secrets').select('lie_handouts, handouts_question_no').eq('code', code).maybeSingle(),
       ])
+      const sec = unwrap(secrets)
       return {
         lies: unwrap(lies).map((r) => ({ playerId: r.player_id, text: r.text })),
         picks: unwrap(picks).map((r) => ({ playerId: r.player_id, optionId: r.option_id })),
         likes: unwrap(likes).map((r) => ({ playerId: r.player_id, optionId: r.option_id })),
+        // "Lie for me" suggestions handed out this question: { playerId: [text] }
+        handouts: sec?.handouts_question_no === questionNo ? sec.lie_handouts || {} : {},
       }
     },
   }

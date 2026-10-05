@@ -473,7 +473,8 @@ function RevealStep({ step, elapsed, players, nobodyFound, rm, narrating }) {
                   <Avatar player={a} size={72} /> {a.name}
                 </span>
               ))}
-              <span>wrote this!</span>
+              <span>{step.bought?.length ? 'bought this lie!' : 'wrote this!'}</span>
+              {step.bought?.length > 0 && <span className="bought-tag">💸 Lie for me</span>}
               <motion.span className="points gold" initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.2 }}>
                 {signed(step.deltas[authors[0]?.id] ?? 0)}{authors.length > 1 ? ' each' : ''}
               </motion.span>
@@ -492,6 +493,7 @@ export function ScoreboardScreen({ pub, rm }) {
   const players = gamePlayers(pub)
   const prev = pub.scoreboard?.prev || {}
   const deltas = pub.scoreboard?.deltas || {}
+  const charges = pub.scoreboard?.charges || {}
   useEffect(() => {
     const t = setTimeout(() => setSettled(true), 900)
     players.forEach((_, i) => setTimeout(() => sfx('blip'), 150 * i))
@@ -520,7 +522,10 @@ export function ScoreboardScreen({ pub, rm }) {
                 />
               </div>
               <span className="score-num">{fmt(scoreOf(p))}</span>
-              <span className={`score-delta ${(deltas[p.id] ?? 0) < 0 ? 'neg' : ''}`}>{deltas[p.id] ? signed(deltas[p.id]) : ''}</span>
+              <span className={`score-delta ${(deltas[p.id] ?? 0) < 0 ? 'neg' : ''}`}>
+                {deltas[p.id] ? signed(deltas[p.id]) : ''}
+                {charges[p.id] > 0 && <small className="lie-charge">💸 −{fmt(charges[p.id])} for lies</small>}
+              </span>
             </motion.div>
           ))}
         </div>

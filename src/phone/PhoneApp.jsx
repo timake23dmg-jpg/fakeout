@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { createPlayerTransport } from '../lib/transport/index.js'
-import { normalize, LIE_MAX, REJECT_MESSAGES } from '../lib/rules.js'
+import { normalize, LIE_MAX, REJECT_MESSAGES, liePrice, lieCost } from '../lib/rules.js'
 import { rankPlayers } from '../engine/hostEngine.js'
 import { AVATARS, Avatar, MuteButton, Prompt, fmt, signed, useNow } from '../components/shared.jsx'
 import { setLobbyMusic, primeLobbyMusic, getMusicState, subscribeMusic } from '../lib/lobbyMusic.js'
@@ -263,6 +263,7 @@ function pickTruthy(prev) {
   if (prev.lie) out.lie = prev.lie
   if (prev.pick) out.pick = prev.pick
   if (prev.likes?.length) out.likes = prev.likes
+  if (prev.bought) out.bought = prev.bought
   return out
 }
 
@@ -333,7 +334,7 @@ function PhoneView({ transport, code, me, state }) {
 
     case 'LIE_ENTRY':
       if (audience) return <Waiting title="Players are writing lies…" sub="Get ready to spot the truth!" />
-      return <LieEntry transport={transport} code={code} state={state} mine={mine} updateMine={updateMine} byId={byId} />
+      return <LieEntry transport={transport} code={code} me={me} state={state} mine={mine} updateMine={updateMine} byId={byId} />
 
     case 'PICK_TRUTH':
       return <PickTruth transport={transport} code={code} me={me} state={state} mine={mine} updateMine={updateMine} />
@@ -390,7 +391,7 @@ function PhoneView({ transport, code, me, state }) {
   }
 }
 
-function LieEntry({ transport, code, state, mine, updateMine, byId }) {
+function LieEntry({ transport, code, me, state, mine, updateMine, byId }) {
   const [text, setText] = useState('')
   const [error, setError] = useState(null)
   const [busy, setBusy] = useState(false)
@@ -429,14 +430,33 @@ function LieEntry({ transport, code, state, mine, updateMine, byId }) {
     }
   }
 
+  // "Lie for me": first one per game free, then it costs points (charged at
+  // the reveal). `bought` counts this question's purchases on this phone.
+  const owned = me.lieBuys || 0
+  const bought = mine.bought || 0
+  const price = liePrice(owned + bought)
+  const canAfford = (me.score || 0) - lieCost(owned, bought) >= price
+  const spent = lieCost(owned, bought)
   const lieForMe = async () => {
     setError(null)
+    setBusy(true)
     try {
-      const suggestion = await transport.lieForMe(code, state.questionNo)
-      if (suggestion) setText(suggestion)
-      else setError('No more suggestions — you’re on your own!')
+      const res = await transport.lieForMe(code, state.questionNo)
+      if (res?.ok) {
+        haptic()
+        updateMine({ bought: bought + 1 })
+        setText(res.text)
+      } else if (res?.reason === 'broke') {
+        setError(`You need ${fmt(res.cost)} points to buy a lie.`)
+      } else if (res?.reason === 'closed') {
+        setError('Too late — time is up!')
+      } else {
+        setError('No more suggestions — you’re on your own!')
+      }
     } catch (err) {
       setError(err.message)
+    } finally {
+      setBusy(false)
     }
   }
 
@@ -458,7 +478,11 @@ function LieEntry({ transport, code, state, mine, updateMine, byId }) {
       <div className="char-count">{text.length}/{LIE_MAX}</div>
       {error && <p className="error">{error}</p>}
       <div className="bottom-actions stack">
-        <button type="button" className="btn btn-ghost btn-block" onClick={lieForMe}>Lie for me</button>
+        <button type="button" className="btn btn-ghost btn-block lie-buy" disabled={busy || !canAfford} onClick={lieForMe}>
+          🎲 {price === 0 ? 'Lie for me · FREE' : `Buy a lie · ${fmt(price)} pts`}
+          {!canAfford && <small>Not enough points</small>}
+        </button>
+        {spent > 0 && <p className="lie-spent">−{fmt(spent)} pts at the reveal</p>}
         <button className="btn btn-pink btn-block" disabled={busy || !text.trim()}>Submit</button>
       </div>
     </form>
@@ -549,7 +573,7 @@ function RevealDelta({ transport, me, state }) {
 const TIPS = [
   'The best lies sound boring. Believable beats funny.',
   'Match the style of the question: if it wants a number, give it a number.',
-  'Stuck? Hit "Lie for me" and tweak it.',
+  'Your first "Lie for me" each game is free. After that, lies cost points!',
   'Fool your friends for points. Finding the truth pays too.',
   'Points double in Round 2 and triple in the Final Fakeout!',
   'Tap 👍 on lies you love: the Crowd Favourite gets an award.',

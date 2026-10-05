@@ -10,7 +10,7 @@ import {
   TIMERS, REVEAL_TIMING, SCORES, AWARDS, MIN_PLAYERS, MIN_OPTIONS,
   SHORT_GAME_MIN_PLAYERS, questionsInRound,
 } from './constants.js'
-import { normalize, matchesTruth } from '../lib/rules.js'
+import { normalize, matchesTruth, lieCost } from '../lib/rules.js'
 
 const DEFAULT_SETTINGS = {
   shortGame: false,
@@ -30,7 +30,7 @@ export function shuffle(list) {
   return a
 }
 
-const blankStats = () => ({ fooled: 0, truths: 0, likes: 0, gotFooled: 0 })
+const blankStats = () => ({ fooled: 0, truths: 0, likes: 0, gotFooled: 0, lieBuys: 0 })
 
 export function initialState(settings = {}) {
   return {
@@ -63,8 +63,11 @@ export function rankPlayers(players, scoreOf) {
 }
 
 export class HostEngine {
-  constructor({ transport, code, saved = null, settings = {}, onPublic = () => {}, timeScale = 1 }) {
+  // `history` (optional) remembers questions this TV has played across rooms:
+  // { recent(): string[], add(id) }. Recent questions are avoided when drawing.
+  constructor({ transport, code, saved = null, settings = {}, onPublic = () => {}, timeScale = 1, history = null }) {
     this.t = transport
+    this.history = history
     this.code = code
     this.s = saved || initialState(settings)
     this.onPublic = onPublic
@@ -212,6 +215,7 @@ export class HostEngine {
           slot: p.slot,
           isAudience: !!p.isAudience,
           score: p.isAudience ? 0 : scoreFor(p.id),
+          lieBuys: s.scores[p.id]?.stats.lieBuys ?? 0,
           connected: this.isOnline(p.id),
         })),
     }
@@ -230,7 +234,7 @@ export class HostEngine {
       if (s.phase === 'PICK_TRUTH') pub.picked = Object.keys(c.picks)
       if (s.phase === 'REVEAL') pub.reveal = c.reveal
       if (s.phase === 'SCOREBOARD') {
-        pub.scoreboard = { prev: s.prevScores, deltas: s.lastDeltas }
+        pub.scoreboard = { prev: s.prevScores, deltas: s.lastDeltas, charges: c.reveal?.charges || {} }
         pub.truth = c.question?.answer
       }
     }
@@ -457,7 +461,7 @@ export class HostEngine {
 
   async goCategoryPick() {
     const s = this.s
-    const categoryOptions = await this.t.drawCategories(this.code)
+    const categoryOptions = await this.t.drawCategories(this.code, this.history?.recent() ?? [])
     this.newQuestion({ categoryOptions, pickerId: this.choosePicker() })
     s.phase = 'CATEGORY_PICK'
     await this.publish(TIMERS.CATEGORY_PICK)
@@ -466,7 +470,8 @@ export class HostEngine {
   async goQuestion(category, isFinal) {
     const s = this.s
     if (isFinal) this.newQuestion()
-    const q = await this.t.drawQuestion(this.code, category, isFinal)
+    const q = await this.t.drawQuestion(this.code, category, isFinal, this.history?.recent() ?? [])
+    this.history?.add(q.id)
     s.current.question = q
     s.current.category = q.category
     s.phase = 'QUESTION'
@@ -490,7 +495,11 @@ export class HostEngine {
       if (!groups.has(key)) groups.set(key, { text, authors: [] })
       groups.get(key).authors.push(pid)
     }
-    const lies = [...groups.values()].map((g) => ({ text: g.text, authors: g.authors, isTruth: false, isDecoy: false }))
+    const handedTo = (pid, key) => (c.handouts?.[pid] || []).some((t) => normalize(t) === key)
+    const lies = [...groups.entries()].map(([key, g]) => ({
+      text: g.text, authors: g.authors, isTruth: false, isDecoy: false,
+      bought: g.authors.filter((a) => handedTo(a, key)),
+    }))
     const need = Math.max(0, MIN_OPTIONS - 1 - lies.length)
     const decoys = shuffle(q.suggestedLies || [])
       .filter((d) => !groups.has(normalize(d)) && !matchesTruth(d, q))
@@ -500,10 +509,26 @@ export class HostEngine {
     return shuffle([...lies, ...decoys, truth]).map((o, i) => ({ id: `o${i + 1}`, ...o }))
   }
 
+  // Every "Lie for me" handed out this question is paid for (the first per
+  // game is free). The charge lands with the reveal's score changes.
+  chargeLiePurchases(handouts) {
+    const c = this.s.current
+    c.handouts = handouts
+    c.charges = {}
+    for (const [pid, texts] of Object.entries(handouts)) {
+      const stats = this.s.scores[pid]?.stats
+      if (!stats || !texts.length) continue
+      const cost = lieCost(stats.lieBuys || 0, texts.length)
+      stats.lieBuys = (stats.lieBuys || 0) + texts.length
+      if (cost) c.charges[pid] = cost
+    }
+  }
+
   async goPickTruth() {
     const s = this.s
     const rows = await this.t.fetchRoundRows(this.code, s.questionNo)
     for (const l of rows.lies) if (!s.current.lies[l.playerId]) s.current.lies[l.playerId] = l.text
+    this.chargeLiePurchases(rows.handouts || {})
     s.current.options = this.buildOptions()
     s.current.picks = {}
     s.phase = 'PICK_TRUTH'
@@ -550,7 +575,7 @@ export class HostEngine {
       }
       lieSteps.push({
         optionId: o.id, text: o.text, kind: o.isDecoy ? 'decoy' : 'lie',
-        authors: o.authors, pickers, audienceCount, deltas,
+        authors: o.authors, bought: o.bought || [], pickers, audienceCount, deltas,
       })
     }
     lieSteps.sort((a, b) => a.pickers.length + a.audienceCount - (b.pickers.length + b.audienceCount))
@@ -573,7 +598,9 @@ export class HostEngine {
     }
     const totals = {}
     for (const step of steps) for (const [id, d] of Object.entries(step.deltas)) totals[id] = (totals[id] || 0) + d
-    return { steps, nobodyFound, totals, duration: at + REVEAL_TIMING.TAIL }
+    const charges = Object.fromEntries(Object.entries(c.charges || {}).filter(([id]) => scored.has(id)))
+    for (const [id, cost] of Object.entries(charges)) totals[id] = (totals[id] || 0) - cost
+    return { steps, nobodyFound, totals, charges, duration: at + REVEAL_TIMING.TAIL }
   }
 
   async goReveal() {
@@ -583,11 +610,11 @@ export class HostEngine {
       const option = s.current.options.find((o) => o.id === p.optionId)
       if (!s.current.picks[p.playerId] && option && !option.authors.includes(p.playerId)) s.current.picks[p.playerId] = p.optionId
     }
-    const { steps, nobodyFound, totals, duration } = this.computeReveal(rows.likes)
+    const { steps, nobodyFound, totals, charges, duration } = this.computeReveal(rows.likes)
     s.prevScores = Object.fromEntries(Object.entries(s.scores).map(([id, v]) => [id, v.score]))
     for (const [id, d] of Object.entries(totals)) if (s.scores[id]) s.scores[id].score += d
     s.lastDeltas = totals
-    s.current.reveal = { steps, nobodyFound }
+    s.current.reveal = { steps, nobodyFound, charges }
     s.phase = 'REVEAL'
     await this.publish(duration)
   }

@@ -2,7 +2,7 @@
 // tests. Every method mirrors an RPC or table access in supabase/schema.sql,
 // including its checks (host-only, phase/question guards, lie validation).
 
-import { normalize, validateLie } from '../rules.js'
+import { normalize, validateLie, liePrice, lieCost } from '../rules.js'
 
 const CHARSET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'
 const MAX_PLAYERS = 8
@@ -93,27 +93,32 @@ export class LocalServer {
     return { deadline, startedAt }
   }
 
-  drawCategories(userId, code) {
+  // `exclude`: questions this TV played recently (in earlier rooms), avoided
+  // when possible. Categories offered are ones that still have fresh questions.
+  drawCategories(userId, code, exclude = []) {
     const g = this.hostGame(userId, code)
-    const available = () => [...new Set(this.questions
-      .filter((q) => !q.isFinal && !g.usedQuestionIds.includes(q.id)).map((q) => q.category))]
-    let cats = available()
+    const regular = this.questions.filter((q) => !q.isFinal && !g.usedQuestionIds.includes(q.id))
+    const catsOf = (list) => [...new Set(list.map((q) => q.category))]
+    let cats = catsOf(regular.filter((q) => !exclude.includes(q.id)))
+    if (cats.length < 3) cats = catsOf(regular)
     if (cats.length < 3) {
       g.usedQuestionIds = g.usedQuestionIds.filter((id) => this.questions.find((q) => q.id === id)?.isFinal)
-      cats = available()
+      cats = catsOf(this.questions.filter((q) => !q.isFinal))
     }
     return shuffleCopy(cats).slice(0, 3)
   }
 
-  drawQuestion(userId, code, category, isFinal) {
+  drawQuestion(userId, code, category, isFinal, exclude = []) {
     const g = this.hostGame(userId, code)
     const pool = this.questions.filter((q) => q.isFinal === !!isFinal && (isFinal || !category || q.category === category))
     const fresh = pool.filter((q) => !g.usedQuestionIds.includes(q.id))
-    const q = pickRandom(fresh.length ? fresh : pool)
+    const freshest = fresh.filter((q) => !exclude.includes(q.id))
+    const q = pickRandom(freshest.length ? freshest : fresh.length ? fresh : pool)
     if (!q) throw new Error('No questions available')
     g.usedQuestionIds = [...g.usedQuestionIds.filter((id) => id !== q.id), q.id]
     this.db.secrets[code].question = q
     this.db.secrets[code].given = []
+    this.db.secrets[code].handouts = {}
     return JSON.parse(JSON.stringify(q))
   }
 
@@ -124,12 +129,14 @@ export class LocalServer {
   }
 
   fetchRoundRows(userId, code, questionNo) {
-    this.hostGame(userId, code)
+    const g = this.hostGame(userId, code)
     const mine = (r) => r.gameCode === code && r.questionNo === questionNo
     return {
       lies: this.db.lies.filter(mine).map((r) => ({ playerId: r.playerId, text: r.text })),
       picks: this.db.picks.filter(mine).map((r) => ({ playerId: r.playerId, optionId: r.optionId })),
       likes: this.db.likes.filter(mine).map((r) => ({ playerId: r.playerId, optionId: r.optionId })),
+      // "Lie for me" suggestions handed out this question: { playerId: [text] }
+      handouts: g.questionNo === questionNo ? JSON.parse(JSON.stringify(this.db.secrets[code].handouts || {})) : {},
     }
   }
 
@@ -194,19 +201,29 @@ export class LocalServer {
     return { ok: true }
   }
 
+  // Hands out a suggested lie. The first per game is free; after that each
+  // costs points (see liePrice), checked against the score the host published.
+  // The host charges for every handout when lie entry closes.
   lieForMe(userId, code, questionNo) {
     const g = this.game(code)
     const p = this.playerFor(userId, g.code)
     if (!p || p.isAudience) throw new Error('You are not a player in this room')
-    if (g.phase !== 'LIE_ENTRY' || g.questionNo !== questionNo) return null
+    if (g.phase !== 'LIE_ENTRY' || g.questionNo !== questionNo) return { ok: false, reason: 'closed' }
     const secrets = this.db.secrets[g.code]
-    if (!secrets.question) return null
+    if (!secrets.question) return { ok: false, reason: 'closed' }
+    const me = (g.state.players || []).find((x) => x.id === p.id) || {}
+    const bought = me.lieBuys || 0
+    const mineNow = (secrets.handouts ||= {})[p.id] || []
+    const cost = liePrice(bought + mineNow.length)
+    if ((me.score || 0) - lieCost(bought, mineNow.length) < cost) return { ok: false, reason: 'broke', cost }
     const used = new Set(this.db.lies.filter((r) => r.gameCode === g.code && r.questionNo === questionNo).map((r) => r.norm))
-    const open = secrets.question.suggestedLies.filter((x) => !used.has(normalize(x)))
+    const open = secrets.question.suggestedLies.filter((x) => !used.has(normalize(x)) && !mineNow.includes(x))
     const fresh = open.filter((x) => !secrets.given.includes(x))
     const pick = pickRandom(fresh.length ? fresh : open) ?? null
-    if (pick) secrets.given.push(pick)
-    return pick
+    if (!pick) return { ok: false, reason: 'empty' }
+    secrets.given.push(pick)
+    secrets.handouts[p.id] = [...mineNow, pick]
+    return { ok: true, text: pick, cost }
   }
 
   submitPick(userId, code, questionNo, optionId) {

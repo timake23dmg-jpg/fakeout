@@ -1,92 +1,6165 @@
 [
-  {"id":"q001","category":"Animals","prompt":"A group of flamingos is called a ______.","answer":"flamboyance","alternateSpellings":["flamboyancy"],"suggestedLies":["blush","parade","pinkery","stilt"],"isFinal":false},
-  {"id":"q002","category":"Animals","prompt":"A group of owls is called a ______.","answer":"parliament","alternateSpellings":[],"suggestedLies":["wisdom","hoot","council","library"],"isFinal":false},
-  {"id":"q003","category":"Animals","prompt":"A baby puffin is called a ______.","answer":"puffling","alternateSpellings":[],"suggestedLies":["puffkin","cheeper","pufflet","fluffin"],"isFinal":false},
-  {"id":"q004","category":"Animals","prompt":"Wombat poop comes out shaped like ______.","answer":"cubes","alternateSpellings":["cube"],"suggestedLies":["stars","spirals","pyramids","coins"],"isFinal":false},
-  {"id":"q005","category":"Animals","prompt":"Koalas have ______ so similar to humans' they could confuse a crime scene.","answer":"fingerprints","alternateSpellings":[],"suggestedLies":["footprints","teeth marks","voices","blood types"],"isFinal":false},
-  {"id":"q006","category":"Animals","prompt":"A garden snail's mouth contains thousands of tiny ______.","answer":"teeth","alternateSpellings":[],"suggestedLies":["tongues","hairs","suckers","eyes"],"isFinal":false},
-  {"id":"q007","category":"Food","prompt":"In the 1830s, ketchup was sold in the US as a ______.","answer":"medicine","alternateSpellings":[],"suggestedLies":["hair dye","paint","love potion","rat poison"],"isFinal":false},
-  {"id":"q008","category":"Food","prompt":"Despite its name, the peanut isn't a nut but a ______.","answer":"legume","alternateSpellings":[],"suggestedLies":["root","berry","seed pod","fungus"],"isFinal":false},
-  {"id":"q009","category":"Food","prompt":"Honey found in ancient ______ tombs was still edible.","answer":"Egyptian","alternateSpellings":[],"suggestedLies":["Roman","Viking","Mayan","Chinese"],"isFinal":false},
-  {"id":"q010","category":"Food","prompt":"Before the 1600s, most cultivated carrots were ______.","answer":"purple","alternateSpellings":["yellow","purple and yellow"],"suggestedLies":["white","blue","black","green"],"isFinal":false},
-  {"id":"q011","category":"History","prompt":"Oxford University is older than the ______ Empire.","answer":"Aztec","alternateSpellings":[],"suggestedLies":["Ottoman","Mongol","Inca","Russian"],"isFinal":false},
-  {"id":"q012","category":"History","prompt":"Cleopatra lived closer in time to the ______ than to the building of the Great Pyramid.","answer":"moon landing","alternateSpellings":[],"suggestedLies":["iPhone","printing press","Titanic","Eiffel Tower"],"isFinal":false},
-  {"id":"q013","category":"History","prompt":"The 1896 war between Britain and Zanzibar lasted about 38 ______.","answer":"minutes","alternateSpellings":[],"suggestedLies":["seconds","hours","days","cups of tea"],"isFinal":false},
-  {"id":"q014","category":"History","prompt":"Napoleon was once chased off during a hunt by a swarm of ______.","answer":"rabbits","alternateSpellings":[],"suggestedLies":["geese","bees","squirrels","frogs"],"isFinal":false},
-  {"id":"q015","category":"Science","prompt":"A single day on Venus is longer than a Venus ______.","answer":"year","alternateSpellings":[],"suggestedLies":["month","season","eclipse","orbit of Mercury"],"isFinal":false},
-  {"id":"q016","category":"Science","prompt":"Bananas are naturally slightly ______.","answer":"radioactive","alternateSpellings":[],"suggestedLies":["magnetic","alcoholic","luminous","caffeinated"],"isFinal":false},
-  {"id":"q017","category":"Science","prompt":"The ______ is the only part of the human body with no blood supply.","answer":"cornea","alternateSpellings":[],"suggestedLies":["earlobe","tooth enamel","fingernail","eyelash"],"isFinal":false},
-  {"id":"q018","category":"Science","prompt":"A microwave oven was invented after an engineer noticed a ______ had melted in his pocket.","answer":"chocolate bar","alternateSpellings":[],"suggestedLies":["candle","crayon","lipstick","gummy bear"],"isFinal":false},
-  {"id":"q019","category":"Words","prompt":"The dot above a lowercase \"i\" is called a ______.","answer":"tittle","alternateSpellings":[],"suggestedLies":["jot","speck","dimple","iota"],"isFinal":false},
-  {"id":"q020","category":"Words","prompt":"The plastic tip on a shoelace is called a(n) ______.","answer":"aglet","alternateSpellings":[],"suggestedLies":["ferrule","lacette","nib","tipple"],"isFinal":false},
-  {"id":"q021","category":"Words","prompt":"The word \"nerd\" first appeared in print in a book by ______.","answer":"Dr. Seuss","alternateSpellings":["Doctor Seuss","Seuss"],"suggestedLies":["Roald Dahl","Mark Twain","Enid Blyton","Charles Dickens"],"isFinal":false},
-  {"id":"q022","category":"Words","prompt":"______ is the only letter that doesn't appear in any US state name.","answer":"Q","alternateSpellings":[],"suggestedLies":["X","Z","J","K"],"isFinal":false},
-  {"id":"q023","category":"Sport","prompt":"Early golf balls were made of leather stuffed with ______.","answer":"feathers","alternateSpellings":[],"suggestedLies":["horsehair","sawdust","wool","sand"],"isFinal":false},
-  {"id":"q024","category":"Sport","prompt":"The 1900 Paris Olympics included live ______ shooting.","answer":"pigeon","alternateSpellings":[],"suggestedLies":["turkey","duck","rabbit","balloon"],"isFinal":false},
-  {"id":"q025","category":"Places","prompt":"Scotland's official national animal is the ______.","answer":"unicorn","alternateSpellings":[],"suggestedLies":["Loch Ness monster","haggis","dragon","stag"],"isFinal":false},
-  {"id":"q026","category":"Places","prompt":"Canada has more ______ than the rest of the world combined.","answer":"lakes","alternateSpellings":[],"suggestedLies":["moose","maple trees","igloos","islands"],"isFinal":false},
-  {"id":"q027","category":"Places","prompt":"The Eiffel Tower grows about 15 cm taller in summer because of ______.","answer":"heat","alternateSpellings":["thermal expansion"],"suggestedLies":["tourists","paint","pigeons","rust"],"isFinal":false},
-  {"id":"q028","category":"Inventions","prompt":"Play-Doh was first sold as a ______ cleaner.","answer":"wallpaper","alternateSpellings":[],"suggestedLies":["carpet","window","oven","denture"],"isFinal":false},
-  {"id":"q029","category":"Inventions","prompt":"The first product ever scanned with a supermarket barcode, in 1974, was a pack of ______.","answer":"chewing gum","alternateSpellings":["gum"],"suggestedLies":["cigarettes","batteries","playing cards","mints"],"isFinal":false},
-  {"id":"q030","category":"Tech & Internet","prompt":"The first video ever uploaded to YouTube, in 2005, was filmed at a ______.","answer":"zoo","alternateSpellings":[],"suggestedLies":["skate park","car wash","fish market","bowling alley"],"isFinal":false},
-  {"id":"q031","category":"Tech & Internet","prompt":"Before it was called Google, the search engine was named ______.","answer":"BackRub","alternateSpellings":["Back Rub"],"suggestedLies":["WebCrawl","LinkSeek","Findr","PageHopper"],"isFinal":false},
-  {"id":"q032","category":"Tech & Internet","prompt":"In Italian, the @ symbol is called \"chiocciola\", which means ______.","answer":"snail","alternateSpellings":[],"suggestedLies":["monkey tail","little ear","whirlpool","curly fry"],"isFinal":false},
-  {"id":"q033","category":"Tech & Internet","prompt":"The first item ever sold on eBay was a broken ______.","answer":"laser pointer","alternateSpellings":[],"suggestedLies":["calculator","toaster","fax machine","pager"],"isFinal":false},
-  {"id":"q034","category":"Tech & Internet","prompt":"The \"wiki\" in Wikipedia comes from a Hawaiian word meaning ______.","answer":"quick","alternateSpellings":[],"suggestedLies":["shared","open","friendly","knowledge"],"isFinal":false},
-  {"id":"q035","category":"Tech & Internet","prompt":"Bluetooth is named after a 10th-century Scandinavian ______.","answer":"king","alternateSpellings":[],"suggestedLies":["pirate","blacksmith","dentist","sailor"],"isFinal":false},
-  {"id":"q036","category":"Tech & Internet","prompt":"The QR code was invented in 1994 to track ______ during manufacturing.","answer":"car parts","alternateSpellings":["car components","auto parts"],"suggestedLies":["rice sacks","medicines","train tickets","circuit boards"],"isFinal":false},
-  {"id":"q037","category":"Tech & Internet","prompt":"One of the first webcams was set up at Cambridge University to watch a ______.","answer":"coffee pot","alternateSpellings":["coffee machine","coffee maker"],"suggestedLies":["fish tank","printer","parking space","bird feeder"],"isFinal":false},
-  {"id":"q038","category":"Gaming","prompt":"Nintendo was founded in 1889 as a company making ______.","answer":"playing cards","alternateSpellings":["cards"],"suggestedLies":["toys","umbrellas","rice cookers","bicycles"],"isFinal":false},
-  {"id":"q039","category":"Gaming","prompt":"Pac-Man's shape was inspired by a ______ with a slice missing.","answer":"pizza","alternateSpellings":[],"suggestedLies":["pie","cheese wheel","cake","melon"],"isFinal":false},
-  {"id":"q040","category":"Gaming","prompt":"In his first game, Donkey Kong, Mario was a ______, not a plumber.","answer":"carpenter","alternateSpellings":[],"suggestedLies":["firefighter","janitor","chef","mechanic"],"isFinal":false},
-  {"id":"q041","category":"Gaming","prompt":"A Game Boy that survived a ______ during the Gulf War still worked and went on display in New York.","answer":"bombing","alternateSpellings":["bomb","bomb blast"],"suggestedLies":["sandstorm","tank crash","shipwreck","flood"],"isFinal":false},
-  {"id":"q042","category":"Gaming","prompt":"Pokémon's creator was inspired by his childhood hobby of collecting ______.","answer":"insects","alternateSpellings":["bugs"],"suggestedLies":["stamps","rocks","marbles","seashells"],"isFinal":false},
-  {"id":"q043","category":"Gaming","prompt":"Thousands of unsold copies of the 1982 E.T. video game were buried in a New Mexico ______.","answer":"landfill","alternateSpellings":["dump","garbage dump"],"suggestedLies":["bunker","lake","mine shaft","cornfield"],"isFinal":false},
-  {"id":"q044","category":"Movies & TV","prompt":"The T. rex roar in Jurassic Park was partly made from the sound of a baby ______.","answer":"elephant","alternateSpellings":[],"suggestedLies":["whale","lion","walrus","camel"],"isFinal":false},
-  {"id":"q045","category":"Movies & TV","prompt":"In The Simpsons, Homer's middle name is ______.","answer":"Jay","alternateSpellings":[],"suggestedLies":["James","Julius","Jasper","Jerome"],"isFinal":false},
-  {"id":"q046","category":"Movies & TV","prompt":"The name \"Shrek\" comes from a Yiddish word meaning ______.","answer":"fear","alternateSpellings":["terror","fright"],"suggestedLies":["ogre","swamp","onion","grumpy"],"isFinal":false},
-  {"id":"q047","category":"Movies & TV","prompt":"The Lion King's working title was \"______\".","answer":"King of the Jungle","alternateSpellings":[],"suggestedLies":["Pride Rock","Circle of Life","Simba","Hakuna Matata"],"isFinal":false},
-  {"id":"q048","category":"Movies & TV","prompt":"Before settling on \"Friends\", the sitcom was almost called \"______\".","answer":"Insomnia Cafe","alternateSpellings":["Six of One","Friends Like Us","Across the Hall"],"suggestedLies":["Coffee People","Central Perk","The Apartment","Twentysomething"],"isFinal":false},
-  {"id":"q049","category":"Music","prompt":"Ed Sheeran originally wrote \"Shape of You\" with ______ in mind.","answer":"Rihanna","alternateSpellings":["Little Mix"],"suggestedLies":["Adele","Justin Bieber","Taylor Swift","Beyoncé"],"isFinal":false},
-  {"id":"q050","category":"Music","prompt":"A church in Germany is playing a John Cage organ piece so slowly that it will end in the year ______.","answer":"2640","alternateSpellings":[],"suggestedLies":["2100","3000","2500","2222"],"isFinal":false},
-  {"id":"q051","category":"Music","prompt":"Barefoot Paul on the Abbey Road cover fuelled a rumour that he was secretly ______.","answer":"dead","alternateSpellings":["dead and replaced"],"suggestedLies":["married","a twin","an alien","a spy"],"isFinal":false},
-  {"id":"q052","category":"Music","prompt":"Mariah Carey's \"All I Want for Christmas Is You\" was reportedly written in about ______.","answer":"15 minutes","alternateSpellings":["fifteen minutes","quarter of an hour"],"suggestedLies":["two hours","one day","a week","a month"],"isFinal":false},
-  {"id":"q053","category":"Music","prompt":"\"Gangnam Style\" was the first YouTube video to reach ______ views.","answer":"one billion","alternateSpellings":["1 billion","a billion","1000000000"],"suggestedLies":["100 million","500 million","ten billion","one trillion"],"isFinal":false},
-  {"id":"q054","category":"Space","prompt":"Astronauts often say space smells like ______.","answer":"seared steak","alternateSpellings":["burnt steak","burnt metal","gunpowder","welding fumes","steak"],"suggestedLies":["rotten eggs","vanilla","wet dog","popcorn"],"isFinal":false},
-  {"id":"q055","category":"Space","prompt":"The International Space Station circles the Earth about every ______.","answer":"90 minutes","alternateSpellings":["92 minutes","hour and a half","ninety minutes"],"suggestedLies":["24 hours","12 hours","6 hours","3 hours"],"isFinal":false},
-  {"id":"q056","category":"Space","prompt":"Astronomers once suggested the exoplanet 55 Cancri e might be largely made of ______.","answer":"diamond","alternateSpellings":["diamonds","carbon"],"suggestedLies":["glass","ice","gold","iron"],"isFinal":false},
-  {"id":"q057","category":"Space","prompt":"The Sun makes up about ______ of all the mass in our solar system.","answer":"99.8%","alternateSpellings":["99.8 percent","99%","99.86%","99 percent"],"suggestedLies":["50%","75%","90%","60%"],"isFinal":false},
-  {"id":"q058","category":"Space","prompt":"Seen from the surface of Mars, sunsets look ______.","answer":"blue","alternateSpellings":["bluish"],"suggestedLies":["green","purple","pink","gold"],"isFinal":false},
-  {"id":"q059","category":"Human Body","prompt":"Babies are born without bony ______.","answer":"kneecaps","alternateSpellings":["knee caps","patellas"],"suggestedLies":["ribs","elbows","ankles","fingertips"],"isFinal":false},
-  {"id":"q060","category":"Human Body","prompt":"Your stomach lining replaces itself every few ______.","answer":"days","alternateSpellings":[],"suggestedLies":["hours","weeks","months","years"],"isFinal":false},
-  {"id":"q061","category":"Human Body","prompt":"One study estimated the human nose can tell apart at least one ______ different smells.","answer":"trillion","alternateSpellings":[],"suggestedLies":["thousand","million","hundred thousand","billion"],"isFinal":false},
-  {"id":"q062","category":"Human Body","prompt":"It's almost impossible to ______ while pinching your nose with your mouth closed.","answer":"hum","alternateSpellings":[],"suggestedLies":["whistle","sneeze","blink","yawn"],"isFinal":false},
-  {"id":"q063","category":"Money & Brands","prompt":"Samsung's first business, in 1938, sold ______.","answer":"dried fish","alternateSpellings":["noodles","groceries","fish"],"suggestedLies":["radios","bicycles","umbrellas","soap"],"isFinal":false},
-  {"id":"q064","category":"Money & Brands","prompt":"LEGO comes from the Danish phrase \"leg godt\", meaning ______.","answer":"play well","alternateSpellings":[],"suggestedLies":["build big","little bricks","stack high","have fun"],"isFinal":false},
-  {"id":"q065","category":"Money & Brands","prompt":"The E and A in IKEA stand for the founder's family farm and his home ______.","answer":"village","alternateSpellings":[],"suggestedLies":["street","church","school","lake"],"isFinal":false},
-  {"id":"q066","category":"Money & Brands","prompt":"The game that became Monopoly was designed to show the problems with ______.","answer":"landlords","alternateSpellings":["monopolies","landlordism","land ownership"],"suggestedLies":["gambling","taxes","alcohol","railroads"],"isFinal":false},
-  {"id":"q067","category":"Money & Brands","prompt":"Amazon was almost named ______.","answer":"Cadabra","alternateSpellings":["Relentless"],"suggestedLies":["Bookworm","Shopazon","Riverbank","Everything Store"],"isFinal":false},
-  {"id":"q068","category":"Money & Brands","prompt":"In 1989, a trade deal briefly left Pepsi owning a fleet of Soviet ______.","answer":"submarines","alternateSpellings":["warships","subs"],"suggestedLies":["tanks","fighter jets","oil rigs","trains"],"isFinal":false},
-  {"id":"q069","category":"Money & Brands","prompt":"The glue on Post-it notes came from a failed attempt to make a super-______ adhesive.","answer":"strong","alternateSpellings":["strength","powerful"],"suggestedLies":["waterproof","heatproof","invisible","edible"],"isFinal":false},
-  {"id":"q070","category":"Words","prompt":"The \"moji\" in \"emoji\" is Japanese for ______.","answer":"character","alternateSpellings":["letter","written character"],"suggestedLies":["emotion","face","feeling","message"],"isFinal":false},
-  {"id":"q071","category":"Words","prompt":"Oxford's Word of the Year for 2023 was \"______\".","answer":"rizz","alternateSpellings":[],"suggestedLies":["slay","delulu","situationship","vibe"],"isFinal":false},
-  {"id":"q072","category":"Words","prompt":"Oxford's Word of the Year for 2024 was \"______\".","answer":"brain rot","alternateSpellings":["brainrot"],"suggestedLies":["doomscrolling","demure","brat","romantasy"],"isFinal":false},
-  {"id":"q073","category":"Sport","prompt":"The winner of the first modern Olympic marathon, in 1896, reportedly stopped mid-race for a glass of ______.","answer":"wine","alternateSpellings":[],"suggestedLies":["milk","lemonade","coffee","ouzo"],"isFinal":false},
-  {"id":"q074","category":"Sport","prompt":"The first basketball hoops were ______.","answer":"peach baskets","alternateSpellings":["peach basket","fruit baskets","baskets"],"suggestedLies":["buckets","barrels","fishing nets","hat boxes"],"isFinal":false},
-  {"id":"q075","category":"Sport","prompt":"Wimbledon uses a trained ______ to scare away pigeons.","answer":"hawk","alternateSpellings":["harris hawk","harris's hawk"],"suggestedLies":["drone","owl","dog","eagle"],"isFinal":false},
-  {"id":"q076","category":"Food","prompt":"A pineapple plant takes about ______ to grow one pineapple.","answer":"two years","alternateSpellings":["2 years","18 months","eighteen months"],"suggestedLies":["six months","three months","five years","three weeks"],"isFinal":false},
-  {"id":"q077","category":"Food","prompt":"Ripe cranberries can ______, which is one way to test them.","answer":"bounce","alternateSpellings":[],"suggestedLies":["glow","squeak","whistle","stretch"],"isFinal":false},
-  {"id":"q078","category":"Places","prompt":"The world's shortest scheduled flight, between two Scottish islands, takes about ______.","answer":"two minutes","alternateSpellings":["2 minutes","a minute","1 minute","90 seconds","one minute","a minute and a half"],"suggestedLies":["15 minutes","ten minutes","30 minutes","an hour"],"isFinal":false},
-  {"id":"q079","category":"Places","prompt":"Australia is wider from east to west than ______.","answer":"the Moon","alternateSpellings":["moon","the moon's diameter"],"suggestedLies":["Mars","the Sahara","the United States","Mercury"],"isFinal":false},
-  {"id":"q080","category":"History","prompt":"Ancient Romans reportedly whitened their teeth using ______.","answer":"urine","alternateSpellings":["pee","wee"],"suggestedLies":["vinegar","honey","olive oil","goat milk"],"isFinal":false},
-  {"id":"q081","category":"History","prompt":"Tsar Peter the Great of Russia introduced a tax on ______.","answer":"beards","alternateSpellings":["beard"],"suggestedLies":["hats","windows","dogs","mirrors"],"isFinal":false},
-  {"id":"q082","category":"Science","prompt":"An octopus has ______ hearts.","answer":"three","alternateSpellings":["3"],"suggestedLies":["two","four","five","eight"],"isFinal":false},
-  {"id":"q083","category":"Science","prompt":"Sharks have existed for longer than ______.","answer":"trees","alternateSpellings":["tree"],"suggestedLies":["jellyfish","sponges","seaweed","worms"],"isFinal":false},
-  {"id":"f001","category":"Final Fakeout","prompt":"In 1386, a ______ was put on trial and executed for murder in Falaise, France.","answer":"pig","alternateSpellings":[],"suggestedLies":["goat","cat","parrot","horse"],"isFinal":true},
-  {"id":"f002","category":"Final Fakeout","prompt":"In 1932, the Australian military fought -- and lost -- a \"war\" against ______.","answer":"emus","alternateSpellings":["emu"],"suggestedLies":["kangaroos","rabbits","crocodiles","koalas"],"isFinal":true},
-  {"id":"f003","category":"Final Fakeout","prompt":"In 1518, dozens of people in Strasbourg couldn't stop ______ for days.","answer":"dancing","alternateSpellings":[],"suggestedLies":["laughing","sneezing","singing","hiccuping"],"isFinal":true},
-  {"id":"f004","category":"Final Fakeout","prompt":"In 1904, the first man to finish the Olympic marathon was disqualified for riding part of the course in a ______.","answer":"car","alternateSpellings":["automobile"],"suggestedLies":["horse cart","bicycle","train","boat"],"isFinal":true},
-  {"id":"f005","category":"Final Fakeout","prompt":"In 2010, a man paid 10,000 ______ for two pizzas, now worth hundreds of millions of dollars.","answer":"bitcoins","alternateSpellings":["bitcoin","btc"],"suggestedLies":["shares","gold coins","Pokémon cards","airline miles"],"isFinal":true},
-  {"id":"f006","category":"Final Fakeout","prompt":"A burning gas crater in Turkmenistan, alight since the 1970s, is nicknamed the ______.","answer":"Door to Hell","alternateSpellings":["Gates of Hell","Gateway to Hell","Door of Hell"],"suggestedLies":["Devil's Kitchen","Eternal Flame","Dragon's Mouth","Fire Eye"],"isFinal":true},
-  {"id":"f007","category":"Final Fakeout","prompt":"In 2013, an astronaut recorded a music video aboard the ISS covering the song ______.","answer":"Space Oddity","alternateSpellings":[],"suggestedLies":["Rocket Man","Fly Me to the Moon","Starman","Across the Universe"],"isFinal":true}
+  {
+    "id": "q001",
+    "category": "Animals",
+    "prompt": "A group of flamingos is called a ______.",
+    "answer": "flamboyance",
+    "alternateSpellings": [
+      "flamboyancy"
+    ],
+    "suggestedLies": [
+      "blush",
+      "parade",
+      "pinkery",
+      "stilt"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q002",
+    "category": "Animals",
+    "prompt": "A group of owls is called a ______.",
+    "answer": "parliament",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "wisdom",
+      "hoot",
+      "council",
+      "library"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q003",
+    "category": "Animals",
+    "prompt": "A baby puffin is called a ______.",
+    "answer": "puffling",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "puffkin",
+      "cheeper",
+      "pufflet",
+      "fluffin"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q004",
+    "category": "Animals",
+    "prompt": "Wombat poop comes out shaped like ______.",
+    "answer": "cubes",
+    "alternateSpellings": [
+      "cube"
+    ],
+    "suggestedLies": [
+      "stars",
+      "spirals",
+      "pyramids",
+      "coins"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q005",
+    "category": "Animals",
+    "prompt": "Koalas have ______ so similar to humans' they could confuse a crime scene.",
+    "answer": "fingerprints",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "footprints",
+      "teeth marks",
+      "voices",
+      "blood types"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q006",
+    "category": "Animals",
+    "prompt": "A garden snail's mouth contains thousands of tiny ______.",
+    "answer": "teeth",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "tongues",
+      "hairs",
+      "suckers",
+      "eyes"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q007",
+    "category": "Food",
+    "prompt": "In the 1830s, ketchup was sold in the US as a ______.",
+    "answer": "medicine",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "hair dye",
+      "paint",
+      "love potion",
+      "rat poison"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q008",
+    "category": "Food",
+    "prompt": "Despite its name, the peanut isn't a nut but a ______.",
+    "answer": "legume",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "root",
+      "berry",
+      "seed pod",
+      "fungus"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q009",
+    "category": "Food",
+    "prompt": "Honey found in ancient ______ tombs was still edible.",
+    "answer": "Egyptian",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "Roman",
+      "Viking",
+      "Mayan",
+      "Chinese"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q010",
+    "category": "Food",
+    "prompt": "Before the 1600s, most cultivated carrots were ______.",
+    "answer": "purple",
+    "alternateSpellings": [
+      "yellow",
+      "purple and yellow"
+    ],
+    "suggestedLies": [
+      "white",
+      "blue",
+      "black",
+      "green"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q011",
+    "category": "History",
+    "prompt": "Oxford University is older than the ______ Empire.",
+    "answer": "Aztec",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "Ottoman",
+      "Mongol",
+      "Inca",
+      "Russian"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q012",
+    "category": "History",
+    "prompt": "Cleopatra lived closer in time to the ______ than to the building of the Great Pyramid.",
+    "answer": "moon landing",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "iPhone",
+      "printing press",
+      "Titanic",
+      "Eiffel Tower"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q013",
+    "category": "History",
+    "prompt": "The 1896 war between Britain and Zanzibar lasted about 38 ______.",
+    "answer": "minutes",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "seconds",
+      "hours",
+      "days",
+      "cups of tea"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q014",
+    "category": "History",
+    "prompt": "Napoleon was once chased off during a hunt by a swarm of ______.",
+    "answer": "rabbits",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "geese",
+      "bees",
+      "squirrels",
+      "frogs"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q015",
+    "category": "Science",
+    "prompt": "A single day on Venus is longer than a Venus ______.",
+    "answer": "year",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "month",
+      "season",
+      "eclipse",
+      "orbit of Mercury"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q016",
+    "category": "Science",
+    "prompt": "Bananas are naturally slightly ______.",
+    "answer": "radioactive",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "magnetic",
+      "alcoholic",
+      "luminous",
+      "caffeinated"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q017",
+    "category": "Science",
+    "prompt": "The ______ is the only part of the human body with no blood supply.",
+    "answer": "cornea",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "earlobe",
+      "tooth enamel",
+      "fingernail",
+      "eyelash"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q018",
+    "category": "Science",
+    "prompt": "A microwave oven was invented after an engineer noticed a ______ had melted in his pocket.",
+    "answer": "chocolate bar",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "candle",
+      "crayon",
+      "lipstick",
+      "gummy bear"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q019",
+    "category": "Words",
+    "prompt": "The dot above a lowercase \"i\" is called a ______.",
+    "answer": "tittle",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "jot",
+      "speck",
+      "dimple",
+      "iota"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q020",
+    "category": "Words",
+    "prompt": "The plastic tip on a shoelace is called a(n) ______.",
+    "answer": "aglet",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "ferrule",
+      "lacette",
+      "nib",
+      "tipple"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q021",
+    "category": "Words",
+    "prompt": "The word \"nerd\" first appeared in print in a book by ______.",
+    "answer": "Dr. Seuss",
+    "alternateSpellings": [
+      "Doctor Seuss",
+      "Seuss"
+    ],
+    "suggestedLies": [
+      "Roald Dahl",
+      "Mark Twain",
+      "Enid Blyton",
+      "Charles Dickens"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q022",
+    "category": "Words",
+    "prompt": "______ is the only letter that doesn't appear in any US state name.",
+    "answer": "Q",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "X",
+      "Z",
+      "J",
+      "K"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q023",
+    "category": "Sport",
+    "prompt": "Early golf balls were made of leather stuffed with ______.",
+    "answer": "feathers",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "horsehair",
+      "sawdust",
+      "wool",
+      "sand"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q024",
+    "category": "Sport",
+    "prompt": "The 1900 Paris Olympics included live ______ shooting.",
+    "answer": "pigeon",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "turkey",
+      "duck",
+      "rabbit",
+      "balloon"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q025",
+    "category": "Places",
+    "prompt": "Scotland's official national animal is the ______.",
+    "answer": "unicorn",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "Loch Ness monster",
+      "haggis",
+      "dragon",
+      "stag"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q026",
+    "category": "Places",
+    "prompt": "Canada has more ______ than the rest of the world combined.",
+    "answer": "lakes",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "moose",
+      "maple trees",
+      "igloos",
+      "islands"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q027",
+    "category": "Places",
+    "prompt": "The Eiffel Tower grows about 15 cm taller in summer because of ______.",
+    "answer": "heat",
+    "alternateSpellings": [
+      "thermal expansion"
+    ],
+    "suggestedLies": [
+      "tourists",
+      "paint",
+      "pigeons",
+      "rust"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q028",
+    "category": "Inventions",
+    "prompt": "Play-Doh was first sold as a ______ cleaner.",
+    "answer": "wallpaper",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "carpet",
+      "window",
+      "oven",
+      "denture"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q029",
+    "category": "Inventions",
+    "prompt": "The first product ever scanned with a supermarket barcode, in 1974, was a pack of ______.",
+    "answer": "chewing gum",
+    "alternateSpellings": [
+      "gum"
+    ],
+    "suggestedLies": [
+      "cigarettes",
+      "batteries",
+      "playing cards",
+      "mints"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q030",
+    "category": "Tech & Internet",
+    "prompt": "The first video ever uploaded to YouTube, in 2005, was filmed at a ______.",
+    "answer": "zoo",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "skate park",
+      "car wash",
+      "fish market",
+      "bowling alley"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q031",
+    "category": "Tech & Internet",
+    "prompt": "Before it was called Google, the search engine was named ______.",
+    "answer": "BackRub",
+    "alternateSpellings": [
+      "Back Rub"
+    ],
+    "suggestedLies": [
+      "WebCrawl",
+      "LinkSeek",
+      "Findr",
+      "PageHopper"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q032",
+    "category": "Tech & Internet",
+    "prompt": "In Italian, the @ symbol is called \"chiocciola\", which means ______.",
+    "answer": "snail",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "monkey tail",
+      "little ear",
+      "whirlpool",
+      "curly fry"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q033",
+    "category": "Tech & Internet",
+    "prompt": "The first item ever sold on eBay was a broken ______.",
+    "answer": "laser pointer",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "calculator",
+      "toaster",
+      "fax machine",
+      "pager"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q034",
+    "category": "Tech & Internet",
+    "prompt": "The \"wiki\" in Wikipedia comes from a Hawaiian word meaning ______.",
+    "answer": "quick",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "shared",
+      "open",
+      "friendly",
+      "knowledge"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q035",
+    "category": "Tech & Internet",
+    "prompt": "Bluetooth is named after a 10th-century Scandinavian ______.",
+    "answer": "king",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "pirate",
+      "blacksmith",
+      "dentist",
+      "sailor"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q036",
+    "category": "Tech & Internet",
+    "prompt": "The QR code was invented in 1994 to track ______ during manufacturing.",
+    "answer": "car parts",
+    "alternateSpellings": [
+      "car components",
+      "auto parts"
+    ],
+    "suggestedLies": [
+      "rice sacks",
+      "medicines",
+      "train tickets",
+      "circuit boards"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q037",
+    "category": "Tech & Internet",
+    "prompt": "One of the first webcams was set up at Cambridge University to watch a ______.",
+    "answer": "coffee pot",
+    "alternateSpellings": [
+      "coffee machine",
+      "coffee maker"
+    ],
+    "suggestedLies": [
+      "fish tank",
+      "printer",
+      "parking space",
+      "bird feeder"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q038",
+    "category": "Gaming",
+    "prompt": "Nintendo was founded in 1889 as a company making ______.",
+    "answer": "playing cards",
+    "alternateSpellings": [
+      "cards"
+    ],
+    "suggestedLies": [
+      "toys",
+      "umbrellas",
+      "rice cookers",
+      "bicycles"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q039",
+    "category": "Gaming",
+    "prompt": "Pac-Man's shape was inspired by a ______ with a slice missing.",
+    "answer": "pizza",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "pie",
+      "cheese wheel",
+      "cake",
+      "melon"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q040",
+    "category": "Gaming",
+    "prompt": "In his first game, Donkey Kong, Mario was a ______, not a plumber.",
+    "answer": "carpenter",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "firefighter",
+      "janitor",
+      "chef",
+      "mechanic"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q041",
+    "category": "Gaming",
+    "prompt": "A Game Boy that survived a ______ during the Gulf War still worked and went on display in New York.",
+    "answer": "bombing",
+    "alternateSpellings": [
+      "bomb",
+      "bomb blast"
+    ],
+    "suggestedLies": [
+      "sandstorm",
+      "tank crash",
+      "shipwreck",
+      "flood"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q042",
+    "category": "Gaming",
+    "prompt": "Pokémon's creator was inspired by his childhood hobby of collecting ______.",
+    "answer": "insects",
+    "alternateSpellings": [
+      "bugs"
+    ],
+    "suggestedLies": [
+      "stamps",
+      "rocks",
+      "marbles",
+      "seashells"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q043",
+    "category": "Gaming",
+    "prompt": "Thousands of unsold copies of the 1982 E.T. video game were buried in a New Mexico ______.",
+    "answer": "landfill",
+    "alternateSpellings": [
+      "dump",
+      "garbage dump"
+    ],
+    "suggestedLies": [
+      "bunker",
+      "lake",
+      "mine shaft",
+      "cornfield"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q044",
+    "category": "Movies & TV",
+    "prompt": "The T. rex roar in Jurassic Park was partly made from the sound of a baby ______.",
+    "answer": "elephant",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "whale",
+      "lion",
+      "walrus",
+      "camel"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q045",
+    "category": "Movies & TV",
+    "prompt": "In The Simpsons, Homer's middle name is ______.",
+    "answer": "Jay",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "James",
+      "Julius",
+      "Jasper",
+      "Jerome"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q046",
+    "category": "Movies & TV",
+    "prompt": "The name \"Shrek\" comes from a Yiddish word meaning ______.",
+    "answer": "fear",
+    "alternateSpellings": [
+      "terror",
+      "fright"
+    ],
+    "suggestedLies": [
+      "ogre",
+      "swamp",
+      "onion",
+      "grumpy"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q047",
+    "category": "Movies & TV",
+    "prompt": "The Lion King's working title was \"______\".",
+    "answer": "King of the Jungle",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "Pride Rock",
+      "Circle of Life",
+      "Simba",
+      "Hakuna Matata"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q048",
+    "category": "Movies & TV",
+    "prompt": "Before settling on \"Friends\", the sitcom was almost called \"______\".",
+    "answer": "Insomnia Cafe",
+    "alternateSpellings": [
+      "Six of One",
+      "Friends Like Us",
+      "Across the Hall"
+    ],
+    "suggestedLies": [
+      "Coffee People",
+      "Central Perk",
+      "The Apartment",
+      "Twentysomething"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q049",
+    "category": "Music",
+    "prompt": "Ed Sheeran originally wrote \"Shape of You\" with ______ in mind.",
+    "answer": "Rihanna",
+    "alternateSpellings": [
+      "Little Mix"
+    ],
+    "suggestedLies": [
+      "Adele",
+      "Justin Bieber",
+      "Taylor Swift",
+      "Beyoncé"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q050",
+    "category": "Music",
+    "prompt": "A church in Germany is playing a John Cage organ piece so slowly that it will end in the year ______.",
+    "answer": "2640",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "2100",
+      "3000",
+      "2500",
+      "2222"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q051",
+    "category": "Music",
+    "prompt": "Barefoot Paul on the Abbey Road cover fuelled a rumour that he was secretly ______.",
+    "answer": "dead",
+    "alternateSpellings": [
+      "dead and replaced"
+    ],
+    "suggestedLies": [
+      "married",
+      "a twin",
+      "an alien",
+      "a spy"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q052",
+    "category": "Music",
+    "prompt": "Mariah Carey's \"All I Want for Christmas Is You\" was reportedly written in about ______.",
+    "answer": "15 minutes",
+    "alternateSpellings": [
+      "fifteen minutes",
+      "quarter of an hour"
+    ],
+    "suggestedLies": [
+      "two hours",
+      "one day",
+      "a week",
+      "a month"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q053",
+    "category": "Music",
+    "prompt": "\"Gangnam Style\" was the first YouTube video to reach ______ views.",
+    "answer": "one billion",
+    "alternateSpellings": [
+      "1 billion",
+      "a billion",
+      "1000000000"
+    ],
+    "suggestedLies": [
+      "100 million",
+      "500 million",
+      "ten billion",
+      "one trillion"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q054",
+    "category": "Space",
+    "prompt": "Astronauts often say space smells like ______.",
+    "answer": "seared steak",
+    "alternateSpellings": [
+      "burnt steak",
+      "burnt metal",
+      "gunpowder",
+      "welding fumes",
+      "steak"
+    ],
+    "suggestedLies": [
+      "rotten eggs",
+      "vanilla",
+      "wet dog",
+      "popcorn"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q055",
+    "category": "Space",
+    "prompt": "The International Space Station circles the Earth about every ______.",
+    "answer": "90 minutes",
+    "alternateSpellings": [
+      "92 minutes",
+      "hour and a half",
+      "ninety minutes"
+    ],
+    "suggestedLies": [
+      "24 hours",
+      "12 hours",
+      "6 hours",
+      "3 hours"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q056",
+    "category": "Space",
+    "prompt": "Astronomers once suggested the exoplanet 55 Cancri e might be largely made of ______.",
+    "answer": "diamond",
+    "alternateSpellings": [
+      "diamonds",
+      "carbon"
+    ],
+    "suggestedLies": [
+      "glass",
+      "ice",
+      "gold",
+      "iron"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q057",
+    "category": "Space",
+    "prompt": "The Sun makes up about ______ of all the mass in our solar system.",
+    "answer": "99.8%",
+    "alternateSpellings": [
+      "99.8 percent",
+      "99%",
+      "99.86%",
+      "99 percent"
+    ],
+    "suggestedLies": [
+      "50%",
+      "75%",
+      "90%",
+      "60%"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q058",
+    "category": "Space",
+    "prompt": "Seen from the surface of Mars, sunsets look ______.",
+    "answer": "blue",
+    "alternateSpellings": [
+      "bluish"
+    ],
+    "suggestedLies": [
+      "green",
+      "purple",
+      "pink",
+      "gold"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q059",
+    "category": "Human Body",
+    "prompt": "Babies are born without bony ______.",
+    "answer": "kneecaps",
+    "alternateSpellings": [
+      "knee caps",
+      "patellas"
+    ],
+    "suggestedLies": [
+      "ribs",
+      "elbows",
+      "ankles",
+      "fingertips"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q060",
+    "category": "Human Body",
+    "prompt": "Your stomach lining replaces itself every few ______.",
+    "answer": "days",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "hours",
+      "weeks",
+      "months",
+      "years"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q061",
+    "category": "Human Body",
+    "prompt": "One study estimated the human nose can tell apart at least one ______ different smells.",
+    "answer": "trillion",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "thousand",
+      "million",
+      "hundred thousand",
+      "billion"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q062",
+    "category": "Human Body",
+    "prompt": "It's almost impossible to ______ while pinching your nose with your mouth closed.",
+    "answer": "hum",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "whistle",
+      "sneeze",
+      "blink",
+      "yawn"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q063",
+    "category": "Money & Brands",
+    "prompt": "Samsung's first business, in 1938, sold ______.",
+    "answer": "dried fish",
+    "alternateSpellings": [
+      "noodles",
+      "groceries",
+      "fish"
+    ],
+    "suggestedLies": [
+      "radios",
+      "bicycles",
+      "umbrellas",
+      "soap"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q064",
+    "category": "Money & Brands",
+    "prompt": "LEGO comes from the Danish phrase \"leg godt\", meaning ______.",
+    "answer": "play well",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "build big",
+      "little bricks",
+      "stack high",
+      "have fun"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q065",
+    "category": "Money & Brands",
+    "prompt": "The E and A in IKEA stand for the founder's family farm and his home ______.",
+    "answer": "village",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "street",
+      "church",
+      "school",
+      "lake"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q066",
+    "category": "Money & Brands",
+    "prompt": "The game that became Monopoly was designed to show the problems with ______.",
+    "answer": "landlords",
+    "alternateSpellings": [
+      "monopolies",
+      "landlordism",
+      "land ownership"
+    ],
+    "suggestedLies": [
+      "gambling",
+      "taxes",
+      "alcohol",
+      "railroads"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q067",
+    "category": "Money & Brands",
+    "prompt": "Amazon was almost named ______.",
+    "answer": "Cadabra",
+    "alternateSpellings": [
+      "Relentless"
+    ],
+    "suggestedLies": [
+      "Bookworm",
+      "Shopazon",
+      "Riverbank",
+      "Everything Store"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q068",
+    "category": "Money & Brands",
+    "prompt": "In 1989, a trade deal briefly left Pepsi owning a fleet of Soviet ______.",
+    "answer": "submarines",
+    "alternateSpellings": [
+      "warships",
+      "subs"
+    ],
+    "suggestedLies": [
+      "tanks",
+      "fighter jets",
+      "oil rigs",
+      "trains"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q069",
+    "category": "Money & Brands",
+    "prompt": "The glue on Post-it notes came from a failed attempt to make a super-______ adhesive.",
+    "answer": "strong",
+    "alternateSpellings": [
+      "strength",
+      "powerful"
+    ],
+    "suggestedLies": [
+      "waterproof",
+      "heatproof",
+      "invisible",
+      "edible"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q070",
+    "category": "Words",
+    "prompt": "The \"moji\" in \"emoji\" is Japanese for ______.",
+    "answer": "character",
+    "alternateSpellings": [
+      "letter",
+      "written character"
+    ],
+    "suggestedLies": [
+      "emotion",
+      "face",
+      "feeling",
+      "message"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q071",
+    "category": "Words",
+    "prompt": "Oxford's Word of the Year for 2023 was \"______\".",
+    "answer": "rizz",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "slay",
+      "delulu",
+      "situationship",
+      "vibe"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q072",
+    "category": "Words",
+    "prompt": "Oxford's Word of the Year for 2024 was \"______\".",
+    "answer": "brain rot",
+    "alternateSpellings": [
+      "brainrot"
+    ],
+    "suggestedLies": [
+      "doomscrolling",
+      "demure",
+      "brat",
+      "romantasy"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q073",
+    "category": "Sport",
+    "prompt": "The winner of the first modern Olympic marathon, in 1896, reportedly stopped mid-race for a glass of ______.",
+    "answer": "wine",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "milk",
+      "lemonade",
+      "coffee",
+      "ouzo"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q074",
+    "category": "Sport",
+    "prompt": "The first basketball hoops were ______.",
+    "answer": "peach baskets",
+    "alternateSpellings": [
+      "peach basket",
+      "fruit baskets",
+      "baskets"
+    ],
+    "suggestedLies": [
+      "buckets",
+      "barrels",
+      "fishing nets",
+      "hat boxes"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q075",
+    "category": "Sport",
+    "prompt": "Wimbledon uses a trained ______ to scare away pigeons.",
+    "answer": "hawk",
+    "alternateSpellings": [
+      "harris hawk",
+      "harris's hawk"
+    ],
+    "suggestedLies": [
+      "drone",
+      "owl",
+      "dog",
+      "eagle"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q076",
+    "category": "Food",
+    "prompt": "A pineapple plant takes about ______ to grow one pineapple.",
+    "answer": "two years",
+    "alternateSpellings": [
+      "2 years",
+      "18 months",
+      "eighteen months"
+    ],
+    "suggestedLies": [
+      "six months",
+      "three months",
+      "five years",
+      "three weeks"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q077",
+    "category": "Food",
+    "prompt": "Ripe cranberries can ______, which is one way to test them.",
+    "answer": "bounce",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "glow",
+      "squeak",
+      "whistle",
+      "stretch"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q078",
+    "category": "Places",
+    "prompt": "The world's shortest scheduled flight, between two Scottish islands, takes about ______.",
+    "answer": "two minutes",
+    "alternateSpellings": [
+      "2 minutes",
+      "a minute",
+      "1 minute",
+      "90 seconds",
+      "one minute",
+      "a minute and a half"
+    ],
+    "suggestedLies": [
+      "15 minutes",
+      "ten minutes",
+      "30 minutes",
+      "an hour"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q079",
+    "category": "Places",
+    "prompt": "Australia is wider from east to west than ______.",
+    "answer": "the Moon",
+    "alternateSpellings": [
+      "moon",
+      "the moon's diameter"
+    ],
+    "suggestedLies": [
+      "Mars",
+      "the Sahara",
+      "the United States",
+      "Mercury"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q080",
+    "category": "History",
+    "prompt": "Ancient Romans reportedly whitened their teeth using ______.",
+    "answer": "urine",
+    "alternateSpellings": [
+      "pee",
+      "wee"
+    ],
+    "suggestedLies": [
+      "vinegar",
+      "honey",
+      "olive oil",
+      "goat milk"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q081",
+    "category": "History",
+    "prompt": "Tsar Peter the Great of Russia introduced a tax on ______.",
+    "answer": "beards",
+    "alternateSpellings": [
+      "beard"
+    ],
+    "suggestedLies": [
+      "hats",
+      "windows",
+      "dogs",
+      "mirrors"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q082",
+    "category": "Science",
+    "prompt": "An octopus has ______ hearts.",
+    "answer": "three",
+    "alternateSpellings": [
+      "3"
+    ],
+    "suggestedLies": [
+      "two",
+      "four",
+      "five",
+      "eight"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q083",
+    "category": "Science",
+    "prompt": "Sharks have existed for longer than ______.",
+    "answer": "trees",
+    "alternateSpellings": [
+      "tree"
+    ],
+    "suggestedLies": [
+      "jellyfish",
+      "sponges",
+      "seaweed",
+      "worms"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "f001",
+    "category": "Final Fakeout",
+    "prompt": "In 1386, a ______ was put on trial and executed for murder in Falaise, France.",
+    "answer": "pig",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "goat",
+      "cat",
+      "parrot",
+      "horse"
+    ],
+    "isFinal": true
+  },
+  {
+    "id": "f002",
+    "category": "Final Fakeout",
+    "prompt": "In 1932, the Australian military fought -- and lost -- a \"war\" against ______.",
+    "answer": "emus",
+    "alternateSpellings": [
+      "emu"
+    ],
+    "suggestedLies": [
+      "kangaroos",
+      "rabbits",
+      "crocodiles",
+      "koalas"
+    ],
+    "isFinal": true
+  },
+  {
+    "id": "f003",
+    "category": "Final Fakeout",
+    "prompt": "In 1518, dozens of people in Strasbourg couldn't stop ______ for days.",
+    "answer": "dancing",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "laughing",
+      "sneezing",
+      "singing",
+      "hiccuping"
+    ],
+    "isFinal": true
+  },
+  {
+    "id": "f004",
+    "category": "Final Fakeout",
+    "prompt": "In 1904, the first man to finish the Olympic marathon was disqualified for riding part of the course in a ______.",
+    "answer": "car",
+    "alternateSpellings": [
+      "automobile"
+    ],
+    "suggestedLies": [
+      "horse cart",
+      "bicycle",
+      "train",
+      "boat"
+    ],
+    "isFinal": true
+  },
+  {
+    "id": "f005",
+    "category": "Final Fakeout",
+    "prompt": "In 2010, a man paid 10,000 ______ for two pizzas, now worth hundreds of millions of dollars.",
+    "answer": "bitcoins",
+    "alternateSpellings": [
+      "bitcoin",
+      "btc"
+    ],
+    "suggestedLies": [
+      "shares",
+      "gold coins",
+      "Pokémon cards",
+      "airline miles"
+    ],
+    "isFinal": true
+  },
+  {
+    "id": "f006",
+    "category": "Final Fakeout",
+    "prompt": "A burning gas crater in Turkmenistan, alight since the 1970s, is nicknamed the ______.",
+    "answer": "Door to Hell",
+    "alternateSpellings": [
+      "Gates of Hell",
+      "Gateway to Hell",
+      "Door of Hell"
+    ],
+    "suggestedLies": [
+      "Devil's Kitchen",
+      "Eternal Flame",
+      "Dragon's Mouth",
+      "Fire Eye"
+    ],
+    "isFinal": true
+  },
+  {
+    "id": "f007",
+    "category": "Final Fakeout",
+    "prompt": "In 2013, an astronaut recorded a music video aboard the ISS covering the song ______.",
+    "answer": "Space Oddity",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "Rocket Man",
+      "Fly Me to the Moon",
+      "Starman",
+      "Across the Universe"
+    ],
+    "isFinal": true
+  },
+  {
+    "id": "q084",
+    "category": "Weird Laws",
+    "prompt": "In Switzerland it's illegal to keep just one ______, because they're social animals.",
+    "answer": "guinea pig",
+    "alternateSpellings": [
+      "guinea pigs"
+    ],
+    "suggestedLies": [
+      "parrot",
+      "goldfish",
+      "rabbit",
+      "hamster",
+      "budgie"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q085",
+    "category": "Weird Laws",
+    "prompt": "Singapore has banned the sale of ______ since 1992.",
+    "answer": "chewing gum",
+    "alternateSpellings": [
+      "gum"
+    ],
+    "suggestedLies": [
+      "candy floss",
+      "fireworks",
+      "bubble wrap",
+      "lollipops",
+      "spray paint"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q086",
+    "category": "Weird Laws",
+    "prompt": "Japan's 2008 \"metabo law\" lets local governments measure adults' ______.",
+    "answer": "waistlines",
+    "alternateSpellings": [
+      "waistline",
+      "waist",
+      "waists",
+      "waist size"
+    ],
+    "suggestedLies": [
+      "blood pressure",
+      "shoe size",
+      "caffeine intake",
+      "sleep hours",
+      "step counts"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q087",
+    "category": "Weird Laws",
+    "prompt": "Under the UK's Salmon Act 1986, it's an offence to handle salmon in ______ circumstances.",
+    "answer": "suspicious",
+    "alternateSpellings": [
+      "suspect"
+    ],
+    "suggestedLies": [
+      "wet",
+      "daylight",
+      "romantic",
+      "public",
+      "festive"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q088",
+    "category": "Weird Laws",
+    "prompt": "Since 2016, French supermarkets have been banned from throwing away unsold ______.",
+    "answer": "food",
+    "alternateSpellings": [
+      "edible food"
+    ],
+    "suggestedLies": [
+      "clothes",
+      "flowers",
+      "batteries",
+      "books",
+      "toys"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q089",
+    "category": "Weird Laws",
+    "prompt": "Iceland has an official ______ that must approve new first names.",
+    "answer": "naming committee",
+    "alternateSpellings": [
+      "committee",
+      "names committee",
+      "name committee"
+    ],
+    "suggestedLies": [
+      "name judge",
+      "poetry council",
+      "elf council",
+      "spelling court",
+      "baby panel"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q090",
+    "category": "Weird Laws",
+    "prompt": "In 2008, a New Zealand judge let a 9-year-old escape her name: \"Talula Does The ______ From Hawaii\".",
+    "answer": "Hula",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "Limbo",
+      "Twist",
+      "Splits",
+      "Conga",
+      "Moonwalk"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q091",
+    "category": "Weird Laws",
+    "prompt": "Venice fines tourists for feeding the ______ in St Mark's Square.",
+    "answer": "pigeons",
+    "alternateSpellings": [
+      "pigeon"
+    ],
+    "suggestedLies": [
+      "seagulls",
+      "gondoliers",
+      "cats",
+      "ducks",
+      "fish"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q092",
+    "category": "Weird Laws",
+    "prompt": "Since 2019, tourists in Rome can be fined for ______ on the Spanish Steps.",
+    "answer": "sitting",
+    "alternateSpellings": [
+      "sitting down"
+    ],
+    "suggestedLies": [
+      "singing",
+      "dancing",
+      "whistling",
+      "kissing",
+      "jogging"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q093",
+    "category": "Strange Jobs",
+    "prompt": "Before alarm clocks, \"knocker-uppers\" woke workers by tapping windows with poles or shooting ______ at them.",
+    "answer": "peas",
+    "alternateSpellings": [
+      "dried peas"
+    ],
+    "suggestedLies": [
+      "pebbles",
+      "rice",
+      "acorns",
+      "marbles",
+      "corks"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q094",
+    "category": "Strange Jobs",
+    "prompt": "In Tudor England, the \"Groom of the Stool\" helped the king ______.",
+    "answer": "go to the toilet",
+    "alternateSpellings": [
+      "use the toilet",
+      "poop",
+      "toilet",
+      "go to the loo"
+    ],
+    "suggestedLies": [
+      "get dressed",
+      "taste his food",
+      "climb onto his horse",
+      "trim his beard",
+      "count his money"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q095",
+    "category": "Strange Jobs",
+    "prompt": "Tokyo's train \"pushers\", who cram passengers into carriages, are called ______.",
+    "answer": "oshiya",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "tsumeya",
+      "densha-men",
+      "pushiko",
+      "kakeya",
+      "oshimen"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q096",
+    "category": "Strange Jobs",
+    "prompt": "Deodorant companies employ professional \"odour judges\" to sniff people's ______.",
+    "answer": "armpits",
+    "alternateSpellings": [
+      "armpit",
+      "underarms"
+    ],
+    "suggestedLies": [
+      "socks",
+      "T-shirts",
+      "feet",
+      "necks",
+      "wrists"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q097",
+    "category": "Strange Jobs",
+    "prompt": "Professional golf-ball divers make a living fishing balls out of ______.",
+    "answer": "water hazards",
+    "alternateSpellings": [
+      "ponds",
+      "lakes",
+      "water",
+      "golf course ponds"
+    ],
+    "suggestedLies": [
+      "gopher holes",
+      "trees",
+      "rooftops",
+      "car parks",
+      "storm drains"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q098",
+    "category": "Strange Jobs",
+    "prompt": "Legend says if the Tower of London's ravens ever leave, the ______ will fall.",
+    "answer": "kingdom",
+    "alternateSpellings": [
+      "Tower",
+      "monarchy",
+      "crown",
+      "Britain",
+      "England"
+    ],
+    "suggestedLies": [
+      "London Bridge",
+      "Big Ben",
+      "sky",
+      "parliament",
+      "stock market"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q099",
+    "category": "Strange Jobs",
+    "prompt": "Some pet food companies employ human ______.",
+    "answer": "tasters",
+    "alternateSpellings": [
+      "taste testers",
+      "food tasters",
+      "taste-testers"
+    ],
+    "suggestedLies": [
+      "models",
+      "chefs",
+      "poets",
+      "DJs",
+      "therapists"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q100",
+    "category": "Strange Jobs",
+    "prompt": "Snake \"milkers\" collect venom that's used to make ______.",
+    "answer": "antivenom",
+    "alternateSpellings": [
+      "antivenin",
+      "anti-venom",
+      "antivenoms"
+    ],
+    "suggestedLies": [
+      "perfume",
+      "lipstick",
+      "hair gel",
+      "cough syrup",
+      "glue"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q101",
+    "category": "Strange Jobs",
+    "prompt": "In 2010, a UK hotel chain trialled staff whose job was to ______ guests' beds.",
+    "answer": "warm up",
+    "alternateSpellings": [
+      "warm",
+      "heat",
+      "heat up",
+      "pre-warm"
+    ],
+    "suggestedLies": [
+      "tuck in",
+      "sniff",
+      "sing to",
+      "jump on",
+      "inspect"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q102",
+    "category": "Roadside Oddities",
+    "prompt": "Dunedin's Baldwin Street was long listed as the world's ______ street.",
+    "answer": "steepest",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "shortest",
+      "narrowest",
+      "crookedest",
+      "loudest",
+      "windiest"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q103",
+    "category": "Roadside Oddities",
+    "prompt": "A famous wall near Seattle's Pike Place Market is covered in used ______.",
+    "answer": "chewing gum",
+    "alternateSpellings": [
+      "gum"
+    ],
+    "suggestedLies": [
+      "lipstick prints",
+      "padlocks",
+      "tea bags",
+      "plasters",
+      "bottle caps"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q104",
+    "category": "Roadside Oddities",
+    "prompt": "At Texas's Cadillac Ranch, ten Cadillacs are ______.",
+    "answer": "buried nose-first",
+    "alternateSpellings": [
+      "half-buried",
+      "buried in the ground",
+      "buried",
+      "buried nose down"
+    ],
+    "suggestedLies": [
+      "stacked in a tower",
+      "hanging from trees",
+      "painted gold",
+      "floating in a lake",
+      "balanced on poles"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q105",
+    "category": "Roadside Oddities",
+    "prompt": "Carhenge in Nebraska is a replica of Stonehenge made from ______.",
+    "answer": "cars",
+    "alternateSpellings": [
+      "old cars",
+      "vintage cars"
+    ],
+    "suggestedLies": [
+      "hay bales",
+      "fridges",
+      "shipping containers",
+      "bathtubs",
+      "pianos"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q106",
+    "category": "Roadside Oddities",
+    "prompt": "Zagreb has a Museum of ______, full of objects left behind after breakups.",
+    "answer": "Broken Relationships",
+    "alternateSpellings": [
+      "Broken Relationship"
+    ],
+    "suggestedLies": [
+      "Lost Socks",
+      "Bad Dates",
+      "Ex-Lovers",
+      "Unsent Letters",
+      "Second Chances"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q107",
+    "category": "Roadside Oddities",
+    "prompt": "The Paris Catacombs hold the remains of about ______ people.",
+    "answer": "six million",
+    "alternateSpellings": [
+      "6 million",
+      "6,000,000"
+    ],
+    "suggestedLies": [
+      "ten thousand",
+      "two million",
+      "forty thousand",
+      "500,000",
+      "one billion"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q108",
+    "category": "Roadside Oddities",
+    "prompt": "The Thai town of Lopburi throws an annual banquet for its ______.",
+    "answer": "monkeys",
+    "alternateSpellings": [
+      "macaques",
+      "monkey"
+    ],
+    "suggestedLies": [
+      "elephants",
+      "cats",
+      "crows",
+      "dogs",
+      "ghosts"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q109",
+    "category": "Roadside Oddities",
+    "prompt": "Japan's Okunoshima island is overrun with friendly ______.",
+    "answer": "rabbits",
+    "alternateSpellings": [
+      "bunnies",
+      "rabbit"
+    ],
+    "suggestedLies": [
+      "cats",
+      "deer",
+      "foxes",
+      "tortoises",
+      "raccoons"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q110",
+    "category": "Roadside Oddities",
+    "prompt": "The deer of Nara, Japan, will ______ to visitors for crackers.",
+    "answer": "bow",
+    "alternateSpellings": [
+      "bow down",
+      "bow their heads"
+    ],
+    "suggestedLies": [
+      "wink",
+      "curtsy",
+      "sing",
+      "dance",
+      "roll over"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q111",
+    "category": "Roadside Oddities",
+    "prompt": "Bolivia's Palacio de Sal is a hotel built almost entirely of ______.",
+    "answer": "salt",
+    "alternateSpellings": [
+      "salt blocks"
+    ],
+    "suggestedLies": [
+      "glass",
+      "ice",
+      "bottles",
+      "mud",
+      "cardboard"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q112",
+    "category": "Roadside Oddities",
+    "prompt": "Sweden's Icehotel has to be ______ every year.",
+    "answer": "rebuilt",
+    "alternateSpellings": [
+      "built again",
+      "remade",
+      "rebuilt from scratch"
+    ],
+    "suggestedLies": [
+      "painted",
+      "relocated",
+      "blessed",
+      "flooded",
+      "renamed"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q113",
+    "category": "Strange Medicine",
+    "prompt": "After a stroke, some people develop a rare syndrome that makes them suddenly ______.",
+    "answer": "sound foreign",
+    "alternateSpellings": [
+      "speak with a foreign accent",
+      "have a foreign accent",
+      "get a foreign accent",
+      "foreign accent"
+    ],
+    "suggestedLies": [
+      "speak in rhyme",
+      "hate music",
+      "love spicy food",
+      "forget colours",
+      "laugh at everything"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q114",
+    "category": "Strange Medicine",
+    "prompt": "About 1 in 4 people sneeze when they suddenly see ______.",
+    "answer": "bright light",
+    "alternateSpellings": [
+      "sunlight",
+      "the sun",
+      "bright lights",
+      "light"
+    ],
+    "suggestedLies": [
+      "cats",
+      "the colour red",
+      "their reflection",
+      "feathers",
+      "snow"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q115",
+    "category": "Strange Medicine",
+    "prompt": "\"Exploding head syndrome\" makes people hear a loud ______ as they fall asleep.",
+    "answer": "bang",
+    "alternateSpellings": [
+      "explosion",
+      "crash",
+      "noise",
+      "loud noise",
+      "boom"
+    ],
+    "suggestedLies": [
+      "whistle",
+      "choir",
+      "doorbell",
+      "scream",
+      "trumpet"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q116",
+    "category": "Strange Medicine",
+    "prompt": "\"Alice in Wonderland syndrome\" distorts a person's sense of ______.",
+    "answer": "size",
+    "alternateSpellings": [
+      "sizes",
+      "body size",
+      "their size"
+    ],
+    "suggestedLies": [
+      "smell",
+      "taste",
+      "colours",
+      "memories",
+      "voices"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q117",
+    "category": "Strange Medicine",
+    "prompt": "\"Uncombable hair syndrome\" is also known as \"______ hair\".",
+    "answer": "spun glass",
+    "alternateSpellings": [
+      "spun-glass"
+    ],
+    "suggestedLies": [
+      "candy floss",
+      "steel wool",
+      "dandelion",
+      "straw",
+      "silk"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q118",
+    "category": "Strange Medicine",
+    "prompt": "People with aquagenic urticaria are allergic to ______.",
+    "answer": "water",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "paper",
+      "plastic",
+      "gold",
+      "wood",
+      "music"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q119",
+    "category": "Strange Medicine",
+    "prompt": "Cotard's delusion makes people believe they are ______.",
+    "answer": "dead",
+    "alternateSpellings": [
+      "already dead",
+      "a corpse"
+    ],
+    "suggestedLies": [
+      "invisible",
+      "made of glass",
+      "a cat",
+      "famous",
+      "royalty"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q120",
+    "category": "Strange Medicine",
+    "prompt": "Leeches are still used in hospitals to help surgeons reattach ______.",
+    "answer": "fingers",
+    "alternateSpellings": [
+      "fingers and ears",
+      "ears",
+      "severed fingers",
+      "body parts"
+    ],
+    "suggestedLies": [
+      "teeth",
+      "hair",
+      "eyelashes",
+      "toenails",
+      "eyebrows"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q121",
+    "category": "Strange Medicine",
+    "prompt": "Doctors use sterile ______ to eat dead tissue out of wounds.",
+    "answer": "maggots",
+    "alternateSpellings": [
+      "larvae",
+      "fly larvae"
+    ],
+    "suggestedLies": [
+      "ants",
+      "snails",
+      "slugs",
+      "earthworms",
+      "spiders"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q122",
+    "category": "Royals",
+    "prompt": "King Charles VI of France believed his body was made of ______.",
+    "answer": "glass",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "gold",
+      "wax",
+      "butter",
+      "paper",
+      "stone"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q123",
+    "category": "Royals",
+    "prompt": "The British monarch has the right to claim all unmarked mute ______ on open water.",
+    "answer": "swans",
+    "alternateSpellings": [
+      "mute swans",
+      "swan"
+    ],
+    "suggestedLies": [
+      "ducks",
+      "geese",
+      "deer",
+      "pigeons",
+      "foxes"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q124",
+    "category": "Royals",
+    "prompt": "Under a 1324 law, whales and sturgeon in British waters are \"royal ______\".",
+    "answer": "fish",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "game",
+      "beasts",
+      "treasure",
+      "property",
+      "swimmers"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q125",
+    "category": "Royals",
+    "prompt": "The British monarch celebrates ______ birthdays every year.",
+    "answer": "two",
+    "alternateSpellings": [
+      "2"
+    ],
+    "suggestedLies": [
+      "three",
+      "four",
+      "no",
+      "seven",
+      "twelve"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q126",
+    "category": "Royals",
+    "prompt": "The tall bearskin hats of the King's Guard are made from real ______ fur.",
+    "answer": "bear",
+    "alternateSpellings": [
+      "black bear",
+      "Canadian black bear",
+      "bearskin"
+    ],
+    "suggestedLies": [
+      "goat",
+      "horse",
+      "yak",
+      "sheep",
+      "mink"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q127",
+    "category": "Royals",
+    "prompt": "France's Louis XIV reigned for ______ years.",
+    "answer": "72",
+    "alternateSpellings": [
+      "seventy-two"
+    ],
+    "suggestedLies": [
+      "49",
+      "55",
+      "63",
+      "81",
+      "38"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q128",
+    "category": "Royals",
+    "prompt": "In 1859, a San Francisco man declared himself \"Emperor of the ______\" and the city played along.",
+    "answer": "United States",
+    "alternateSpellings": [
+      "USA",
+      "America",
+      "US",
+      "United States of America"
+    ],
+    "suggestedLies": [
+      "Pacific",
+      "West",
+      "Moon",
+      "Seas",
+      "Gold Coast"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q129",
+    "category": "World Leaders",
+    "prompt": "Abraham Lincoln is in the National ______ Hall of Fame.",
+    "answer": "Wrestling",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "Boxing",
+      "Chess",
+      "Axe-Throwing",
+      "Rowing",
+      "Fencing"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q130",
+    "category": "World Leaders",
+    "prompt": "President Calvin Coolidge kept a pet ______ named Rebecca at the White House.",
+    "answer": "raccoon",
+    "alternateSpellings": [
+      "racoon"
+    ],
+    "suggestedLies": [
+      "goat",
+      "possum",
+      "skunk",
+      "ostrich",
+      "bear cub"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q131",
+    "category": "World Leaders",
+    "prompt": "Mexican president Santa Anna held an elaborate state funeral for his ______.",
+    "answer": "leg",
+    "alternateSpellings": [
+      "amputated leg",
+      "own leg",
+      "lost leg"
+    ],
+    "suggestedLies": [
+      "horse",
+      "parrot",
+      "sword",
+      "hat",
+      "moustache"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q132",
+    "category": "World Leaders",
+    "prompt": "In 1969, future president Jimmy Carter reported seeing a ______.",
+    "answer": "UFO",
+    "alternateSpellings": [
+      "flying saucer"
+    ],
+    "suggestedLies": [
+      "Bigfoot",
+      "ghost",
+      "lake monster",
+      "mermaid",
+      "black panther"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q133",
+    "category": "World Leaders",
+    "prompt": "In 1952, Albert Einstein was offered the presidency of ______.",
+    "answer": "Israel",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "Germany",
+      "Switzerland",
+      "Austria",
+      "Poland",
+      "Czechoslovakia"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q134",
+    "category": "World Leaders",
+    "prompt": "George Washington's false teeth included ivory from a ______.",
+    "answer": "hippopotamus",
+    "alternateSpellings": [
+      "hippo",
+      "hippopotamuses"
+    ],
+    "suggestedLies": [
+      "rhino",
+      "boar",
+      "shark",
+      "cow",
+      "narwhal"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q135",
+    "category": "Ocean",
+    "prompt": "An ocean sunfish can release up to ______ eggs at once.",
+    "answer": "300 million",
+    "alternateSpellings": [
+      "three hundred million"
+    ],
+    "suggestedLies": [
+      "2 million",
+      "50,000",
+      "10 million",
+      "1 billion",
+      "900"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q136",
+    "category": "Ocean",
+    "prompt": "Sea otters often hold hands while they sleep so they don't ______.",
+    "answer": "drift apart",
+    "alternateSpellings": [
+      "drift away",
+      "float away",
+      "float apart"
+    ],
+    "suggestedLies": [
+      "sink",
+      "snore",
+      "get cold",
+      "get eaten",
+      "roll over"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q137",
+    "category": "Ocean",
+    "prompt": "A blue whale's heart is roughly the size of a ______.",
+    "answer": "small car",
+    "alternateSpellings": [
+      "car",
+      "golf cart",
+      "bumper car"
+    ],
+    "suggestedLies": [
+      "bathtub",
+      "fridge",
+      "sofa",
+      "piano",
+      "horse"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q138",
+    "category": "Ocean",
+    "prompt": "Among seahorses, it's the males who ______.",
+    "answer": "give birth",
+    "alternateSpellings": [
+      "get pregnant",
+      "carry the eggs",
+      "carry the babies",
+      "have the babies"
+    ],
+    "suggestedLies": [
+      "build nests",
+      "sing",
+      "eat the young",
+      "never sleep",
+      "hunt"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q139",
+    "category": "Ocean",
+    "prompt": "The so-called \"immortal jellyfish\" can ______ when it's injured or stressed.",
+    "answer": "turn young again",
+    "alternateSpellings": [
+      "revert to a polyp",
+      "age backwards",
+      "reverse ageing",
+      "become young again",
+      "reverse aging"
+    ],
+    "suggestedLies": [
+      "turn invisible",
+      "explode",
+      "glow red",
+      "freeze solid",
+      "grow a shell"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q140",
+    "category": "Ocean",
+    "prompt": "Octopuses can taste things using their ______.",
+    "answer": "arms",
+    "alternateSpellings": [
+      "suckers",
+      "tentacles"
+    ],
+    "suggestedLies": [
+      "eyes",
+      "beaks",
+      "ink",
+      "gills",
+      "hearts"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q141",
+    "category": "Ocean",
+    "prompt": "Much of the white sand on tropical beaches is actually ______ poop.",
+    "answer": "parrotfish",
+    "alternateSpellings": [
+      "parrot fish"
+    ],
+    "suggestedLies": [
+      "turtle",
+      "seagull",
+      "crab",
+      "dolphin",
+      "jellyfish"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q142",
+    "category": "Ocean",
+    "prompt": "If Everest were dropped into the Mariana Trench, its peak would sit about ______ underwater.",
+    "answer": "two kilometres",
+    "alternateSpellings": [
+      "2 km",
+      "2 kilometers",
+      "two kilometers",
+      "over a mile",
+      "a mile"
+    ],
+    "suggestedLies": [
+      "50 metres",
+      "ten metres",
+      "5 kilometres",
+      "400 metres",
+      "9 kilometres"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q143",
+    "category": "Ocean",
+    "prompt": "Greenland sharks can live for about ______ years.",
+    "answer": "400",
+    "alternateSpellings": [
+      "four hundred"
+    ],
+    "suggestedLies": [
+      "60",
+      "90",
+      "150",
+      "1,000",
+      "2,000"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q144",
+    "category": "Ocean",
+    "prompt": "A pistol shrimp's snap makes a bubble nearly as hot as the surface of the ______.",
+    "answer": "Sun",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "candle flame",
+      "lava",
+      "toaster",
+      "Moon",
+      "Venus"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q145",
+    "category": "Bugs",
+    "prompt": "Honeybees tell each other where flowers are by ______.",
+    "answer": "dancing",
+    "alternateSpellings": [
+      "dance",
+      "doing a waggle dance",
+      "waggle dance",
+      "waggle dancing"
+    ],
+    "suggestedLies": [
+      "humming",
+      "drawing maps",
+      "flashing",
+      "tapping",
+      "spitting"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q146",
+    "category": "Bugs",
+    "prompt": "Some ants \"farm\" ______ to milk them for honeydew.",
+    "answer": "aphids",
+    "alternateSpellings": [
+      "aphid",
+      "greenfly"
+    ],
+    "suggestedLies": [
+      "snails",
+      "spiders",
+      "earthworms",
+      "ladybirds",
+      "moths"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q147",
+    "category": "Bugs",
+    "prompt": "A cockroach can survive for about a ______ without its head.",
+    "answer": "week",
+    "alternateSpellings": [
+      "one week",
+      "a few weeks",
+      "weeks",
+      "couple of weeks"
+    ],
+    "suggestedLies": [
+      "minute",
+      "hour",
+      "day",
+      "year",
+      "decade"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q148",
+    "category": "Bugs",
+    "prompt": "Butterflies taste with their ______.",
+    "answer": "feet",
+    "alternateSpellings": [
+      "legs"
+    ],
+    "suggestedLies": [
+      "wings",
+      "eyes",
+      "noses",
+      "tails",
+      "scales"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q149",
+    "category": "Bugs",
+    "prompt": "Mosquitoes find you partly by tracking the ______ you breathe out.",
+    "answer": "carbon dioxide",
+    "alternateSpellings": [
+      "CO2"
+    ],
+    "suggestedLies": [
+      "oxygen",
+      "garlic smell",
+      "nitrogen",
+      "steam",
+      "helium"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q150",
+    "category": "Bugs",
+    "prompt": "A group of butterflies can be called a ______.",
+    "answer": "kaleidoscope",
+    "alternateSpellings": [
+      "flutter",
+      "rabble",
+      "flight"
+    ],
+    "suggestedLies": [
+      "rainbow",
+      "palette",
+      "swirl",
+      "glimmer",
+      "shimmer"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q151",
+    "category": "Bugs",
+    "prompt": "Dragonflies catch about ______ of the prey they chase.",
+    "answer": "95%",
+    "alternateSpellings": [
+      "95 percent",
+      "ninety-five percent",
+      "90%",
+      "90 percent"
+    ],
+    "suggestedLies": [
+      "10%",
+      "25%",
+      "50%",
+      "70%",
+      "5%"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q152",
+    "category": "Bugs",
+    "prompt": "The silk of Darwin's bark spider is about ten times tougher than ______.",
+    "answer": "Kevlar",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "leather",
+      "bamboo",
+      "titanium",
+      "diamond",
+      "bone"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q153",
+    "category": "Bugs",
+    "prompt": "A termite queen can lay around ______ eggs a day.",
+    "answer": "30,000",
+    "alternateSpellings": [
+      "thirty thousand",
+      "20,000",
+      "40,000",
+      "30000"
+    ],
+    "suggestedLies": [
+      "50",
+      "300",
+      "1,500",
+      "one million",
+      "900"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q154",
+    "category": "Prehistoric",
+    "prompt": "T. rex lived closer in time to us than to the ______.",
+    "answer": "Stegosaurus",
+    "alternateSpellings": [
+      "Stegosaur"
+    ],
+    "suggestedLies": [
+      "Triceratops",
+      "Velociraptor",
+      "Spinosaurus",
+      "Ankylosaurus",
+      "Pteranodon"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q155",
+    "category": "Prehistoric",
+    "prompt": "Woolly mammoths were still alive when the Egyptians were building the ______.",
+    "answer": "pyramids",
+    "alternateSpellings": [
+      "Great Pyramid",
+      "pyramid",
+      "Pyramids of Giza"
+    ],
+    "suggestedLies": [
+      "Colosseum",
+      "Great Wall",
+      "Parthenon",
+      "Eiffel Tower",
+      "Taj Mahal"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q156",
+    "category": "Prehistoric",
+    "prompt": "The word \"dinosaur\" means \"terrible ______\".",
+    "answer": "lizard",
+    "alternateSpellings": [
+      "lizards"
+    ],
+    "suggestedLies": [
+      "dragon",
+      "beast",
+      "giant",
+      "serpent",
+      "monster"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q157",
+    "category": "Prehistoric",
+    "prompt": "The pterosaur Quetzalcoatlus stood about as tall as a ______.",
+    "answer": "giraffe",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "elephant",
+      "horse",
+      "double-decker bus",
+      "man",
+      "ostrich"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q158",
+    "category": "Prehistoric",
+    "prompt": "Some dinosaurs swallowed ______ to help grind up their food.",
+    "answer": "stones",
+    "alternateSpellings": [
+      "rocks",
+      "pebbles",
+      "gastroliths",
+      "stone"
+    ],
+    "suggestedLies": [
+      "sand",
+      "bones",
+      "shells",
+      "wood",
+      "teeth"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q159",
+    "category": "Prehistoric",
+    "prompt": "The biggest megalodon teeth are about as long as a human ______.",
+    "answer": "hand",
+    "alternateSpellings": [
+      "hands",
+      "palm"
+    ],
+    "suggestedLies": [
+      "finger",
+      "forearm",
+      "foot",
+      "thumb",
+      "ear"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q160",
+    "category": "Prehistoric",
+    "prompt": "For centuries, many people in China believed fossil bones belonged to ______.",
+    "answer": "dragons",
+    "alternateSpellings": [
+      "dragon"
+    ],
+    "suggestedLies": [
+      "elephants",
+      "demons",
+      "whales",
+      "oxen",
+      "ancestors"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q161",
+    "category": "Weather",
+    "prompt": "A lightning bolt is about ______ times hotter than the surface of the Sun.",
+    "answer": "five",
+    "alternateSpellings": [
+      "5",
+      "five times"
+    ],
+    "suggestedLies": [
+      "two",
+      "ten",
+      "fifty",
+      "a hundred",
+      "twenty"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q162",
+    "category": "Weather",
+    "prompt": "The hottest temperature ever recorded on Earth was measured in a place called ______.",
+    "answer": "Death Valley",
+    "alternateSpellings": [
+      "Furnace Creek"
+    ],
+    "suggestedLies": [
+      "Hell's Gate",
+      "Fire Creek",
+      "Satan's Bowl",
+      "Devil's Kitchen",
+      "Hellfire Pass"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q163",
+    "category": "Weather",
+    "prompt": "A town in Honduras holds a yearly festival celebrating its \"rain of ______\".",
+    "answer": "fish",
+    "alternateSpellings": [
+      "fishes"
+    ],
+    "suggestedLies": [
+      "frogs",
+      "spiders",
+      "flowers",
+      "worms",
+      "coins"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q164",
+    "category": "Weather",
+    "prompt": "The largest snowflake ever reported, in 1887 Montana, was about ______ wide.",
+    "answer": "15 inches",
+    "alternateSpellings": [
+      "38 cm",
+      "fifteen inches",
+      "38 centimetres"
+    ],
+    "suggestedLies": [
+      "3 inches",
+      "2 feet",
+      "6 inches",
+      "1 metre",
+      "1 inch"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q165",
+    "category": "Weather",
+    "prompt": "An average fluffy cumulus cloud weighs about ______.",
+    "answer": "500 tonnes",
+    "alternateSpellings": [
+      "500 tons",
+      "a million pounds",
+      "1.1 million pounds",
+      "half a million kilos"
+    ],
+    "suggestedLies": [
+      "5 kilograms",
+      "one tonne",
+      "50,000 tonnes",
+      "nothing",
+      "10 tonnes"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q166",
+    "category": "Weather",
+    "prompt": "Mawsynram in India is one of the ______ places on Earth.",
+    "answer": "wettest",
+    "alternateSpellings": [
+      "rainiest"
+    ],
+    "suggestedLies": [
+      "hottest",
+      "windiest",
+      "driest",
+      "quietest",
+      "foggiest"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q167",
+    "category": "Plants",
+    "prompt": "Some bamboo can grow up to ______ in a single day.",
+    "answer": "90 cm",
+    "alternateSpellings": [
+      "3 feet",
+      "a metre",
+      "one metre",
+      "35 inches",
+      "91 cm",
+      "three feet"
+    ],
+    "suggestedLies": [
+      "5 cm",
+      "15 cm",
+      "2 inches",
+      "3 metres",
+      "half an inch"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q168",
+    "category": "Plants",
+    "prompt": "Botanically, a ______ is a berry but a strawberry is not.",
+    "answer": "banana",
+    "alternateSpellings": [
+      "bananas"
+    ],
+    "suggestedLies": [
+      "cherry",
+      "plum",
+      "raspberry",
+      "apple",
+      "peach"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q169",
+    "category": "Plants",
+    "prompt": "Pando, a single living organism in Utah, is a forest of about 47,000 ______ trees.",
+    "answer": "aspen",
+    "alternateSpellings": [
+      "quaking aspen",
+      "aspens"
+    ],
+    "suggestedLies": [
+      "oak",
+      "pine",
+      "birch",
+      "maple",
+      "redwood"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q170",
+    "category": "Plants",
+    "prompt": "A Venus flytrap only snaps shut after its trigger hairs are touched ______.",
+    "answer": "twice",
+    "alternateSpellings": [
+      "two times",
+      "2 times"
+    ],
+    "suggestedLies": [
+      "once",
+      "three times",
+      "ten times",
+      "at night",
+      "slowly"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q171",
+    "category": "Plants",
+    "prompt": "The giant corpse flower smells like ______.",
+    "answer": "rotting meat",
+    "alternateSpellings": [
+      "rotten meat",
+      "dead body",
+      "corpse",
+      "death",
+      "rotting flesh",
+      "rotting corpse"
+    ],
+    "suggestedLies": [
+      "burnt toast",
+      "wet dog",
+      "vinegar",
+      "old socks",
+      "cheese"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q172",
+    "category": "Plants",
+    "prompt": "Apples float in water because they're about 25% ______.",
+    "answer": "air",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "sugar",
+      "juice",
+      "fibre",
+      "seeds",
+      "wax"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q173",
+    "category": "Plants",
+    "prompt": "Vanilla comes from a type of ______.",
+    "answer": "orchid",
+    "alternateSpellings": [
+      "orchids"
+    ],
+    "suggestedLies": [
+      "lily",
+      "palm",
+      "cactus",
+      "tulip",
+      "fern"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q174",
+    "category": "Plants",
+    "prompt": "A cashew nut grows hanging off the bottom of a ______.",
+    "answer": "cashew apple",
+    "alternateSpellings": [
+      "fruit",
+      "cashew fruit",
+      "apple"
+    ],
+    "suggestedLies": [
+      "flower",
+      "leaf",
+      "root",
+      "pod",
+      "vine"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q175",
+    "category": "Pets",
+    "prompt": "Cats can't taste ______.",
+    "answer": "sweetness",
+    "alternateSpellings": [
+      "sweet",
+      "sweet things",
+      "sugar",
+      "sweets"
+    ],
+    "suggestedLies": [
+      "salt",
+      "sourness",
+      "bitterness",
+      "spice",
+      "meat"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q176",
+    "category": "Pets",
+    "prompt": "Contrary to myth, goldfish can remember things for ______.",
+    "answer": "months",
+    "alternateSpellings": [
+      "several months",
+      "five months",
+      "months at a time"
+    ],
+    "suggestedLies": [
+      "three seconds",
+      "a minute",
+      "a day",
+      "an hour",
+      "ten seconds"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q177",
+    "category": "Pets",
+    "prompt": "Cats spend roughly ______ of their lives asleep.",
+    "answer": "70%",
+    "alternateSpellings": [
+      "two-thirds",
+      "2/3",
+      "seventy percent",
+      "70 percent"
+    ],
+    "suggestedLies": [
+      "10%",
+      "25%",
+      "40%",
+      "95%",
+      "50%"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q178",
+    "category": "Pets",
+    "prompt": "The Basenji is a dog breed that can't ______.",
+    "answer": "bark",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "swim",
+      "wag its tail",
+      "fetch",
+      "see colour",
+      "sit"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q179",
+    "category": "Pets",
+    "prompt": "Dalmatian puppies are born ______.",
+    "answer": "white",
+    "alternateSpellings": [
+      "all white",
+      "without spots",
+      "spotless",
+      "pure white"
+    ],
+    "suggestedLies": [
+      "black",
+      "brown",
+      "grey",
+      "striped",
+      "blind and spotty"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q180",
+    "category": "Pets",
+    "prompt": "Rabbits are physically unable to ______.",
+    "answer": "vomit",
+    "alternateSpellings": [
+      "throw up",
+      "be sick"
+    ],
+    "suggestedLies": [
+      "sneeze",
+      "yawn",
+      "swim",
+      "whistle",
+      "jump backwards"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q181",
+    "category": "Pets",
+    "prompt": "Dogs mainly sweat through their ______.",
+    "answer": "paws",
+    "alternateSpellings": [
+      "paw pads",
+      "feet",
+      "paw"
+    ],
+    "suggestedLies": [
+      "tongues",
+      "ears",
+      "noses",
+      "tails",
+      "bellies"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q182",
+    "category": "Mythology",
+    "prompt": "In Norse myth, Thor's chariot is pulled by two ______.",
+    "answer": "goats",
+    "alternateSpellings": [
+      "goat"
+    ],
+    "suggestedLies": [
+      "wolves",
+      "bears",
+      "horses",
+      "ravens",
+      "cats"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q183",
+    "category": "Mythology",
+    "prompt": "In Greek myth, Zeus turned himself into a ______ to seduce Leda.",
+    "answer": "swan",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "bull",
+      "eagle",
+      "cuckoo",
+      "golden rain",
+      "serpent"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q184",
+    "category": "Mythology",
+    "prompt": "Japan's mischievous river creatures, the kappa, are said to love eating ______.",
+    "answer": "cucumbers",
+    "alternateSpellings": [
+      "cucumber"
+    ],
+    "suggestedLies": [
+      "rice cakes",
+      "plums",
+      "tofu",
+      "radishes",
+      "sushi"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q185",
+    "category": "Mythology",
+    "prompt": "In Norse myth, the giant tree that holds up the nine worlds is called ______.",
+    "answer": "Yggdrasil",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "Irminsul",
+      "Asgardwood",
+      "Valtree",
+      "Midgardia",
+      "Bifrost"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q186",
+    "category": "Mythology",
+    "prompt": "Ancient Greeks placed a ______ with the dead to pay the ferryman Charon.",
+    "answer": "coin",
+    "alternateSpellings": [
+      "obol",
+      "silver coin",
+      "coins"
+    ],
+    "suggestedLies": [
+      "lock of hair",
+      "candle",
+      "honey cake",
+      "song",
+      "ring"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q187",
+    "category": "Mythology",
+    "prompt": "In Scottish folklore, kelpies are shape-shifting water ______.",
+    "answer": "horses",
+    "alternateSpellings": [
+      "horse"
+    ],
+    "suggestedLies": [
+      "snakes",
+      "dogs",
+      "maidens",
+      "seals",
+      "frogs"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q188",
+    "category": "Mythology",
+    "prompt": "The Aztec god Quetzalcoatl was a feathered ______.",
+    "answer": "serpent",
+    "alternateSpellings": [
+      "snake"
+    ],
+    "suggestedLies": [
+      "jaguar",
+      "eagle",
+      "dragon",
+      "monkey",
+      "lizard"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q189",
+    "category": "Art",
+    "prompt": "The Mona Lisa famously has no visible ______.",
+    "answer": "eyebrows",
+    "alternateSpellings": [
+      "eyebrows or eyelashes",
+      "eyelashes"
+    ],
+    "suggestedLies": [
+      "fingers",
+      "nose",
+      "hair",
+      "shoulders",
+      "ears"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q190",
+    "category": "Art",
+    "prompt": "The man who stole the Mona Lisa in 1911 was a ______ who had worked at the Louvre.",
+    "answer": "handyman",
+    "alternateSpellings": [
+      "glazier",
+      "worker",
+      "workman",
+      "carpenter",
+      "decorator"
+    ],
+    "suggestedLies": [
+      "security guard",
+      "tour guide",
+      "curator",
+      "painter",
+      "chef"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q191",
+    "category": "Art",
+    "prompt": "Vincent van Gogh is known to have sold just ______ painting in his lifetime.",
+    "answer": "one",
+    "alternateSpellings": [
+      "1",
+      "a single"
+    ],
+    "suggestedLies": [
+      "no",
+      "three",
+      "eleven",
+      "forty",
+      "two"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q192",
+    "category": "Art",
+    "prompt": "The paint colour \"Mummy Brown\" was made from ground-up ______.",
+    "answer": "mummies",
+    "alternateSpellings": [
+      "Egyptian mummies",
+      "mummy",
+      "human mummies"
+    ],
+    "suggestedLies": [
+      "chocolate",
+      "beetles",
+      "coffee",
+      "bricks",
+      "tree bark"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q193",
+    "category": "Art",
+    "prompt": "The pigment \"Indian Yellow\" was said to come from the urine of cows fed only ______.",
+    "answer": "mango leaves",
+    "alternateSpellings": [
+      "mango",
+      "mangoes"
+    ],
+    "suggestedLies": [
+      "turmeric",
+      "saffron",
+      "marigolds",
+      "carrots",
+      "bananas"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q194",
+    "category": "Art",
+    "prompt": "Contrary to legend, Michelangelo painted the Sistine Chapel ceiling while ______.",
+    "answer": "standing up",
+    "alternateSpellings": [
+      "standing",
+      "standing upright"
+    ],
+    "suggestedLies": [
+      "lying down",
+      "sitting",
+      "hanging from ropes",
+      "kneeling",
+      "blindfolded"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q195",
+    "category": "Art",
+    "prompt": "In 2018, Banksy's \"Girl with Balloon\" ______ seconds after it was sold at auction.",
+    "answer": "shredded itself",
+    "alternateSpellings": [
+      "self-shredded",
+      "shredded",
+      "got shredded",
+      "was shredded"
+    ],
+    "suggestedLies": [
+      "caught fire",
+      "turned upside down",
+      "fell off the wall",
+      "started playing music",
+      "floated away"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q196",
+    "category": "Books & Authors",
+    "prompt": "Agatha Christie learned about poisons while working in a hospital ______.",
+    "answer": "dispensary",
+    "alternateSpellings": [
+      "pharmacy",
+      "chemist"
+    ],
+    "suggestedLies": [
+      "morgue",
+      "kitchen",
+      "laundry",
+      "garden",
+      "library"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q197",
+    "category": "Books & Authors",
+    "prompt": "Before writing children's books, Roald Dahl was a ______ in World War II.",
+    "answer": "fighter pilot",
+    "alternateSpellings": [
+      "spy",
+      "pilot",
+      "RAF pilot"
+    ],
+    "suggestedLies": [
+      "chef",
+      "codebreaker",
+      "submarine captain",
+      "tank driver",
+      "medic"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q198",
+    "category": "Books & Authors",
+    "prompt": "Dr. Seuss wrote Green Eggs and Ham using only ______ different words.",
+    "answer": "fifty",
+    "alternateSpellings": [
+      "50"
+    ],
+    "suggestedLies": [
+      "twenty",
+      "a hundred",
+      "236",
+      "500",
+      "twelve"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q199",
+    "category": "Books & Authors",
+    "prompt": "Mary Shelley began writing Frankenstein when she was ______.",
+    "answer": "18",
+    "alternateSpellings": [
+      "eighteen"
+    ],
+    "suggestedLies": [
+      "12",
+      "25",
+      "31",
+      "45",
+      "15"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q200",
+    "category": "Books & Authors",
+    "prompt": "Ernest Hemingway's Key West house is famous for its many ______ cats.",
+    "answer": "six-toed",
+    "alternateSpellings": [
+      "polydactyl",
+      "extra-toed",
+      "six toed"
+    ],
+    "suggestedLies": [
+      "blind",
+      "hairless",
+      "one-eyed",
+      "three-legged",
+      "ginger"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q201",
+    "category": "Books & Authors",
+    "prompt": "J.K. Rowling first dreamed up Harry Potter on a delayed ______.",
+    "answer": "train",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "plane",
+      "bus",
+      "ferry",
+      "tram",
+      "flight"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q202",
+    "category": "Books & Authors",
+    "prompt": "Victor Hugo's entire letter asking his publisher how his book was selling was just a ______.",
+    "answer": "question mark",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "full stop",
+      "exclamation mark",
+      "smiley face",
+      "single word",
+      "blank page"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q203",
+    "category": "Books & Authors",
+    "prompt": "Jane Austen's original title for Pride and Prejudice was \"______\".",
+    "answer": "First Impressions",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "Sense of Pride",
+      "Love at Last",
+      "The Bennet Sisters",
+      "Second Thoughts",
+      "A Fine Match"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q204",
+    "category": "Books & Authors",
+    "prompt": "One title F. Scott Fitzgerald considered for The Great Gatsby was \"______\".",
+    "answer": "Trimalchio in West Egg",
+    "alternateSpellings": [
+      "Trimalchio"
+    ],
+    "suggestedLies": [
+      "Jay on the Bay",
+      "The Green Light",
+      "Daisy's Dream",
+      "The Last Party",
+      "Gatsby's Gold"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q205",
+    "category": "Superstitions",
+    "prompt": "In Italy, the traditionally unlucky number is ______.",
+    "answer": "17",
+    "alternateSpellings": [
+      "seventeen"
+    ],
+    "suggestedLies": [
+      "13",
+      "4",
+      "9",
+      "21",
+      "666"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q206",
+    "category": "Superstitions",
+    "prompt": "In Japan, the number 4 is avoided because it sounds like the word for ______.",
+    "answer": "death",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "ghost",
+      "snake",
+      "debt",
+      "failure",
+      "fire"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q207",
+    "category": "Superstitions",
+    "prompt": "In South Korea, an old myth says sleeping in a closed room with a ______ on can kill you.",
+    "answer": "fan",
+    "alternateSpellings": [
+      "electric fan"
+    ],
+    "suggestedLies": [
+      "hat",
+      "TV",
+      "radio",
+      "lamp",
+      "heater"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q208",
+    "category": "Superstitions",
+    "prompt": "In Russia, it's bad luck to give someone an ______ number of flowers, except at funerals.",
+    "answer": "even",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "odd",
+      "uncounted",
+      "prime",
+      "unlucky",
+      "red"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q209",
+    "category": "Superstitions",
+    "prompt": "Many people believe it's bad luck to put a ______ on a bed.",
+    "answer": "hat",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "shoe",
+      "book",
+      "coat",
+      "cat",
+      "mirror"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q210",
+    "category": "Cars & Transport",
+    "prompt": "The first speeding ticket in Britain, in 1896, was for doing ______ mph.",
+    "answer": "8",
+    "alternateSpellings": [
+      "eight"
+    ],
+    "suggestedLies": [
+      "20",
+      "15",
+      "30",
+      "4",
+      "12"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q211",
+    "category": "Cars & Transport",
+    "prompt": "Early British cars had to be preceded by a person on foot carrying a ______.",
+    "answer": "red flag",
+    "alternateSpellings": [
+      "flag"
+    ],
+    "suggestedLies": [
+      "lantern",
+      "bell",
+      "trumpet",
+      "torch",
+      "horn"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q212",
+    "category": "Cars & Transport",
+    "prompt": "Volvo gave away its patent for the three-point ______ for free.",
+    "answer": "seatbelt",
+    "alternateSpellings": [
+      "seat belt",
+      "safety belt"
+    ],
+    "suggestedLies": [
+      "airbag",
+      "steering wheel",
+      "headlight",
+      "turn signal",
+      "crumple zone"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q213",
+    "category": "Cars & Transport",
+    "prompt": "Mary Anderson invented the windscreen wiper after a snowy ride on a ______.",
+    "answer": "streetcar",
+    "alternateSpellings": [
+      "tram",
+      "trolley",
+      "trolley car"
+    ],
+    "suggestedLies": [
+      "horse-drawn carriage",
+      "ferry",
+      "train",
+      "bicycle",
+      "sleigh"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q214",
+    "category": "Cars & Transport",
+    "prompt": "Before making supercars, Lamborghini made ______.",
+    "answer": "tractors",
+    "alternateSpellings": [
+      "tractor"
+    ],
+    "suggestedLies": [
+      "motorcycles",
+      "boats",
+      "lawnmowers",
+      "washing machines",
+      "buses"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q215",
+    "category": "Cars & Transport",
+    "prompt": "Long before cars, Peugeot was famous for making ______.",
+    "answer": "pepper mills",
+    "alternateSpellings": [
+      "coffee grinders",
+      "coffee mills",
+      "pepper grinders",
+      "salt and pepper mills"
+    ],
+    "suggestedLies": [
+      "wine barrels",
+      "clocks",
+      "umbrellas",
+      "shoes",
+      "church bells"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q216",
+    "category": "Crime & Heists",
+    "prompt": "In 2017, thieves stole a 100 kg gold ______ from a Berlin museum.",
+    "answer": "coin",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "bar",
+      "statue",
+      "crown",
+      "egg",
+      "bell"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q217",
+    "category": "Crime & Heists",
+    "prompt": "In 1971, hijacker \"D.B. Cooper\" parachuted from a plane with $______ and was never found.",
+    "answer": "200,000",
+    "alternateSpellings": [
+      "200000",
+      "two hundred thousand"
+    ],
+    "suggestedLies": [
+      "50,000",
+      "1 million",
+      "10,000",
+      "750,000",
+      "75,000"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q218",
+    "category": "Crime & Heists",
+    "prompt": "In 2012, thieves in Quebec stole about $18 million worth of ______.",
+    "answer": "maple syrup",
+    "alternateSpellings": [
+      "syrup"
+    ],
+    "suggestedLies": [
+      "lobster",
+      "whisky",
+      "ice wine",
+      "hockey cards",
+      "cheese"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q219",
+    "category": "Crime & Heists",
+    "prompt": "In 1876, a gang tried to steal Abraham Lincoln's ______ and hold it for ransom.",
+    "answer": "body",
+    "alternateSpellings": [
+      "corpse",
+      "coffin",
+      "remains"
+    ],
+    "suggestedLies": [
+      "hat",
+      "Bible",
+      "horse",
+      "portrait",
+      "pocket watch"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q220",
+    "category": "Crime & Heists",
+    "prompt": "In 1978, thieves dug up the coffin of ______ and demanded a ransom for it.",
+    "answer": "Charlie Chaplin",
+    "alternateSpellings": [
+      "Chaplin"
+    ],
+    "suggestedLies": [
+      "Elvis Presley",
+      "Albert Einstein",
+      "Winston Churchill",
+      "Pablo Picasso",
+      "Marilyn Monroe"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q221",
+    "category": "Crime & Heists",
+    "prompt": "Conman ______ Lustig famously \"sold\" the Eiffel Tower for scrap.",
+    "answer": "Victor",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "Charles",
+      "Henri",
+      "Pierre",
+      "Jacques",
+      "Louis"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q222",
+    "category": "Holidays & Traditions",
+    "prompt": "In Spain, people eat ______ grapes at midnight on New Year's Eve for luck.",
+    "answer": "twelve",
+    "alternateSpellings": [
+      "12"
+    ],
+    "suggestedLies": [
+      "seven",
+      "nine",
+      "thirteen",
+      "three",
+      "twenty"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q223",
+    "category": "Holidays & Traditions",
+    "prompt": "In Japan, a hugely popular Christmas dinner is ______.",
+    "answer": "KFC",
+    "alternateSpellings": [
+      "fried chicken",
+      "Kentucky Fried Chicken"
+    ],
+    "suggestedLies": [
+      "sushi",
+      "ramen",
+      "turkey burgers",
+      "pizza",
+      "curry"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q224",
+    "category": "Holidays & Traditions",
+    "prompt": "Catalan nativity scenes include the \"caganer\", a little figure who is ______.",
+    "answer": "pooping",
+    "alternateSpellings": [
+      "going to the toilet",
+      "defecating",
+      "doing a poo",
+      "taking a poo",
+      "pooing"
+    ],
+    "suggestedLies": [
+      "sleeping",
+      "dancing",
+      "sneezing",
+      "praying",
+      "fishing"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q225",
+    "category": "Holidays & Traditions",
+    "prompt": "Iceland's 13 Yule Lads include Door-Slammer and ______-Licker.",
+    "answer": "Spoon",
+    "alternateSpellings": [
+      "Pot",
+      "Bowl"
+    ],
+    "suggestedLies": [
+      "Window",
+      "Shoe",
+      "Sock",
+      "Boot",
+      "Butter"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q226",
+    "category": "Holidays & Traditions",
+    "prompt": "The first jack-o'-lanterns in Ireland were carved from ______.",
+    "answer": "turnips",
+    "alternateSpellings": [
+      "turnip",
+      "potatoes",
+      "beets"
+    ],
+    "suggestedLies": [
+      "melons",
+      "apples",
+      "coconuts",
+      "marrows",
+      "cabbages"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q227",
+    "category": "Holidays & Traditions",
+    "prompt": "In Norway, people traditionally hide their ______ on Christmas Eve so witches can't steal them.",
+    "answer": "brooms",
+    "alternateSpellings": [
+      "broom",
+      "brooms and mops"
+    ],
+    "suggestedLies": [
+      "shoes",
+      "candles",
+      "knives",
+      "mirrors",
+      "hats"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q228",
+    "category": "Holidays & Traditions",
+    "prompt": "Every 23 December, Oaxaca in Mexico holds a festival of sculptures carved from ______.",
+    "answer": "radishes",
+    "alternateSpellings": [
+      "radish"
+    ],
+    "suggestedLies": [
+      "ice",
+      "butter",
+      "potatoes",
+      "watermelons",
+      "soap"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q229",
+    "category": "Holidays & Traditions",
+    "prompt": "In Denmark, people still single at 25 get covered in ______.",
+    "answer": "cinnamon",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "flour",
+      "glitter",
+      "mustard",
+      "feathers",
+      "ketchup"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q230",
+    "category": "Toys",
+    "prompt": "The Slinky was invented by an engineer working on ______ for ships.",
+    "answer": "springs",
+    "alternateSpellings": [
+      "tension springs",
+      "spring"
+    ],
+    "suggestedLies": [
+      "rope",
+      "sonar",
+      "propellers",
+      "anchors",
+      "radar"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q231",
+    "category": "Toys",
+    "prompt": "Silly Putty came from a wartime attempt to make synthetic ______.",
+    "answer": "rubber",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "glue",
+      "plastic",
+      "nylon",
+      "leather",
+      "chewing gum"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q232",
+    "category": "Toys",
+    "prompt": "Mr. Potato Head was the first toy ever advertised on ______.",
+    "answer": "television",
+    "alternateSpellings": [
+      "TV",
+      "telly"
+    ],
+    "suggestedLies": [
+      "radio",
+      "billboards",
+      "cereal boxes",
+      "the internet",
+      "buses"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q233",
+    "category": "Toys",
+    "prompt": "Barbie's full name is Barbara Millicent ______.",
+    "answer": "Roberts",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "Robinson",
+      "Rogers",
+      "Richards",
+      "Hartley",
+      "Monroe"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q234",
+    "category": "Toys",
+    "prompt": "A Rubik's Cube has over 43 ______ possible positions.",
+    "answer": "quintillion",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "million",
+      "billion",
+      "trillion",
+      "thousand",
+      "googol"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q235",
+    "category": "Toys",
+    "prompt": "By number of units, LEGO has been called the world's biggest ______ maker.",
+    "answer": "tyre",
+    "alternateSpellings": [
+      "tire",
+      "tyres",
+      "tires"
+    ],
+    "suggestedLies": [
+      "doll",
+      "button",
+      "brick",
+      "toy car",
+      "plastic cup"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q236",
+    "category": "Fashion",
+    "prompt": "High heels were originally worn by ______.",
+    "answer": "men",
+    "alternateSpellings": [
+      "horse riders",
+      "soldiers",
+      "horsemen",
+      "male horse riders",
+      "Persian soldiers"
+    ],
+    "suggestedLies": [
+      "dancers",
+      "actors",
+      "chefs",
+      "children",
+      "nuns"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q237",
+    "category": "Fashion",
+    "prompt": "The tiny front pocket on jeans was originally designed for ______.",
+    "answer": "pocket watches",
+    "alternateSpellings": [
+      "a pocket watch",
+      "watches",
+      "watch"
+    ],
+    "suggestedLies": [
+      "pencils",
+      "keys",
+      "tickets",
+      "lighters",
+      "toothpicks"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q238",
+    "category": "Fashion",
+    "prompt": "The necktie traces back to ______ soldiers in the 1600s.",
+    "answer": "Croatian",
+    "alternateSpellings": [
+      "Croat",
+      "Croats",
+      "Croatian mercenaries"
+    ],
+    "suggestedLies": [
+      "Scottish",
+      "Swiss",
+      "Turkish",
+      "Polish",
+      "Spanish"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q239",
+    "category": "Fashion",
+    "prompt": "Velcro was invented after a Swiss engineer noticed ______ stuck to his dog.",
+    "answer": "burrs",
+    "alternateSpellings": [
+      "burdock burrs",
+      "burs",
+      "seeds",
+      "burdock"
+    ],
+    "suggestedLies": [
+      "ticks",
+      "thorns",
+      "spiderwebs",
+      "ivy",
+      "chewing gum"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q240",
+    "category": "Fashion",
+    "prompt": "One of the first uses of the zip fastener was on rubber ______.",
+    "answer": "boots",
+    "alternateSpellings": [
+      "galoshes",
+      "overshoes"
+    ],
+    "suggestedLies": [
+      "tents",
+      "corsets",
+      "gloves",
+      "saddles",
+      "raincoats"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q241",
+    "category": "Phobias",
+    "prompt": "Arachibutyrophobia is the fear of ______ sticking to the roof of your mouth.",
+    "answer": "peanut butter",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "toffee",
+      "chewing gum",
+      "crackers",
+      "caramel",
+      "spiders"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q242",
+    "category": "Phobias",
+    "prompt": "Hippopotomonstrosesquippedaliophobia is the fear of ______.",
+    "answer": "long words",
+    "alternateSpellings": [
+      "big words",
+      "long word"
+    ],
+    "suggestedLies": [
+      "hippos",
+      "large animals",
+      "giants",
+      "big crowds",
+      "monsters"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q243",
+    "category": "Phobias",
+    "prompt": "Nomophobia is the fear of being without your ______.",
+    "answer": "mobile phone",
+    "alternateSpellings": [
+      "phone",
+      "cellphone",
+      "mobile",
+      "cell phone",
+      "smartphone"
+    ],
+    "suggestedLies": [
+      "house keys",
+      "glasses",
+      "passport",
+      "wallet",
+      "name"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q244",
+    "category": "Phobias",
+    "prompt": "Coulrophobia is the fear of ______.",
+    "answer": "clowns",
+    "alternateSpellings": [
+      "clown"
+    ],
+    "suggestedLies": [
+      "cows",
+      "colours",
+      "coal",
+      "cold",
+      "cooking"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q245",
+    "category": "Phobias",
+    "prompt": "Triskaidekaphobia is the fear of ______.",
+    "answer": "the number 13",
+    "alternateSpellings": [
+      "13",
+      "number thirteen",
+      "thirteen",
+      "number 13"
+    ],
+    "suggestedLies": [
+      "triangles",
+      "Tuesdays",
+      "three",
+      "twins",
+      "tricycles"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q246",
+    "category": "Phobias",
+    "prompt": "Ergophobia is the fear of ______.",
+    "answer": "work",
+    "alternateSpellings": [
+      "working"
+    ],
+    "suggestedLies": [
+      "heights",
+      "computers",
+      "exercise",
+      "cars",
+      "energy"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q247",
+    "category": "Phobias",
+    "prompt": "Pogonophobia is the fear of ______.",
+    "answer": "beards",
+    "alternateSpellings": [
+      "beard",
+      "facial hair"
+    ],
+    "suggestedLies": [
+      "pogo sticks",
+      "ponies",
+      "bananas",
+      "feathers",
+      "pigeons"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q248",
+    "category": "Phobias",
+    "prompt": "Omphalophobia is the fear of ______.",
+    "answer": "belly buttons",
+    "alternateSpellings": [
+      "navels",
+      "belly button",
+      "navel",
+      "bellybuttons"
+    ],
+    "suggestedLies": [
+      "umbrellas",
+      "eyelids",
+      "omelettes",
+      "elbows",
+      "owls"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q249",
+    "category": "Odd Records",
+    "prompt": "An American man hiccupped non-stop for ______ years.",
+    "answer": "68",
+    "alternateSpellings": [
+      "sixty-eight"
+    ],
+    "suggestedLies": [
+      "12",
+      "23",
+      "41",
+      "7",
+      "90"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q250",
+    "category": "Odd Records",
+    "prompt": "The longest recorded flight of a chicken lasted ______ seconds.",
+    "answer": "13",
+    "alternateSpellings": [
+      "thirteen"
+    ],
+    "suggestedLies": [
+      "3",
+      "30",
+      "45",
+      "90",
+      "7"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q251",
+    "category": "Odd Records",
+    "prompt": "The oldest person ever verified, Jeanne Calment, lived to ______.",
+    "answer": "122",
+    "alternateSpellings": [
+      "one hundred and twenty-two",
+      "122 years"
+    ],
+    "suggestedLies": [
+      "109",
+      "115",
+      "118",
+      "131",
+      "127"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q252",
+    "category": "Odd Records",
+    "prompt": "Robert Wadlow, the tallest man in recorded history, stood ______ tall.",
+    "answer": "8 ft 11 in",
+    "alternateSpellings": [
+      "2.72 m",
+      "272 cm",
+      "8 feet 11 inches",
+      "almost 9 feet",
+      "8'11\""
+    ],
+    "suggestedLies": [
+      "7 ft 2 in",
+      "7 ft 9 in",
+      "9 ft 6 in",
+      "10 feet",
+      "8 ft 2 in"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q253",
+    "category": "Odd Records",
+    "prompt": "Park ranger Roy Sullivan was struck by lightning ______ times and survived them all.",
+    "answer": "seven",
+    "alternateSpellings": [
+      "7"
+    ],
+    "suggestedLies": [
+      "three",
+      "four",
+      "eleven",
+      "fifteen",
+      "twenty"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q254",
+    "category": "Odd Records",
+    "prompt": "In 1964, a high-school student stayed awake for ______ days straight.",
+    "answer": "11",
+    "alternateSpellings": [
+      "eleven"
+    ],
+    "suggestedLies": [
+      "4",
+      "7",
+      "19",
+      "30",
+      "25"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q255",
+    "category": "Ancient World",
+    "prompt": "Egyptian pharaohs, even queens, wore false ______.",
+    "answer": "beards",
+    "alternateSpellings": [
+      "beard"
+    ],
+    "suggestedLies": [
+      "noses",
+      "teeth",
+      "ears",
+      "nails",
+      "eyebrows"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q256",
+    "category": "Ancient World",
+    "prompt": "The Great Pyramid was the tallest human-made structure on Earth for about ______ years.",
+    "answer": "3,800",
+    "alternateSpellings": [
+      "3800",
+      "nearly 4,000",
+      "4,000",
+      "almost 4000",
+      "4000"
+    ],
+    "suggestedLies": [
+      "500",
+      "1,200",
+      "2,000",
+      "10,000",
+      "300"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q257",
+    "category": "Ancient World",
+    "prompt": "Athletes at the ancient Greek Olympics competed ______.",
+    "answer": "naked",
+    "alternateSpellings": [
+      "nude",
+      "in the nude"
+    ],
+    "suggestedLies": [
+      "blindfolded",
+      "in armour",
+      "on stilts",
+      "in togas",
+      "at night"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q258",
+    "category": "Ancient World",
+    "prompt": "Ancient Romans worshipped Cloacina, the goddess of the ______.",
+    "answer": "sewers",
+    "alternateSpellings": [
+      "sewer",
+      "city sewer",
+      "drains"
+    ],
+    "suggestedLies": [
+      "harvest",
+      "hearth",
+      "tides",
+      "kitchen",
+      "bathhouses"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q259",
+    "category": "Ancient World",
+    "prompt": "Ancient Egyptians shaved off their ______ to mourn the death of a pet cat.",
+    "answer": "eyebrows",
+    "alternateSpellings": [
+      "eyebrow"
+    ],
+    "suggestedLies": [
+      "heads",
+      "beards",
+      "legs",
+      "arms",
+      "eyelashes"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q260",
+    "category": "Ancient World",
+    "prompt": "The emperor Caligula reportedly planned to make his ______ a consul.",
+    "answer": "horse",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "dog",
+      "parrot",
+      "slave",
+      "sister",
+      "barber"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q261",
+    "category": "Ancient World",
+    "prompt": "The Colosseum was sometimes flooded to stage mock ______.",
+    "answer": "sea battles",
+    "alternateSpellings": [
+      "naval battles",
+      "ship battles",
+      "naval combat",
+      "sea fights"
+    ],
+    "suggestedLies": [
+      "swimming races",
+      "fishing contests",
+      "crocodile hunts",
+      "water polo",
+      "regattas"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q262",
+    "category": "Inventions",
+    "prompt": "Bubble wrap was originally invented to be sold as ______.",
+    "answer": "wallpaper",
+    "alternateSpellings": [
+      "textured wallpaper"
+    ],
+    "suggestedLies": [
+      "shower curtains",
+      "tablecloths",
+      "raincoats",
+      "mattresses",
+      "carpet"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q263",
+    "category": "Inventions",
+    "prompt": "The Popsicle was invented by a boy aged ______ who left his drink outside overnight.",
+    "answer": "11",
+    "alternateSpellings": [
+      "eleven"
+    ],
+    "suggestedLies": [
+      "6",
+      "8",
+      "14",
+      "17",
+      "4"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q264",
+    "category": "Inventions",
+    "prompt": "Super Glue was discovered by accident while developing clear plastic ______.",
+    "answer": "gun sights",
+    "alternateSpellings": [
+      "gunsights",
+      "rifle sights",
+      "gun sight"
+    ],
+    "suggestedLies": [
+      "contact lenses",
+      "spectacles",
+      "windows",
+      "bottles",
+      "buttons"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q265",
+    "category": "Inventions",
+    "prompt": "The Frisbee got its name from a bakery that sold ______.",
+    "answer": "pies",
+    "alternateSpellings": [
+      "pie"
+    ],
+    "suggestedLies": [
+      "bagels",
+      "doughnuts",
+      "cookies",
+      "bread",
+      "pretzels"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q266",
+    "category": "Inventions",
+    "prompt": "The first known vending machine, in ancient Egypt, dispensed ______.",
+    "answer": "holy water",
+    "alternateSpellings": [
+      "water"
+    ],
+    "suggestedLies": [
+      "wine",
+      "olive oil",
+      "perfume",
+      "bread",
+      "incense"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q267",
+    "category": "Inventions",
+    "prompt": "The chocolate chip cookie was invented at the ______ Inn in Massachusetts.",
+    "answer": "Toll House",
+    "alternateSpellings": [
+      "Tollhouse"
+    ],
+    "suggestedLies": [
+      "Blue Moon",
+      "Red Barn",
+      "Cosy Corner",
+      "Maple Leaf",
+      "Old Mill"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q268",
+    "category": "Human Body",
+    "prompt": "You're about a centimetre ______ in the morning than at night.",
+    "answer": "taller",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "shorter",
+      "wider",
+      "heavier",
+      "lighter",
+      "colder"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q269",
+    "category": "Human Body",
+    "prompt": "Fingernails grow faster on your ______ hand.",
+    "answer": "dominant",
+    "alternateSpellings": [
+      "writing",
+      "stronger",
+      "main"
+    ],
+    "suggestedLies": [
+      "left",
+      "non-dominant",
+      "colder",
+      "smaller",
+      "weaker"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q270",
+    "category": "Human Body",
+    "prompt": "The smallest bone in your body is in your ______.",
+    "answer": "ear",
+    "alternateSpellings": [
+      "middle ear",
+      "ears"
+    ],
+    "suggestedLies": [
+      "nose",
+      "toe",
+      "finger",
+      "wrist",
+      "eye"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q271",
+    "category": "Human Body",
+    "prompt": "Your brain uses about ______ of your body's energy.",
+    "answer": "20%",
+    "alternateSpellings": [
+      "twenty percent",
+      "a fifth",
+      "20 percent",
+      "one fifth"
+    ],
+    "suggestedLies": [
+      "2%",
+      "5%",
+      "45%",
+      "60%",
+      "80%"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q272",
+    "category": "Sport",
+    "prompt": "Volleyball was originally called ______.",
+    "answer": "Mintonette",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "Netball",
+      "Bounceball",
+      "Hand-tennis",
+      "Skyball",
+      "Pushball"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q273",
+    "category": "Sport",
+    "prompt": "Tug of war was an Olympic sport until ______.",
+    "answer": "1920",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "1896",
+      "1948",
+      "1964",
+      "1980",
+      "1936"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q274",
+    "category": "Sport",
+    "prompt": "NHL ice hockey pucks are ______ before games so they bounce less.",
+    "answer": "frozen",
+    "alternateSpellings": [
+      "chilled",
+      "cooled",
+      "refrigerated"
+    ],
+    "suggestedLies": [
+      "weighed",
+      "polished",
+      "blessed",
+      "heated",
+      "soaked"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q275",
+    "category": "Sport",
+    "prompt": "An official Major League baseball has ______ stitches.",
+    "answer": "108",
+    "alternateSpellings": [
+      "one hundred and eight",
+      "108 double stitches"
+    ],
+    "suggestedLies": [
+      "72",
+      "96",
+      "120",
+      "144",
+      "88"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q276",
+    "category": "Sport",
+    "prompt": "The marathon's 26.2 miles come from the 1908 Olympics, where the race started at ______.",
+    "answer": "Windsor Castle",
+    "alternateSpellings": [
+      "Windsor"
+    ],
+    "suggestedLies": [
+      "Buckingham Palace",
+      "Wembley",
+      "Big Ben",
+      "Hyde Park",
+      "Oxford"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q277",
+    "category": "Space",
+    "prompt": "High on the mountains of Venus, the \"snow\" is made of ______.",
+    "answer": "metal",
+    "alternateSpellings": [
+      "heavy metal",
+      "lead sulfide",
+      "metal frost"
+    ],
+    "suggestedLies": [
+      "sugar",
+      "glass",
+      "salt",
+      "diamonds",
+      "plastic"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q278",
+    "category": "Space",
+    "prompt": "A teaspoon of neutron star would weigh about ______.",
+    "answer": "a billion tons",
+    "alternateSpellings": [
+      "billion tonnes",
+      "1 billion tons",
+      "billions of tons",
+      "a billion tonnes"
+    ],
+    "suggestedLies": [
+      "a tonne",
+      "ten tonnes",
+      "a thousand tonnes",
+      "a kilogram",
+      "a million kilograms"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q279",
+    "category": "Space",
+    "prompt": "With no wind to erase them, the footprints on the Moon could last for ______ years.",
+    "answer": "millions of",
+    "alternateSpellings": [
+      "a million",
+      "millions",
+      "100 million"
+    ],
+    "suggestedLies": [
+      "ten",
+      "a hundred",
+      "a thousand",
+      "fifty",
+      "twenty"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q280",
+    "category": "Space",
+    "prompt": "Saturn is so light for its size that it would ______ in a big enough bathtub.",
+    "answer": "float",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "sink",
+      "dissolve",
+      "fizz",
+      "explode",
+      "spin"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q281",
+    "category": "Space",
+    "prompt": "Uranus spins on its ______.",
+    "answer": "side",
+    "alternateSpellings": [
+      "sideways"
+    ],
+    "suggestedLies": [
+      "back",
+      "head",
+      "belly",
+      "edge",
+      "tail"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q282",
+    "category": "Music",
+    "prompt": "The Beatles' \"Yesterday\" had the working title \"Scrambled ______\".",
+    "answer": "Eggs",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "Toast",
+      "Bacon",
+      "Brains",
+      "Dreams",
+      "Words"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q283",
+    "category": "Music",
+    "prompt": "The first song ever played in space, in 1965, was \"______\".",
+    "answer": "Jingle Bells",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "Fly Me to the Moon",
+      "Twinkle Twinkle Little Star",
+      "Happy Birthday",
+      "Blue Moon",
+      "Rocket Man"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q284",
+    "category": "Music",
+    "prompt": "Metallica is the only band to have played on all seven ______.",
+    "answer": "continents",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "oceans",
+      "aircraft carriers",
+      "Olympic stadiums",
+      "islands",
+      "wonders of the world"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q285",
+    "category": "Music",
+    "prompt": "Elvis Presley's natural hair colour was ______.",
+    "answer": "blond",
+    "alternateSpellings": [
+      "blonde",
+      "dirty blond",
+      "light brown",
+      "dirty blonde",
+      "sandy blond"
+    ],
+    "suggestedLies": [
+      "black",
+      "red",
+      "auburn",
+      "grey",
+      "white"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q286",
+    "category": "Movies & TV",
+    "prompt": "The hum of a Star Wars lightsaber came partly from a ______ picking up interference.",
+    "answer": "TV set",
+    "alternateSpellings": [
+      "television",
+      "TV",
+      "telly"
+    ],
+    "suggestedLies": [
+      "microwave",
+      "radio",
+      "hairdryer",
+      "fridge",
+      "vacuum"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q287",
+    "category": "Movies & TV",
+    "prompt": "In early drafts of Toy Story, Buzz Lightyear was called Lunar ______.",
+    "answer": "Larry",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "Lenny",
+      "Lou",
+      "Leo",
+      "Luke",
+      "Lance"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q288",
+    "category": "Movies & TV",
+    "prompt": "Hitchcock used ______ syrup for the blood in Psycho's shower scene.",
+    "answer": "chocolate",
+    "alternateSpellings": [
+      "chocolate syrup"
+    ],
+    "suggestedLies": [
+      "maple",
+      "strawberry",
+      "cherry",
+      "corn",
+      "golden"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q289",
+    "category": "Movies & TV",
+    "prompt": "E.T.'s face was partly modelled on Albert Einstein and a ______.",
+    "answer": "pug",
+    "alternateSpellings": [
+      "pug dog",
+      "Carl Sandburg"
+    ],
+    "suggestedLies": [
+      "frog",
+      "baby",
+      "turtle",
+      "bulldog",
+      "koala"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q290",
+    "category": "Movies & TV",
+    "prompt": "In early drafts of Back to the Future, the time machine was a ______.",
+    "answer": "refrigerator",
+    "alternateSpellings": [
+      "fridge"
+    ],
+    "suggestedLies": [
+      "phone booth",
+      "washing machine",
+      "lift",
+      "bathtub",
+      "jukebox"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q291",
+    "category": "Gaming",
+    "prompt": "Minecraft's Creeper came from a coding mistake while making a ______.",
+    "answer": "pig",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "cow",
+      "sheep",
+      "chicken",
+      "tree",
+      "zombie"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q292",
+    "category": "Gaming",
+    "prompt": "Tetris was created in the ______.",
+    "answer": "Soviet Union",
+    "alternateSpellings": [
+      "USSR",
+      "Russia",
+      "Moscow"
+    ],
+    "suggestedLies": [
+      "Japan",
+      "Hungary",
+      "Finland",
+      "East Germany",
+      "China"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q293",
+    "category": "Gaming",
+    "prompt": "In Super Mario Bros., the clouds and bushes use the same ______, just in different colours.",
+    "answer": "sprite",
+    "alternateSpellings": [
+      "graphic",
+      "image",
+      "shape",
+      "drawing",
+      "artwork"
+    ],
+    "suggestedLies": [
+      "song",
+      "font",
+      "code",
+      "level",
+      "sound"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q294",
+    "category": "Food",
+    "prompt": "Eaten in large amounts, nutmeg can be ______.",
+    "answer": "hallucinogenic",
+    "alternateSpellings": [
+      "psychoactive",
+      "a hallucinogen",
+      "mind-altering",
+      "toxic"
+    ],
+    "suggestedLies": [
+      "radioactive",
+      "explosive",
+      "magnetic",
+      "addictive",
+      "fizzy"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q295",
+    "category": "Food",
+    "prompt": "The Caesar salad was invented in ______.",
+    "answer": "Mexico",
+    "alternateSpellings": [
+      "Tijuana"
+    ],
+    "suggestedLies": [
+      "Italy",
+      "Rome",
+      "Greece",
+      "Spain",
+      "California"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q296",
+    "category": "Food",
+    "prompt": "Fortune cookies were popularised in the US but most likely originated in ______.",
+    "answer": "Japan",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "China",
+      "Korea",
+      "Vietnam",
+      "Hong Kong",
+      "Taiwan"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q297",
+    "category": "Food",
+    "prompt": "Most \"wasabi\" served outside Japan is actually dyed ______.",
+    "answer": "horseradish",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "mustard",
+      "avocado",
+      "spinach",
+      "ginger",
+      "peas"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q298",
+    "category": "Food",
+    "prompt": "The inventor of the Pringles can had some of his ashes buried in a ______.",
+    "answer": "Pringles can",
+    "alternateSpellings": [
+      "Pringles tube",
+      "can",
+      "tube"
+    ],
+    "suggestedLies": [
+      "lunchbox",
+      "cookie jar",
+      "cereal box",
+      "teapot",
+      "crisp packet"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q299",
+    "category": "Words",
+    "prompt": "\"Quarantine\" comes from the Italian for ______ days.",
+    "answer": "forty",
+    "alternateSpellings": [
+      "40"
+    ],
+    "suggestedLies": [
+      "ten",
+      "seven",
+      "thirty",
+      "hundred",
+      "fourteen"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q300",
+    "category": "Words",
+    "prompt": "\"Muscle\" comes from the Latin for \"little ______\".",
+    "answer": "mouse",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "man",
+      "snake",
+      "rope",
+      "fish",
+      "worm"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q301",
+    "category": "Words",
+    "prompt": "\"Salary\" is linked to the Latin word for ______.",
+    "answer": "salt",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "silver",
+      "soldier",
+      "bread",
+      "sun",
+      "salad"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q302",
+    "category": "Words",
+    "prompt": "The # symbol's oldest technical name is the ______.",
+    "answer": "octothorpe",
+    "alternateSpellings": [
+      "octothorp"
+    ],
+    "suggestedLies": [
+      "gridlet",
+      "quadrille",
+      "octolith",
+      "pound fence",
+      "tic-tac"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q303",
+    "category": "Words",
+    "prompt": "\"Robot\" comes from a Czech word meaning ______.",
+    "answer": "forced labour",
+    "alternateSpellings": [
+      "forced labor",
+      "drudgery",
+      "slave labour",
+      "serf labour",
+      "hard work",
+      "work"
+    ],
+    "suggestedLies": [
+      "metal man",
+      "thinker",
+      "tin",
+      "puppet",
+      "machine"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q304",
+    "category": "Words",
+    "prompt": "\"Avocado\" comes from an Aztec word meaning ______.",
+    "answer": "testicle",
+    "alternateSpellings": [
+      "testicles"
+    ],
+    "suggestedLies": [
+      "green egg",
+      "butter",
+      "jewel",
+      "heart",
+      "tree egg"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q305",
+    "category": "Words",
+    "prompt": "\"Clue\" comes from \"clew\", meaning a ball of ______.",
+    "answer": "thread",
+    "alternateSpellings": [
+      "yarn",
+      "string",
+      "wool"
+    ],
+    "suggestedLies": [
+      "clay",
+      "wax",
+      "iron",
+      "paper",
+      "dough"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q306",
+    "category": "Places",
+    "prompt": "There's a village in Norway called ______.",
+    "answer": "Hell",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "Heaven",
+      "Doom",
+      "Gloom",
+      "Boring",
+      "Misery"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q307",
+    "category": "Places",
+    "prompt": "The country with the most pyramids is ______.",
+    "answer": "Sudan",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "Egypt",
+      "Mexico",
+      "Peru",
+      "Guatemala",
+      "Libya"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q308",
+    "category": "Places",
+    "prompt": "Russia spans ______ time zones.",
+    "answer": "eleven",
+    "alternateSpellings": [
+      "11"
+    ],
+    "suggestedLies": [
+      "five",
+      "seven",
+      "nine",
+      "fourteen",
+      "three"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q309",
+    "category": "Places",
+    "prompt": "Istanbul sits on two ______.",
+    "answer": "continents",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "rivers",
+      "volcanoes",
+      "time zones",
+      "deserts",
+      "islands"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q310",
+    "category": "Places",
+    "prompt": "Alaska is the furthest north, furthest west and furthest ______ US state.",
+    "answer": "east",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "south",
+      "up",
+      "highest",
+      "oldest",
+      "coldest"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q311",
+    "category": "Places",
+    "prompt": "Lake Baikal holds about ______ of the world's unfrozen fresh surface water.",
+    "answer": "20%",
+    "alternateSpellings": [
+      "22%",
+      "23%",
+      "a fifth",
+      "20 percent",
+      "one fifth"
+    ],
+    "suggestedLies": [
+      "2%",
+      "5%",
+      "50%",
+      "70%",
+      "1%"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q312",
+    "category": "History",
+    "prompt": "In 1919, a flood of ______ swept through Boston, killing 21 people.",
+    "answer": "molasses",
+    "alternateSpellings": [
+      "treacle"
+    ],
+    "suggestedLies": [
+      "beer",
+      "milk",
+      "tar",
+      "maple syrup",
+      "gin"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q313",
+    "category": "History",
+    "prompt": "In 1814, a flood of ______ burst out of a London brewery and killed eight people.",
+    "answer": "beer",
+    "alternateSpellings": [
+      "porter",
+      "ale"
+    ],
+    "suggestedLies": [
+      "gin",
+      "milk",
+      "tea",
+      "whisky",
+      "cider"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q314",
+    "category": "History",
+    "prompt": "The Hundred Years' War actually lasted ______ years.",
+    "answer": "116",
+    "alternateSpellings": [
+      "one hundred and sixteen"
+    ],
+    "suggestedLies": [
+      "99",
+      "87",
+      "103",
+      "125",
+      "140"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q315",
+    "category": "History",
+    "prompt": "Japanese soldier Hiroo Onoda kept fighting World War II in the jungle until ______.",
+    "answer": "1974",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "1946",
+      "1952",
+      "1961",
+      "1989",
+      "1958"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q316",
+    "category": "History",
+    "prompt": "Real Viking helmets did not have ______.",
+    "answer": "horns",
+    "alternateSpellings": [
+      "horned tops",
+      "horn"
+    ],
+    "suggestedLies": [
+      "nose guards",
+      "padding",
+      "leather straps",
+      "paint",
+      "rivets"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q317",
+    "category": "History",
+    "prompt": "At Cambridge, Charles Darwin belonged to a club that ate unusual animals, the \"______ Club\".",
+    "answer": "Glutton",
+    "alternateSpellings": [
+      "Gluttons"
+    ],
+    "suggestedLies": [
+      "Feast",
+      "Beast",
+      "Supper",
+      "Taste",
+      "Gourmand"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q318",
+    "category": "Science",
+    "prompt": "Hot water can sometimes freeze faster than cold water; this is called the ______ effect.",
+    "answer": "Mpemba",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "Leidenfrost",
+      "Doppler",
+      "Coanda",
+      "Peltier",
+      "Joule"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q319",
+    "category": "Science",
+    "prompt": "Heated in enough oxygen, a diamond will ______.",
+    "answer": "burn",
+    "alternateSpellings": [
+      "catch fire",
+      "burn up",
+      "burn away"
+    ],
+    "suggestedLies": [
+      "shatter",
+      "turn blue",
+      "sing",
+      "turn to glass",
+      "melt"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q320",
+    "category": "Science",
+    "prompt": "Water expands by about ______ when it freezes.",
+    "answer": "9%",
+    "alternateSpellings": [
+      "nine percent",
+      "9 percent",
+      "ten percent",
+      "10%"
+    ],
+    "suggestedLies": [
+      "1%",
+      "25%",
+      "40%",
+      "2%",
+      "50%"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q321",
+    "category": "Science",
+    "prompt": "Helium was discovered on the ______ before it was found on Earth.",
+    "answer": "Sun",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "Moon",
+      "Mars",
+      "Venus",
+      "a meteorite",
+      "Jupiter"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q322",
+    "category": "Science",
+    "prompt": "The only two elements that are liquid at room temperature are bromine and ______.",
+    "answer": "mercury",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "gallium",
+      "caesium",
+      "sodium",
+      "lithium",
+      "iodine"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q323",
+    "category": "Animals",
+    "prompt": "North America's wood frog survives winter by letting its body ______.",
+    "answer": "freeze solid",
+    "alternateSpellings": [
+      "freeze",
+      "freeze over",
+      "freeze completely"
+    ],
+    "suggestedLies": [
+      "shrink by half",
+      "turn white",
+      "dry out",
+      "hibernate underwater",
+      "turn to jelly"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q324",
+    "category": "Animals",
+    "prompt": "Studies suggest cows have best ______ and get stressed when separated.",
+    "answer": "friends",
+    "alternateSpellings": [
+      "friend",
+      "buddies",
+      "pals"
+    ],
+    "suggestedLies": [
+      "sides",
+      "songs",
+      "spots",
+      "days",
+      "fields"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q325",
+    "category": "Animals",
+    "prompt": "A sloth can hold its breath longer than a ______.",
+    "answer": "dolphin",
+    "alternateSpellings": [
+      "dolphins"
+    ],
+    "suggestedLies": [
+      "whale",
+      "sea turtle",
+      "seal",
+      "crocodile",
+      "hippo"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q326",
+    "category": "Animals",
+    "prompt": "Crows can recognise individual human ______ and hold grudges.",
+    "answer": "faces",
+    "alternateSpellings": [
+      "face"
+    ],
+    "suggestedLies": [
+      "handwriting",
+      "birthdays",
+      "perfumes",
+      "shoes",
+      "cars"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q327",
+    "category": "Animals",
+    "prompt": "An ostrich's eye is bigger than its ______.",
+    "answer": "brain",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "heart",
+      "beak",
+      "stomach",
+      "egg",
+      "foot"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q328",
+    "category": "Animals",
+    "prompt": "A narwhal's tusk is actually a ______.",
+    "answer": "tooth",
+    "alternateSpellings": [
+      "long tooth",
+      "canine tooth"
+    ],
+    "suggestedLies": [
+      "horn",
+      "nose",
+      "bone",
+      "tongue",
+      "antenna"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q329",
+    "category": "Animals",
+    "prompt": "A shrimp's heart is located in its ______.",
+    "answer": "head",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "tail",
+      "claws",
+      "legs",
+      "eyes",
+      "back"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q330",
+    "category": "Animals",
+    "prompt": "Some snails can sleep for up to ______.",
+    "answer": "three years",
+    "alternateSpellings": [
+      "3 years"
+    ],
+    "suggestedLies": [
+      "a week",
+      "three months",
+      "ten years",
+      "a month",
+      "a day"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q331",
+    "category": "Animals",
+    "prompt": "Rats make laughing sounds when they're ______.",
+    "answer": "tickled",
+    "alternateSpellings": [
+      "being tickled"
+    ],
+    "suggestedLies": [
+      "sleeping",
+      "dreaming",
+      "eating",
+      "full",
+      "scared"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q332",
+    "category": "Money & Brands",
+    "prompt": "Nokia started out in 1865 as a ______ mill.",
+    "answer": "paper",
+    "alternateSpellings": [
+      "pulp",
+      "paper pulp",
+      "wood pulp"
+    ],
+    "suggestedLies": [
+      "steel",
+      "cotton",
+      "flour",
+      "rubber",
+      "saw"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q333",
+    "category": "Money & Brands",
+    "prompt": "Twitter's original name was \"______\".",
+    "answer": "twttr",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "Chirpr",
+      "Tweetbox",
+      "Blurb",
+      "Squawk",
+      "Status"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q334",
+    "category": "Money & Brands",
+    "prompt": "Before becoming \"Mr. Monopoly\", the Monopoly mascot was called Rich Uncle ______.",
+    "answer": "Pennybags",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "Moneybags",
+      "Goldsworth",
+      "Silverspoon",
+      "Cashwell",
+      "Bigbucks"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q335",
+    "category": "Money & Brands",
+    "prompt": "Starbucks is named after a character in ______.",
+    "answer": "Moby-Dick",
+    "alternateSpellings": [
+      "Moby Dick"
+    ],
+    "suggestedLies": [
+      "Treasure Island",
+      "The Odyssey",
+      "Robinson Crusoe",
+      "Peter Pan",
+      "Jaws"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q336",
+    "category": "Tech & Internet",
+    "prompt": "The first computer \"bug\" was a real ______ found in a machine.",
+    "answer": "moth",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "beetle",
+      "cockroach",
+      "spider",
+      "fly",
+      "ant"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q337",
+    "category": "Tech & Internet",
+    "prompt": "The first-ever text message, sent in 1992, said \"______\".",
+    "answer": "Merry Christmas",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "Hello World",
+      "Can you hear me",
+      "Test",
+      "Happy New Year",
+      "Hi Mum"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q338",
+    "category": "Tech & Internet",
+    "prompt": "The first .com domain ever registered, in 1985, was ______.com.",
+    "answer": "symbolics",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "apple",
+      "ibm",
+      "computer",
+      "arpa",
+      "mail"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q339",
+    "category": "Tech & Internet",
+    "prompt": "Apple's very first logo showed ______ sitting under a tree.",
+    "answer": "Isaac Newton",
+    "alternateSpellings": [
+      "Newton",
+      "Sir Isaac Newton"
+    ],
+    "suggestedLies": [
+      "Adam and Eve",
+      "Steve Jobs",
+      "Albert Einstein",
+      "Snow White",
+      "a monk"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "f008",
+    "category": "Final Fakeout",
+    "prompt": "Frenchman Michel Lotito, \"Monsieur Mangetout\", once ate an entire ______.",
+    "answer": "aeroplane",
+    "alternateSpellings": [
+      "airplane",
+      "plane",
+      "Cessna",
+      "aircraft"
+    ],
+    "suggestedLies": [
+      "car",
+      "bicycle",
+      "television",
+      "piano",
+      "canoe"
+    ],
+    "isFinal": true
+  },
+  {
+    "id": "f009",
+    "category": "Final Fakeout",
+    "prompt": "In 1945, a chicken named Mike lived for 18 months without his ______.",
+    "answer": "head",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "feathers",
+      "feet",
+      "beak",
+      "wings",
+      "legs"
+    ],
+    "isFinal": true
+  },
+  {
+    "id": "f010",
+    "category": "Final Fakeout",
+    "prompt": "In 1999, NASA lost the Mars Climate Orbiter because one team used ______ units.",
+    "answer": "imperial",
+    "alternateSpellings": [
+      "English",
+      "US customary",
+      "imperial units",
+      "non-metric"
+    ],
+    "suggestedLies": [
+      "Celsius",
+      "decimal",
+      "radian",
+      "binary",
+      "nautical"
+    ],
+    "isFinal": true
+  },
+  {
+    "id": "f011",
+    "category": "Final Fakeout",
+    "prompt": "In 1962, an epidemic of ______ spread from a girls' school in Tanganyika and lasted months.",
+    "answer": "laughter",
+    "alternateSpellings": [
+      "laughing"
+    ],
+    "suggestedLies": [
+      "sneezing",
+      "hiccups",
+      "sleepwalking",
+      "yawning",
+      "singing"
+    ],
+    "isFinal": true
+  },
+  {
+    "id": "f012",
+    "category": "Final Fakeout",
+    "prompt": "An underground coal fire has been burning beneath the town of Centralia since ______.",
+    "answer": "1962",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "1906",
+      "1931",
+      "1975",
+      "1989",
+      "1950"
+    ],
+    "isFinal": true
+  },
+  {
+    "id": "f013",
+    "category": "Final Fakeout",
+    "prompt": "In 1983, Soviet officer Stanislav Petrov averted nuclear war by judging a missile alert to be a ______.",
+    "answer": "false alarm",
+    "alternateSpellings": [
+      "computer error",
+      "mistake",
+      "malfunction",
+      "glitch",
+      "false alert"
+    ],
+    "suggestedLies": [
+      "training drill",
+      "weather balloon",
+      "flock of geese",
+      "meteor shower",
+      "prank"
+    ],
+    "isFinal": true
+  },
+  {
+    "id": "f014",
+    "category": "Final Fakeout",
+    "prompt": "In 2011, a woman digging for scrap copper accidentally cut off the internet in most of ______.",
+    "answer": "Armenia",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "Azerbaijan",
+      "Turkey",
+      "Iran",
+      "Russia",
+      "Ukraine"
+    ],
+    "isFinal": true
+  },
+  {
+    "id": "f015",
+    "category": "Final Fakeout",
+    "prompt": "In 1969, El Salvador and Honduras fought a brief war sparked partly by a ______ match.",
+    "answer": "football",
+    "alternateSpellings": [
+      "soccer",
+      "World Cup qualifying",
+      "World Cup"
+    ],
+    "suggestedLies": [
+      "boxing",
+      "chess",
+      "baseball",
+      "wrestling",
+      "tennis"
+    ],
+    "isFinal": true
+  },
+  {
+    "id": "f016",
+    "category": "Final Fakeout",
+    "prompt": "In 1858, London's \"Great ______\" forced Parliament to build a modern sewer system.",
+    "answer": "Stink",
+    "alternateSpellings": [
+      "Stench"
+    ],
+    "suggestedLies": [
+      "Smog",
+      "Plague",
+      "Flood",
+      "Rot",
+      "Fire"
+    ],
+    "isFinal": true
+  },
+  {
+    "id": "f017",
+    "category": "Final Fakeout",
+    "prompt": "In 2006, a Canadian man traded his way from a single red ______ up to a house.",
+    "answer": "paperclip",
+    "alternateSpellings": [
+      "paper clip"
+    ],
+    "suggestedLies": [
+      "button",
+      "pencil",
+      "balloon",
+      "rubber band",
+      "marble"
+    ],
+    "isFinal": true
+  },
+  {
+    "id": "f018",
+    "category": "Final Fakeout",
+    "prompt": "In 1982, a man flew to 16,000 feet over Los Angeles in a lawn chair tied to ______.",
+    "answer": "weather balloons",
+    "alternateSpellings": [
+      "balloons",
+      "helium balloons",
+      "weather balloon"
+    ],
+    "suggestedLies": [
+      "kites",
+      "a parachute",
+      "fireworks",
+      "a leaf blower",
+      "a hang glider"
+    ],
+    "isFinal": true
+  },
+  {
+    "id": "f019",
+    "category": "Final Fakeout",
+    "prompt": "Fanta was invented in 1940s Germany because of a shortage of ______ syrup.",
+    "answer": "Coca-Cola",
+    "alternateSpellings": [
+      "Coke",
+      "Coca Cola",
+      "cola"
+    ],
+    "suggestedLies": [
+      "orange",
+      "sugar",
+      "lemon",
+      "cherry",
+      "grape"
+    ],
+    "isFinal": true
+  },
+  {
+    "id": "f020",
+    "category": "Final Fakeout",
+    "prompt": "During the 1859 solar storm, some telegraph operators found their lines ______.",
+    "answer": "worked unplugged",
+    "alternateSpellings": [
+      "worked without batteries",
+      "spark",
+      "sparking",
+      "caught fire",
+      "worked without power",
+      "gave shocks"
+    ],
+    "suggestedLies": [
+      "sang",
+      "melted",
+      "froze",
+      "glowed green",
+      "spelled out words"
+    ],
+    "isFinal": true
+  },
+  {
+    "id": "f021",
+    "category": "Final Fakeout",
+    "prompt": "In 1954, a meteorite crashed through a roof in Alabama and hit a woman who was ______.",
+    "answer": "napping",
+    "alternateSpellings": [
+      "sleeping",
+      "asleep",
+      "taking a nap",
+      "on the couch",
+      "lying on the sofa"
+    ],
+    "suggestedLies": [
+      "cooking",
+      "bathing",
+      "knitting",
+      "on the phone",
+      "gardening"
+    ],
+    "isFinal": true
+  }
 ]
