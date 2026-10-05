@@ -152,7 +152,7 @@ function JoinForm({ transport, initialCode, error: initError, onJoined }) {
   const [error, setError] = useState(initError)
 
   const submit = async (e) => {
-    primeLobbyMusic() // this tap lets the lobby song play on mobile browsers
+    primeLobbyMusic() // this tap lets the lobby music play on mobile browsers
     e.preventDefault()
     setBusy(true)
     setError(null)
@@ -588,7 +588,7 @@ function NowPlaying() {
   return (
     <p className="now-playing">
       <span className="eq" aria-hidden="true"><i /><i /><i /></span>
-      Now playing: Loading Screen Music
+      Now playing: the Fakeout theme
     </p>
   )
 }

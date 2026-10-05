@@ -1,7 +1,7 @@
 // Procedural sound for the host screen (Web Audio, no asset files).
 // SFX, music and the narrator voice have separate volumes, plus a master mute
 // (the mute button). Music ducks while the narrator speaks (narrator.js).
-// The lobby song itself is a real audio file: see lobbyMusic.js.
+// When the lobby theme plays is decided in lobbyMusic.js.
 
 let ctx = null
 let sfxGain = null
@@ -10,9 +10,6 @@ let voiceGain = null
 let volumes = { music: 0.35, sfx: 0.8, voice: 1 }
 let masterMuted = false
 let ducked = false
-let musicTimer = null
-let currentLoop = null
-let loopGain = null
 const volumeListeners = new Set()
 const DUCK_LEVEL = 0.3
 
@@ -48,8 +45,23 @@ export function unlockAudio() {
     sfxGain.connect(ctx.destination)
     musicGain.connect(ctx.destination)
     voiceGain.connect(ctx.destination)
+    // Music waits for the context to actually be running (resume is async).
+    ctx.addEventListener('statechange', syncMusic)
+    if (import.meta.env.DEV) devMeter()
   }
   if (ctx.state === 'suspended') ctx.resume()
+  syncMusic()
+}
+
+// Host screen: any click or key press unlocks audio (browsers only allow
+// sound after a user gesture), so music starts without a special button.
+export function enableGestureUnlock() {
+  const unlock = () => unlockAudio()
+  const types = ['pointerdown', 'pointerup', 'touchend', 'click', 'keydown']
+  for (const type of types) document.addEventListener(type, unlock, { capture: true, passive: true })
+  return () => {
+    for (const type of types) document.removeEventListener(type, unlock, { capture: true })
+  }
 }
 
 export function setVolumes(v) {
@@ -195,56 +207,291 @@ export function sfx(name) {
 }
 
 // ------------------------------------------------------------------ music
+//
+// Procedural backing tracks for the whole game (the lobby has its real song,
+// see lobbyMusic.js). A small step sequencer: each song is a chord loop plus
+// 16-step patterns per bar for drums, bass, arpeggio and a soft pad.
+//
+// Pattern characters: drums 'x' = hit, 'o' = soft hit; bass/arp digits pick a
+// chord tone (0 = root, 1, 2, ... wrapping up an octave); '.' = rest.
+//
+// Notes are scheduled ahead on the audio clock (not by timer timing), so the
+// music stays in time when timers jitter. Each song has its own gain node, so
+// switching songs crossfades and silences notes already scheduled.
 
-const LOOPS = {
-  // relaxed lobby-style loop (lobby, LIE_ENTRY)
-  chill: { bpm: 104, bass: [130.8, 130.8, 174.6, 196], arp: [523, 659, 784, 659], type: 'triangle' },
-  // tenser loop (PICK_TRUTH)
-  tense: { bpm: 132, bass: [110, 110, 116.5, 110], arp: [440, 523, 466, 523], type: 'square' },
+const midi = (n) => 440 * 2 ** ((n - 69) / 12)
+
+const SONGS = {
+  // The Fakeout theme: relaxed and groovy, for the lobbies (TV and phones).
+  lobby: {
+    bpm: 100,
+    chords: [[60, 64, 67, 71], [57, 60, 64, 67], [62, 65, 69, 72], [55, 59, 62, 65]], // Cmaj7 Am7 Dm7 G7
+    kick: 'x.....x...x.....',
+    snare: '....x.......x...',
+    hat: 'o.o.o.o.o.o.o.o.',
+    bass: '0..2..0.1..2..0.',
+    arp: '0.2.1.3.2.0.3.1.',
+    arpType: 'triangle',
+    pad: 0.035,
+  },
+  // Upbeat, for titles, category picks, questions and scores.
+  bounce: {
+    bpm: 112,
+    chords: [[60, 64, 67], [57, 60, 64], [53, 57, 60], [55, 59, 62]], // C Am F G
+    kick: 'x.......x.......',
+    snare: '....x.......x...',
+    hat: '..o...o...o...o.',
+    bass: '0..0..2.0..0.2..',
+    arp: '0.1.2.1.3.2.1.2.',
+    arpType: 'triangle',
+    pad: 0.035,
+  },
+  // Mellow and jazzy while players write their lies.
+  think: {
+    bpm: 92,
+    chords: [[65, 69, 72, 76], [64, 67, 71, 74], [62, 65, 69, 72], [60, 64, 67, 71]], // Fmaj7 Em7 Dm7 Cmaj7
+    kick: 'x.........x.....',
+    snare: '....o.......o...',
+    hat: 'o.o.o.o.o.o.o.o.',
+    bass: '0.....2...0...1.',
+    arp: '3...2.....1...2.',
+    arpType: 'sine',
+    pad: 0.045,
+  },
+  // Driving and tense while players pick the truth.
+  tense: {
+    bpm: 128,
+    chords: [[57, 60, 64], [57, 60, 64], [53, 57, 60], [52, 56, 59]], // Am Am F E
+    kick: 'x...x...x...x...',
+    snare: '....x.......x..o',
+    hat: 'oxoxoxoxoxoxoxox',
+    bass: '0.0.0.0.0.0.0.0.',
+    arp: '0.2.3.2.0.2.3.2.',
+    arpType: 'square',
+    pad: 0,
+  },
+  // A quiet heartbeat under the reveal, so the drumrolls and stamps land.
+  reveal: {
+    bpm: 72,
+    chords: [[57, 60, 64], [53, 57, 60]], // Am F
+    kick: 'x..o............',
+    snare: '................',
+    hat: '................',
+    bass: '0...............',
+    arp: '................',
+    arpType: 'sine',
+    pad: 0.03,
+  },
+  // Celebration for the winner and awards.
+  victory: {
+    bpm: 124,
+    chords: [[60, 64, 67], [65, 69, 72], [67, 71, 74], [60, 64, 67]], // C F G C
+    kick: 'x...x...x...x...',
+    snare: '....x.......x.x.',
+    hat: 'o.x.o.x.o.x.o.x.',
+    bass: '0.0.2.0.0.0.2.1.',
+    arp: '0123012301230123',
+    arpType: 'triangle',
+    pad: 0.03,
+  },
 }
 
-// Notes are scheduled a little ahead on the audio clock (not by setInterval
-// timing), so the loop stays in time even when timers jitter. Each loop has
-// its own gain node so stopping it silences notes already scheduled.
-const LOOKAHEAD = 0.6 // seconds
+// Which song each game phase gets (no entry = silence).
+const PHASE_SONGS = {
+  INTRO: 'bounce', ROUND_TITLE: 'bounce', FINAL_TITLE: 'tense', CATEGORY_PICK: 'bounce', QUESTION: 'bounce',
+  LIE_ENTRY: 'think', PICK_TRUTH: 'tense', REVEAL: 'reveal', SCOREBOARD: 'bounce',
+  WINNER: 'victory', AWARDS: 'victory',
+}
+export const songForPhase = (phase) => PHASE_SONGS[phase] ?? null
 
-export function playMusic(name) {
-  if (currentLoop === name) return
-  stopMusic()
-  if (!ctx || !LOOPS[name]) return
-  currentLoop = name
-  const loop = LOOPS[name]
-  const half = 60 / loop.bpm / 2
+const LOOKAHEAD = 1.0 // seconds scheduled ahead (covers background-tab timer throttling)
+const TICK_MS = 200
+const FADE_IN = 0.6
+const FADE_OUT = 0.8
+const MUSIC_BOOST = 2 // the songs are written quiet; this matches the lobby song's level
+
+let musicBus = null // compressor shared by all songs, into musicGain
+let noiseBuf = null
+let wantedSong = null // what should be playing (kept even before audio is unlocked)
+let playing = null // { name, out, timer }
+const musicListeners = new Set()
+
+// What's audible right now (null while silent or before audio is unlocked).
+export const currentSong = () => playing?.name ?? null
+export function onMusicChange(fn) {
+  musicListeners.add(fn)
+  return () => musicListeners.delete(fn)
+}
+
+function setupMusicBus() {
+  if (musicBus) return
+  const comp = ctx.createDynamicsCompressor()
+  comp.threshold.value = -18
+  comp.ratio.value = 4
+  comp.attack.value = 0.01
+  comp.release.value = 0.2
+  const boost = ctx.createGain()
+  boost.gain.value = MUSIC_BOOST
+  comp.connect(boost).connect(musicGain)
+  musicBus = comp
+  noiseBuf = ctx.createBuffer(1, ctx.sampleRate, ctx.sampleRate)
+  const data = noiseBuf.getChannelData(0)
+  for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1
+}
+
+function env(g, t, peak, attack, dur) {
+  g.gain.setValueAtTime(0.0001, t)
+  g.gain.exponentialRampToValueAtTime(peak, t + attack)
+  g.gain.exponentialRampToValueAtTime(0.0001, t + dur)
+}
+
+function kick(out, t, v) {
+  const o = ctx.createOscillator()
+  const g = ctx.createGain()
+  o.frequency.setValueAtTime(150, t)
+  o.frequency.exponentialRampToValueAtTime(45, t + 0.12)
+  env(g, t, v, 0.003, 0.28)
+  o.connect(g).connect(out)
+  o.start(t)
+  o.stop(t + 0.3)
+}
+
+function noiseHit(out, t, v, { hp, dur }) {
+  const s = ctx.createBufferSource()
+  s.buffer = noiseBuf
+  const f = ctx.createBiquadFilter()
+  f.type = 'highpass'
+  f.frequency.value = hp
+  const g = ctx.createGain()
+  env(g, t, v, 0.002, dur)
+  s.connect(f).connect(g).connect(out)
+  s.start(t, Math.random() * 0.5)
+  s.stop(t + dur + 0.02)
+}
+
+function snare(out, t, v) {
+  noiseHit(out, t, v, { hp: 1500, dur: 0.16 })
+  const o = ctx.createOscillator()
+  const g = ctx.createGain()
+  o.frequency.setValueAtTime(220, t)
+  o.frequency.exponentialRampToValueAtTime(140, t + 0.08)
+  env(g, t, v * 0.5, 0.002, 0.1)
+  o.connect(g).connect(out)
+  o.start(t)
+  o.stop(t + 0.12)
+}
+
+function voice(out, t, freq, dur, v, { type, cutoff, attack = 0.005, detune = 0 }) {
+  const o = ctx.createOscillator()
+  o.type = type
+  o.frequency.value = freq
+  o.detune.value = detune
+  const f = ctx.createBiquadFilter()
+  f.type = 'lowpass'
+  f.frequency.value = cutoff
+  const g = ctx.createGain()
+  env(g, t, v, attack, dur)
+  o.connect(f).connect(g).connect(out)
+  o.start(t)
+  o.stop(t + dur + 0.05)
+}
+
+// Chord tone by index: 0 = root, wrapping up an octave past the last tone.
+const chordTone = (chord, i) => chord[i % chord.length] + 12 * Math.floor(i / chord.length)
+
+function playStep(song, out, step, t, sixteenth) {
+  const pos = step % 16
+  const chord = song.chords[Math.floor(step / 16) % song.chords.length]
+  const hit = (pattern) => pattern[pos]
+  if (hit(song.kick) !== '.') kick(out, t, hit(song.kick) === 'x' ? 0.55 : 0.3)
+  if (hit(song.snare) !== '.') snare(out, t, hit(song.snare) === 'x' ? 0.22 : 0.1)
+  if (hit(song.hat) !== '.') noiseHit(out, t, hit(song.hat) === 'x' ? 0.07 : 0.035, { hp: 7000, dur: 0.04 })
+  const b = hit(song.bass)
+  if (b !== '.') {
+    voice(out, t, midi(chordTone(chord, +b) - 24), sixteenth * 1.8, 0.2, { type: 'sawtooth', cutoff: 500 })
+  }
+  const a = hit(song.arp)
+  if (a !== '.') {
+    voice(out, t, midi(chordTone(chord, +a) + 12), sixteenth * 1.5, song.arpType === 'square' ? 0.035 : 0.07,
+      { type: song.arpType, cutoff: 3000 })
+  }
+  if (song.pad && pos === 0) {
+    const bar = sixteenth * 16
+    for (const n of chord) {
+      for (const detune of [-7, 7]) {
+        voice(out, t, midi(n), bar * 0.98, song.pad, { type: 'sawtooth', cutoff: 1100, attack: 0.25, detune })
+      }
+    }
+  }
+}
+
+function startSong(name) {
+  const song = SONGS[name]
+  setupMusicBus()
   const out = ctx.createGain()
-  out.connect(musicGain)
-  loopGain = out
+  out.gain.setValueAtTime(0.0001, ctx.currentTime)
+  out.gain.exponentialRampToValueAtTime(1, ctx.currentTime + FADE_IN)
+  out.connect(musicBus)
+  const sixteenth = 60 / song.bpm / 4
   let step = 0
   let next = ctx.currentTime + 0.05
   const fill = () => {
-    // After a long timer stall (hidden tab), skip ahead instead of bunching notes.
+    // After a long timer stall, skip ahead instead of bunching notes up.
     if (next < ctx.currentTime) next = ctx.currentTime + 0.05
     while (next < ctx.currentTime + LOOKAHEAD) {
-      const at = next - ctx.currentTime
-      tone({ freq: loop.arp[step % loop.arp.length], type: loop.type, dur: half * 0.8, vol: 0.05, at, out })
-      if (step % 2 === 0) {
-        tone({ freq: loop.bass[Math.floor(step / 2) % loop.bass.length], type: 'sine', dur: half * 1.8, vol: 0.18, at, out })
-      }
+      playStep(song, out, step, next, sixteenth)
       step++
-      next += half
+      next += sixteenth
     }
   }
   fill()
-  musicTimer = setInterval(fill, 150)
+  playing = { name, out, timer: setInterval(fill, TICK_MS) }
+}
+
+function stopSong() {
+  if (!playing) return
+  const { out, timer } = playing
+  clearInterval(timer)
+  out.gain.cancelScheduledValues(ctx.currentTime)
+  out.gain.setValueAtTime(Math.max(0.0001, out.gain.value), ctx.currentTime)
+  out.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + FADE_OUT)
+  setTimeout(() => out.disconnect(), (FADE_OUT + LOOKAHEAD) * 1000 + 200)
+  playing = null
+}
+
+// Start (or crossfade to) a song. Remembered if audio isn't unlocked yet, and
+// started by unlockAudio() on the next click.
+export function playMusic(name) {
+  wantedSong = SONGS[name] ? name : null
+  syncMusic()
 }
 
 export function stopMusic() {
-  clearInterval(musicTimer)
-  musicTimer = null
-  currentLoop = null
-  if (loopGain && ctx) {
-    const g = loopGain
-    g.gain.setTargetAtTime(0, ctx.currentTime, 0.05)
-    setTimeout(() => g.disconnect(), 400)
+  wantedSong = null
+  syncMusic()
+}
+
+function syncMusic() {
+  if (ctx?.state === 'running' && playing?.name !== wantedSong) {
+    stopSong()
+    if (wantedSong) startSong(wantedSong)
   }
-  loopGain = null
+  for (const fn of musicListeners) fn()
+}
+
+// Dev-only console handle for checking music levels:
+// window.__fakeoutAudio.peak() -> loudest sample of the music in the last ~0.1 s
+function devMeter() {
+  const an = ctx.createAnalyser()
+  an.fftSize = 4096
+  musicGain.connect(an)
+  const buf = new Float32Array(an.fftSize)
+  window.__fakeoutAudio = {
+    state: () => ctx.state,
+    playing: () => playing?.name ?? null,
+    peak: () => {
+      an.getFloatTimeDomainData(buf)
+      return Math.max(...buf.map(Math.abs))
+    },
+  }
 }

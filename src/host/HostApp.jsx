@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from
 import { AnimatePresence, MotionConfig, motion } from 'framer-motion'
 import { createHostTransport, BACKEND } from '../lib/transport/index.js'
 import { HostEngine } from '../engine/hostEngine.js'
-import { unlockAudio, sfx, playMusic, stopMusic, setVolumes } from '../lib/audio.js'
+import { unlockAudio, enableGestureUnlock, sfx, playMusic, stopMusic, songForPhase, setVolumes } from '../lib/audio.js'
 import { narrate, prepareLines, stopNarration } from '../lib/narrator.js'
 import { loadAiVoice, subscribeAiVoice } from '../lib/aiVoice.js'
 import { prefersReducedMotion, MuteButton } from '../components/shared.jsx'
@@ -98,6 +98,9 @@ export default function HostApp() {
 
   // The AI narrator voice downloads in the background (cached after the first
   // time). Once it's ready, or the voice changes, pre-generate the stock lines.
+  // Browsers only allow sound after a click: any click on the TV unlocks it.
+  useEffect(() => enableGestureUnlock(), [])
+
   useEffect(() => {
     loadAiVoice()
     return subscribeAiVoice(() => prepareLines(FIXED_LINES))
@@ -178,8 +181,8 @@ export default function HostApp() {
   const phase = pub?.phase
   const rm = !!pub?.settings?.reducedMotion || prefersReducedMotion()
 
-  // The lobby song plays from the moment the TV opens (start screen and
-  // lobby) and ends the moment the game starts.
+  // The lobby theme plays from the moment the TV opens (start screen and
+  // lobby) and hands over to the game music when the game starts.
   const preGame = !pub || pub.phase === 'LOBBY'
   useEffect(() => {
     setLobbyMusic(preGame)
@@ -191,9 +194,10 @@ export default function HostApp() {
   useEffect(() => {
     if (!pub) return
     if (pub.phase !== 'LOBBY') sfx('whoosh')
-    if (pub.phase === 'LIE_ENTRY') playMusic('chill')
-    else if (pub.phase === 'PICK_TRUTH') playMusic('tense')
-    else stopMusic()
+    // The lobby theme is handled by setLobbyMusic above.
+    const song = songForPhase(pub.phase)
+    if (song) playMusic(song)
+    else if (pub.phase !== 'LOBBY') stopMusic()
     if (!narrating) return
     // Lines that will be needed shortly, generated now so they're on time.
     if (pub.phase === 'REVEAL') {
@@ -301,7 +305,6 @@ export default function HostApp() {
             unlockAudio()
             primeLobbyMusic()
             setNeedsSoundClick(false)
-            if (phase === 'LIE_ENTRY') playMusic('chill')
           }}
         >
           🔊 Click to enable sound
