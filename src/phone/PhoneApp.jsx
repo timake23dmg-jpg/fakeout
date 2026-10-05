@@ -264,6 +264,7 @@ function pickTruthy(prev) {
   if (prev.pick) out.pick = prev.pick
   if (prev.likes?.length) out.likes = prev.likes
   if (prev.bought) out.bought = prev.bought
+  if (prev.keep) out.keep = prev.keep
   return out
 }
 
@@ -513,6 +514,26 @@ function PickTruth({ transport, code, me, state, mine, updateMine }) {
     }
   }
 
+  // Truth Detector: once per game, cuts the options down to the truth + one lie.
+  const [detecting, setDetecting] = useState(false)
+  const detect = async () => {
+    setError(null)
+    setDetecting(true)
+    try {
+      const res = await transport.useLifeline(code, state.questionNo)
+      if (res?.ok) {
+        haptic()
+        updateMine({ keep: res.keep })
+      } else {
+        setError(res?.reason === 'closed' ? 'Too late — time is up!' : res?.reason === 'picked' ? 'You already picked!' : 'Your Truth Detector is used up.')
+      }
+    } catch (err) {
+      setError(err.message)
+    } finally {
+      setDetecting(false)
+    }
+  }
+
   const toggleLike = (optionId) => {
     const on = !mine.likes.includes(optionId)
     updateMine({ likes: on ? [...mine.likes, optionId] : mine.likes.filter((x) => x !== optionId) })
@@ -525,11 +546,22 @@ function PickTruth({ transport, code, me, state, mine, updateMine }) {
         <Countdown transport={transport} state={state} />
         <h2>Which one is the truth?</h2>
         {error && <p className="error">{error}</p>}
+        {mine.keep && <p className="detector-note">🔍 One of these two is the truth!</p>}
         <div className="stack">
-          {options.map((o) => (
-            <button key={o.id} className="btn btn-option btn-block" onClick={() => pick(o.id)}>{o.text}</button>
-          ))}
+          {options.map((o) => {
+            const ruledOut = mine.keep && !mine.keep.includes(o.id)
+            return (
+              <button key={o.id} className={`btn btn-option btn-block ${ruledOut ? 'ruled-out' : ''}`} disabled={ruledOut} onClick={() => pick(o.id)}>
+                {o.text}
+              </button>
+            )
+          })}
         </div>
+        {!mine.keep && !me.lifelineUsed && !me.isAudience && (
+          <button type="button" className="btn btn-ghost btn-block detector-btn" disabled={detecting} onClick={detect}>
+            🔍 Truth Detector <small>once per game: leaves the truth + one lie</small>
+          </button>
+        )}
       </div>
     )
   }

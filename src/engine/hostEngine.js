@@ -30,7 +30,7 @@ export function shuffle(list) {
   return a
 }
 
-const blankStats = () => ({ fooled: 0, truths: 0, likes: 0, gotFooled: 0, lieBuys: 0 })
+const blankStats = () => ({ fooled: 0, truths: 0, likes: 0, gotFooled: 0, lieBuys: 0, lifelineUsed: false })
 
 export function initialState(settings = {}) {
   return {
@@ -216,6 +216,7 @@ export class HostEngine {
           isAudience: !!p.isAudience,
           score: p.isAudience ? 0 : scoreFor(p.id),
           lieBuys: s.scores[p.id]?.stats.lieBuys ?? 0,
+          lifelineUsed: !!s.scores[p.id]?.stats.lifelineUsed,
           connected: this.isOnline(p.id),
         })),
     }
@@ -232,6 +233,7 @@ export class HostEngine {
         pub.options = c.options.map((o) => ({ id: o.id, text: o.text }))
       }
       if (s.phase === 'PICK_TRUTH') pub.picked = Object.keys(c.picks)
+      if (s.phase === 'PICK_TRUTH' || s.phase === 'REVEAL') pub.lifelines = c.lifelines || []
       if (s.phase === 'REVEAL') pub.reveal = c.reveal
       if (s.phase === 'SCOREBOARD') {
         pub.scoreboard = { prev: s.prevScores, deltas: s.lastDeltas, charges: c.reveal?.charges || {} }
@@ -355,6 +357,19 @@ export class HostEngine {
     await this.checkEarly()
   }
 
+  // Truth Detectors used this question (each player gets one per game).
+  recordLifelines(ids = []) {
+    const c = this.s.current
+    if (!c) return
+    c.lifelines ||= []
+    for (const id of ids) {
+      if (c.lifelines.includes(id) || !this.s.scores[id]) continue
+      c.lifelines.push(id)
+      this.s.scores[id].stats.lifelineUsed = true
+      this.markDirty()
+    }
+  }
+
   async pollRoundRows() {
     const s = this.s
     if (s.phase !== 'LIE_ENTRY' && s.phase !== 'PICK_TRUTH') return
@@ -362,6 +377,7 @@ export class HostEngine {
     if (s.phase === 'LIE_ENTRY') {
       for (const l of rows.lies) await this.handleLie({ ...l, questionNo: s.questionNo })
     } else {
+      this.recordLifelines(rows.lifelines)
       for (const p of rows.picks) await this.handlePick({ ...p, questionNo: s.questionNo })
     }
   }
@@ -556,7 +572,8 @@ export class HostEngine {
           deltas[id] = SCORES.truth[m]
           stats(id).truths++
         }
-        truthStep = { optionId: o.id, text: o.text, kind: 'truth', authors: [], pickers, audienceCount, deltas }
+        const detected = (c.lifelines || []).filter((id) => pickers.includes(id))
+        truthStep = { optionId: o.id, text: o.text, kind: 'truth', authors: [], pickers, audienceCount, deltas, detected }
         continue
       }
       if (!all.length) continue // lies nobody picked are skipped
@@ -606,6 +623,7 @@ export class HostEngine {
   async goReveal() {
     const s = this.s
     const rows = await this.t.fetchRoundRows(this.code, s.questionNo)
+    this.recordLifelines(rows.lifelines)
     for (const p of rows.picks) {
       const option = s.current.options.find((o) => o.id === p.optionId)
       if (!s.current.picks[p.playerId] && option && !option.authors.includes(p.playerId)) s.current.picks[p.playerId] = p.optionId

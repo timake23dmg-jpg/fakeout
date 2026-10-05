@@ -109,6 +109,15 @@ async function main() {
     assert.equal(ok(await ana.sb.from('lies').select('player_id').eq('game_code', code).eq('question_no', qn)).length, 1)
     const pick = await until((x) => x.phase === 'PICK_TRUTH')
     assert.ok(!JSON.stringify(pick).includes('isTruth'), 'truth flag must not be public before reveal')
+    if (n === 0) {
+      // Truth Detector: keeps the truth and one other option, once per game.
+      const det = ok(await ana.sb.rpc('use_lifeline', { p_code: code, p_question_no: qn }))
+      const truthId = engine.s.current.options.find((o) => o.isTruth).id
+      assert.ok(det.ok && det.keep.length === 2 && det.keep.includes(truthId), JSON.stringify(det))
+    } else if (n === 1) {
+      const again = ok(await ana.sb.rpc('use_lifeline', { p_code: code, p_question_no: qn }))
+      assert.deepEqual([again.ok, again.reason], [false, 'used'])
+    }
     for (const p of players) {
       const own = `${p.name} lie ${n}`.toLowerCase()
       const opt = pick.options.find((o) => o.text.toLowerCase() !== own)

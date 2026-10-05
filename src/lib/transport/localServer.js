@@ -119,6 +119,7 @@ export class LocalServer {
     this.db.secrets[code].question = q
     this.db.secrets[code].given = []
     this.db.secrets[code].handouts = {}
+    this.db.secrets[code].lifelines = {}
     return JSON.parse(JSON.stringify(q))
   }
 
@@ -137,6 +138,8 @@ export class LocalServer {
       likes: this.db.likes.filter(mine).map((r) => ({ playerId: r.playerId, optionId: r.optionId })),
       // "Lie for me" suggestions handed out this question: { playerId: [text] }
       handouts: g.questionNo === questionNo ? JSON.parse(JSON.stringify(this.db.secrets[code].handouts || {})) : {},
+      // Players who used their Truth Detector this question
+      lifelines: g.questionNo === questionNo ? Object.keys(this.db.secrets[code].lifelines || {}) : [],
     }
   }
 
@@ -226,6 +229,31 @@ export class LocalServer {
     return { ok: true, text: pick, cost }
   }
 
+  // Truth Detector: once per game, before picking, narrows this player's
+  // options to the truth and one lie. Returns { ok, keep: [optionId, optionId] }.
+  useLifeline(userId, code, questionNo) {
+    const g = this.game(code)
+    const p = this.playerFor(userId, g.code)
+    if (!p || p.isAudience) throw new Error('You are not a player in this room')
+    if (g.phase !== 'PICK_TRUTH' || g.questionNo !== questionNo) return { ok: false, reason: 'closed' }
+    const secrets = this.db.secrets[g.code]
+    const me = (g.state.players || []).find((x) => x.id === p.id) || {}
+    if (me.lifelineUsed) return { ok: false, reason: 'used' }
+    const mine = (secrets.lifelines ||= {})
+    if (mine[p.id]) return { ok: true, keep: mine[p.id] }
+    const row = (t) => t.gameCode === g.code && t.questionNo === questionNo && t.playerId === p.id
+    if (this.db.picks.some(row)) return { ok: false, reason: 'picked' }
+    const ownLie = this.db.lies.find(row)?.norm
+    const truthNorm = normalize(secrets.question.answer)
+    const options = g.state.options || []
+    const truth = options.find((o) => normalize(o.text) === truthNorm)
+    const lies = options.filter((o) => o !== truth && normalize(o.text) !== ownLie)
+    if (!truth || !lies.length) return { ok: false, reason: 'closed' }
+    const keep = shuffleCopy([truth.id, pickRandom(lies).id])
+    mine[p.id] = keep
+    return { ok: true, keep }
+  }
+
   submitPick(userId, code, questionNo, optionId) {
     const g = this.game(code)
     const p = this.playerFor(userId, g.code)
@@ -284,5 +312,5 @@ function publicPlayer(p) {
 
 // Methods phones may call over the local channel (everything else is host-only).
 export const PHONE_METHODS = [
-  'joinGame', 'findMyPlayer', 'fetchGame', 'submitLie', 'lieForMe', 'submitPick', 'setLike', 'sendCommand', 'fetchMine',
+  'joinGame', 'findMyPlayer', 'fetchGame', 'submitLie', 'lieForMe', 'submitPick', 'useLifeline', 'setLike', 'sendCommand', 'fetchMine',
 ]

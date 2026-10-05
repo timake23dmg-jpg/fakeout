@@ -3,7 +3,7 @@
 // voice (~60 MB) downloads once and is then kept in the browser's storage.
 //
 // Same messages as tts.worker.js:
-// in:  { type: 'load', voice } | { type: 'generate', id, text, urgent } | { type: 'cancel', id }
+// in:  { type: 'load', voice } | { type: 'generate', id, text, urgent } | { type: 'cancel' | 'bump', id }
 // out: { type: 'progress', pct } | { type: 'ready', device, voice } | { type: 'error', id?, message }
 //      | { type: 'audio', id, audio: Float32Array, sampleRate, ms }
 
@@ -91,10 +91,18 @@ self.onmessage = ({ data }) => {
   if (data.type === 'load') {
     load(data.voice).catch((err) => self.postMessage({ type: 'error', message: String(err?.message || err) }))
   } else if (data.type === 'generate') {
-    if (data.urgent) queue.unshift(data)
-    else queue.push(data)
+    // Lower priority number first (0 = needed now); FIFO within a priority.
+    const priority = data.priority ?? (data.urgent ? 0 : 2)
+    const job = { ...data, priority }
+    const at = queue.findIndex((j) => j.priority > priority)
+    if (at < 0) queue.push(job)
+    else queue.splice(at, 0, job)
     pump()
   } else if (data.type === 'cancel') {
     queue = queue.filter((j) => j.id !== data.id)
+  } else if (data.type === 'bump') {
+    // A line prepared ahead is needed now: move it to the front.
+    const i = queue.findIndex((j) => j.id === data.id)
+    if (i > 0) queue.unshift({ ...queue.splice(i, 1)[0], priority: 0 })
   }
 }

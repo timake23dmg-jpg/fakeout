@@ -45,6 +45,9 @@ create table if not exists game_secrets (
 -- { "<player id>": ["text", ...] }. The host charges for them.
 alter table game_secrets add column if not exists lie_handouts jsonb not null default '{}'::jsonb;
 alter table game_secrets add column if not exists handouts_question_no int;
+-- Truth Detectors used in the current question: { "<player id>": [kept option ids] }
+alter table game_secrets add column if not exists lifelines jsonb not null default '{}'::jsonb;
+alter table game_secrets add column if not exists lifelines_question_no int;
 
 create table if not exists players (
   id uuid primary key default gen_random_uuid(),
@@ -536,6 +539,60 @@ begin
   return jsonb_build_object('ok', true, 'text', v_pick, 'cost', v_cost);
 end; $$;
 
+-- Truth Detector: once per game, before picking, narrows a player's options to
+-- the truth and one lie: { ok, keep: [option id, option id] } or
+-- { ok: false, reason }. "Once per game" is checked against the flag the host
+-- publishes (state.players[].lifelineUsed); the host learns about uses from
+-- game_secrets.lifelines.
+create or replace function use_lifeline(p_code text, p_question_no int)
+returns jsonb language plpgsql security definer set search_path = fakeout, public as $$
+declare
+  g games;
+  p players;
+  s game_secrets;
+  v_truth text;
+  v_lie text;
+  v_own text;
+  v_keep jsonb;
+begin
+  select * into g from games where code = p_code;
+  if not found then raise exception 'Room not found'; end if;
+  select * into p from players where game_code = p_code and user_id = auth.uid() and not is_audience;
+  if not found then raise exception 'You are not a player in this room'; end if;
+  if g.phase <> 'PICK_TRUTH' or g.question_no <> p_question_no then
+    return jsonb_build_object('ok', false, 'reason', 'closed');
+  end if;
+  if exists (select 1 from jsonb_array_elements(coalesce(g.state -> 'players', '[]'::jsonb)) x
+             where x ->> 'id' = p.id::text and coalesce((x ->> 'lifelineUsed')::boolean, false)) then
+    return jsonb_build_object('ok', false, 'reason', 'used');
+  end if;
+  select * into s from game_secrets where code = p_code for update;
+  if s.lifelines_question_no is distinct from p_question_no then
+    s.lifelines := '{}'::jsonb;
+  end if;
+  if s.lifelines ? (p.id::text) then
+    return jsonb_build_object('ok', true, 'keep', s.lifelines -> (p.id::text));
+  end if;
+  if exists (select 1 from picks where game_code = p_code and question_no = p_question_no and player_id = p.id) then
+    return jsonb_build_object('ok', false, 'reason', 'picked');
+  end if;
+
+  select norm into v_own from lies where game_code = p_code and question_no = p_question_no and player_id = p.id;
+  select o ->> 'id' into v_truth from jsonb_array_elements(coalesce(g.state -> 'options', '[]'::jsonb)) o
+  where fakeout_normalize(o ->> 'text') = fakeout_normalize(s.question ->> 'answer') limit 1;
+  select o ->> 'id' into v_lie from jsonb_array_elements(coalesce(g.state -> 'options', '[]'::jsonb)) o
+  where o ->> 'id' is distinct from v_truth and fakeout_normalize(o ->> 'text') is distinct from v_own
+  order by random() limit 1;
+  if v_truth is null or v_lie is null then return jsonb_build_object('ok', false, 'reason', 'closed'); end if;
+
+  v_keep := case when random() < 0.5 then jsonb_build_array(v_truth, v_lie) else jsonb_build_array(v_lie, v_truth) end;
+  update game_secrets set
+    lifelines = jsonb_set(s.lifelines, array[p.id::text], v_keep),
+    lifelines_question_no = p_question_no
+  where code = p_code;
+  return jsonb_build_object('ok', true, 'keep', v_keep);
+end; $$;
+
 create or replace function submit_pick(p_code text, p_question_no int, p_option_id text)
 returns jsonb language plpgsql security definer set search_path = fakeout, public as $$
 declare
@@ -562,11 +619,11 @@ end; $$;
 revoke execute on function create_game(jsonb), join_game(text, text, text, boolean),
   host_set_state(text, text, int, jsonb, int, boolean), host_draw_categories(text, text[]),
   host_draw_question(text, text, boolean, text[]), submit_lie(text, int, text), lie_for_me(text, int),
-  submit_pick(text, int, text) from public, anon;
+  use_lifeline(text, int), submit_pick(text, int, text) from public, anon;
 grant execute on function server_now(), create_game(jsonb), join_game(text, text, text, boolean),
   host_set_state(text, text, int, jsonb, int, boolean), host_draw_categories(text, text[]),
   host_draw_question(text, text, boolean, text[]), submit_lie(text, int, text), lie_for_me(text, int),
-  submit_pick(text, int, text) to authenticated;
+  use_lifeline(text, int), submit_pick(text, int, text) to authenticated;
 
 -- ------------------------------------------------------------- realtime
 

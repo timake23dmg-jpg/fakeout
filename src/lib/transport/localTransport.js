@@ -201,6 +201,7 @@ export function createLocalPlayerTransport({ userId, channelName = CHANNEL }) {
     submitLie: (code, qn, text) => call('submitLie', code, qn, text),
     lieForMe: (code, qn) => call('lieForMe', code, qn),
     submitPick: (code, qn, optionId) => call('submitPick', code, qn, optionId),
+    useLifeline: (code, qn) => call('useLifeline', code, qn),
     setLike: (code, qn, playerId, optionId, on) => call('setLike', code, qn, playerId, optionId, on),
     sendCommand: (code, playerId, cmd, payload) => call('sendCommand', code, playerId, cmd, payload),
     fetchMine: (code, qn, playerId) => call('fetchMine', code, qn, playerId),

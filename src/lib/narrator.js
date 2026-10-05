@@ -1,14 +1,16 @@
-// The game-show narrator on the host (TV) screen. Uses the Kokoro AI voice
-// (aiVoice.js) once it has loaded and passed its speed check, and the
-// browser's built-in text-to-speech before that or as a fallback. Music ducks
-// while it talks.
+// The game-show narrator on the host (TV) screen. Speaks with the AI voice
+// (aiVoice.js). A line is a list of short segments; each is played when its
+// audio is ready, or skipped if it isn't ready in time (everything is on
+// screen anyway). Most segments are generated ahead (see narration.js), so
+// they're instant. The browser's robotic built-in voice is only used if the
+// host picks it in the lobby. Music ducks while the narrator talks.
 //
 // Browser-voice quirks handled here: voices load late, Chrome can drop an
 // utterance spoken right after cancel(), utterances can be garbage-collected
 // mid-sentence, and Chrome's online voices stop after ~15 s unless nudged.
 
 import { audioReady, getVolumes, isMasterMuted, playVoice, setDucked } from './audio.js'
-import { aiVoiceActive, synthesize } from './aiVoice.js'
+import { aiVoiceActive, browserVoiceChosen, synthesize } from './aiVoice.js'
 
 const synth = typeof window !== 'undefined' ? window.speechSynthesis : null
 const live = new Set() // browser utterances in flight (strong refs, see above)
@@ -19,9 +21,10 @@ let voice = null
 
 // AI voice playback: a queue of lines whose audio may still be generating.
 const STALE_MS = 8000 // a line this late is no longer about what's on screen
+const DEFAULT_WAIT = 1500 // how long a segment may keep the narrator waiting for its audio
 let gen = 0 // bumped on every interrupt; loops from older generations exit
 let runningGen = -1
-let aiQueue = [] // { text, audio: Promise, at }
+let aiQueue = [] // { text, audio: Promise, at, maxWait }
 let aiPlaying = null
 
 // Best-sounding English browser voices first; anything English as a fallback.
@@ -125,15 +128,15 @@ async function runAi() {
     const item = aiQueue[0]
     let r = null
     try {
-      r = await item.audio
+      // Not ready in time: skip it (it keeps generating, for next time).
+      r = await Promise.race([item.audio, new Promise((res) => setTimeout(() => res(null), item.maxWait))])
     } catch {
-      // generation failed: fall back to the browser voice for this line
+      // generation failed: skip this segment
     }
     if (gen !== myGen) return
     aiQueue.shift()
-    if (Date.now() - item.at > STALE_MS || isMasterMuted()) continue
-    if (!r) {
-      narrateBrowser(item.text, true)
+    if (!r || Date.now() - item.at > STALE_MS || isMasterMuted()) {
+      if (import.meta.env.DEV && !r) console.debug('[narrator] skipped (not ready):', item.text)
       continue
     }
     if (import.meta.env.DEV) console.debug('[narrator] ai:', item.text)
@@ -150,19 +153,20 @@ async function runAi() {
 
 // ------------------------------------------------------------------- public
 
-// Say a line. By default it interrupts whatever is being said; with
-// { queue: true } it waits for the current line to finish.
-export function narrate(text, { queue = false } = {}) {
-  if (!text) return
+// Say a line: a string or a list of segments. By default it interrupts
+// whatever is being said; with { queue: true } it waits for the current line.
+// `maxWait`: how long each segment may wait for its audio before it's skipped.
+export function narrate(segments, { queue = false, maxWait = DEFAULT_WAIT } = {}) {
+  const parts = (Array.isArray(segments) ? segments : [segments]).filter(Boolean).map(spoken)
+  if (!parts.length) return
   try {
     if (!queue) stopNarration()
-    const line = spoken(text)
     if (aiVoiceActive() && audioReady()) {
-      aiQueue.push({ text: line, audio: synthesize(line, { urgent: true }), at: Date.now() })
+      for (const text of parts) aiQueue.push({ text, audio: synthesize(text, { urgent: true }), at: Date.now(), maxWait })
       updateDuck()
       runAi()
-    } else {
-      narrateBrowser(line, queue)
+    } else if (browserVoiceChosen()) {
+      parts.forEach((text, i) => narrateBrowser(text, queue || i > 0))
     }
   } catch {
     // no speech available: everything is on screen anyway
@@ -170,9 +174,11 @@ export function narrate(text, { queue = false } = {}) {
 }
 
 // Generate lines ahead of time (AI voice only) so they play without delay.
-export function prepareLines(lines) {
+// Generated lines are kept in the browser, so this is instant next time.
+// `priority`: lower is generated sooner (1 = needed soon, 2 = stock lines).
+export function prepareLines(lines, { priority = 2 } = {}) {
   if (!aiVoiceActive()) return
-  for (const text of lines) if (text) synthesize(spoken(text)).catch(() => {})
+  for (const text of lines) if (text) synthesize(spoken(text), { priority }).catch(() => {})
 }
 
 export function stopNarration() {

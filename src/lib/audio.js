@@ -313,7 +313,7 @@ const MUSIC_BOOST = 2 // the songs are written quiet; this matches the lobby son
 let musicBus = null // compressor shared by all songs, into musicGain
 let noiseBuf = null
 let wantedSong = null // what should be playing (kept even before audio is unlocked)
-let playing = null // { name, out, timer }
+let playing = null // { name, out, kind: 'synth' | 'track', stop() }
 const musicListeners = new Set()
 
 // What's audible right now (null while silent or before audio is unlocked).
@@ -425,7 +425,86 @@ function playStep(song, out, step, t, sixteenth) {
   }
 }
 
+// ----------------------------------------------------------- recorded tracks
+// Real recordings replace the procedural songs once they've loaded (the
+// procedural version plays meanwhile, or if loading fails). Each track
+// resumes where it left off, so short phases don't keep restarting it.
+// Music by Kevin MacLeod (incompetech.com), licensed under CC BY 4.0.
+
+const TRACKS = {
+  lobby: 'music/lobby.mp3', // "Monkeys Spinning Monkeys"
+  bounce: 'music/bounce.mp3', // "Local Forecast - Elevator"
+  think: 'music/think.mp3', // "Sneaky Snitch"
+  tense: 'music/tense.mp3', // "Investigations"
+  victory: 'music/victory.mp3', // "Fluffing a Duck"
+}
+const TRACK_LEVEL = 1.6 // matches the procedural songs' loudness
+const fetched = {} // name -> Promise<ArrayBuffer>
+const decoded = {} // name -> { buffer, start, end } (start/end trim the MP3's silent padding)
+const resumeAt = {} // name -> seconds into the track
+
+// Start downloading tracks before they're needed (no sound needed for that).
+export function preloadMusic(names = Object.keys(TRACKS)) {
+  for (const name of names) {
+    if (!TRACKS[name] || fetched[name]) continue
+    fetched[name] = fetch(`${import.meta.env.BASE_URL}${TRACKS[name]}`)
+      .then((r) => (r.ok ? r.arrayBuffer() : Promise.reject(new Error(r.status))))
+    fetched[name].catch(() => {})
+  }
+}
+
+async function decodeTrack(name) {
+  preloadMusic([name])
+  if (decoded[name] !== undefined) return
+  decoded[name] = null // loading
+  try {
+    const buffer = await ctx.decodeAudioData(await fetched[name])
+    const d = buffer.getChannelData(0)
+    let a = 0
+    let b = d.length - 1
+    while (a < b && Math.abs(d[a]) < 0.001) a++
+    while (b > a && Math.abs(d[b]) < 0.001) b--
+    decoded[name] = { buffer, start: a / buffer.sampleRate, end: (b + 1) / buffer.sampleRate }
+    // Swap the procedural stand-in for the real thing.
+    if (playing?.name === name && playing.kind === 'synth') {
+      stopSong()
+      startSong(name)
+    }
+  } catch {
+    // keep the procedural version
+  }
+}
+
+function startTrack(name) {
+  const { buffer, start, end } = decoded[name]
+  const out = ctx.createGain()
+  out.gain.setValueAtTime(0.0001, ctx.currentTime)
+  out.gain.exponentialRampToValueAtTime(TRACK_LEVEL, ctx.currentTime + FADE_IN)
+  out.connect(musicGain)
+  const src = ctx.createBufferSource()
+  src.buffer = buffer
+  src.loop = true
+  src.loopStart = start
+  src.loopEnd = end
+  src.connect(out)
+  const offset = resumeAt[name] ?? start
+  src.start(ctx.currentTime, offset)
+  const startedAt = ctx.currentTime
+  playing = {
+    name, out, kind: 'track',
+    stop: () => {
+      const len = end - start
+      resumeAt[name] = start + ((offset - start + ctx.currentTime - startedAt) % len)
+      src.stop(ctx.currentTime + FADE_OUT + 0.1)
+    },
+  }
+}
+
 function startSong(name) {
+  if (TRACKS[name]) {
+    if (decoded[name]) return startTrack(name)
+    decodeTrack(name)
+  }
   const song = SONGS[name]
   setupMusicBus()
   const out = ctx.createGain()
@@ -445,13 +524,14 @@ function startSong(name) {
     }
   }
   fill()
-  playing = { name, out, timer: setInterval(fill, TICK_MS) }
+  const timer = setInterval(fill, TICK_MS)
+  playing = { name, out, kind: 'synth', stop: () => clearInterval(timer) }
 }
 
 function stopSong() {
   if (!playing) return
-  const { out, timer } = playing
-  clearInterval(timer)
+  const { out } = playing
+  playing.stop()
   out.gain.cancelScheduledValues(ctx.currentTime)
   out.gain.setValueAtTime(Math.max(0.0001, out.gain.value), ctx.currentTime)
   out.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + FADE_OUT)

@@ -234,3 +234,47 @@ test('a TV avoids questions it played recently, even in a new room', () => {
   const cats = server.drawCategories('host', code, exclude)
   assert.equal(cats.length, 3)
 })
+
+test('Truth Detector: once per game, keeps the truth and one lie', async () => {
+  const { server, engine, code, players } = await setup(['Ana', 'Ben', 'Cat'])
+  const [ana, ben, cat] = players
+  server.sendCommand(ana.userId, code, ana.id, 'start')
+  await until(engine, (s) => s.phase === 'INTRO')
+  server.sendCommand(ana.userId, code, ana.id, 'skipIntro')
+  for (let q = 0; q < 2; q++) {
+    const s = await until(engine, (x) => x.phase === 'CATEGORY_PICK', 20000)
+    const picker = players.find((p) => p.id === s.pickerId)
+    server.sendCommand(picker.userId, code, picker.id, 'pickCategory', { category: s.categoryOptions[0] })
+    const { questionNo: qn } = await until(engine, (x) => x.phase === 'LIE_ENTRY')
+    for (const p of players) server.submitLie(p.userId, code, qn, `zz ${p.name} ${q}`)
+    await until(engine, (x) => x.phase === 'PICK_TRUTH')
+    const truth = engine.s.current.options.find((o) => o.isTruth)
+    const res = server.useLifeline(ana.userId, code, qn)
+    if (q === 0) {
+      assert.ok(res.ok, JSON.stringify(res))
+      assert.equal(res.keep.length, 2)
+      assert.ok(res.keep.includes(truth.id))
+      const own = engine.s.current.options.find((o) => o.authors.includes(ana.id))
+      assert.ok(!res.keep.includes(own.id), 'never keeps your own lie')
+      assert.deepEqual(server.useLifeline(ana.userId, code, qn).keep, res.keep, 'asking again gives the same two')
+      server.submitPick(ana.userId, code, qn, truth.id)
+      server.submitPick(ben.userId, code, qn, truth.id)
+      server.submitPick(cat.userId, code, qn, truth.id)
+      const rev = await until(engine, (x) => x.phase === 'REVEAL')
+      assert.deepEqual(rev.reveal.steps.at(-1).detected, [ana.id])
+      assert.equal(rev.players.find((p) => p.id === ana.id).lifelineUsed, true)
+    } else {
+      assert.deepEqual([res.ok, res.reason], [false, 'used'], 'only once per game')
+      assert.ok(server.useLifeline(ben.userId, code, qn).ok, 'Ben still has his')
+    }
+  }
+  engine.stop()
+})
+
+test('every phone transport method is reachable through the demo channel', async () => {
+  const { PHONE_METHODS } = await import('../src/lib/transport/localServer.js')
+  const src = readFileSync(new URL('../src/lib/transport/localTransport.js', import.meta.url), 'utf8')
+  const called = [...src.matchAll(/call\('(\w+)'/g)].map((m) => m[1])
+  assert.ok(called.includes('useLifeline'))
+  for (const m of called) assert.ok(PHONE_METHODS.includes(m), `${m} is missing from PHONE_METHODS`)
+})

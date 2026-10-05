@@ -168,7 +168,7 @@ export function createSupabaseHostTransport({ url, anonKey }) {
       const q = (table, cols) => supabase.from(table).select(cols).eq('game_code', code).eq('question_no', questionNo)
       const [lies, picks, likes, secrets] = await Promise.all([
         q('lies', 'player_id, text'), q('picks', 'player_id, option_id'), q('likes', 'player_id, option_id'),
-        supabase.from('game_secrets').select('lie_handouts, handouts_question_no').eq('code', code).maybeSingle(),
+        supabase.from('game_secrets').select('lie_handouts, handouts_question_no, lifelines, lifelines_question_no').eq('code', code).maybeSingle(),
       ])
       const sec = unwrap(secrets)
       return {
@@ -177,6 +177,8 @@ export function createSupabaseHostTransport({ url, anonKey }) {
         likes: unwrap(likes).map((r) => ({ playerId: r.player_id, optionId: r.option_id })),
         // "Lie for me" suggestions handed out this question: { playerId: [text] }
         handouts: sec?.handouts_question_no === questionNo ? sec.lie_handouts || {} : {},
+        // Players who used their Truth Detector this question
+        lifelines: sec?.lifelines_question_no === questionNo ? Object.keys(sec.lifelines || {}) : [],
       }
     },
   }
@@ -233,6 +235,9 @@ export function createSupabasePlayerTransport({ url, anonKey }) {
     },
     async lieForMe(code, qn) {
       return unwrap(await supabase.rpc('lie_for_me', { p_code: code, p_question_no: qn }))
+    },
+    async useLifeline(code, qn) {
+      return unwrap(await supabase.rpc('use_lifeline', { p_code: code, p_question_no: qn }))
     },
     async submitPick(code, qn, optionId) {
       return unwrap(await supabase.rpc('submit_pick', { p_code: code, p_question_no: qn, p_option_id: optionId }))

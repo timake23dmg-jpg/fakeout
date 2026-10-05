@@ -72,6 +72,18 @@ The questions live in `src/data/questions.json`. After editing it, run
 `npm run gen:questions` to regenerate `supabase/questions.sql`, then re-run
 that file in Supabase. As the spec says, spot-check each fact before launch.
 
+## Sound and voice
+
+- **Music:** recorded tracks in `public/music/`, one per part of the game (see
+  `TRACKS` in `src/lib/audio.js`), with procedural stand-ins while they load.
+  Music by Kevin MacLeod (incompetech.com), licensed under
+  [Creative Commons: By Attribution 4.0](https://creativecommons.org/licenses/by/4.0/);
+  the credit is shown on the start screens and lobby.
+- **Host voice:** the Kokoro AI voice, running in the browser. It's too slow on
+  many computers to speak on the fly, so the host's lines are generated ahead
+  (`src/host/narration.js`) and saved in the browser; questions are only read
+  aloud on computers fast enough to voice them in time.
+
 ## Tests
 
 `npm test` runs the lie-validation rules and several full simulated games

@@ -810,3 +810,11 @@ code { background: var(--card); border: 2px solid var(--ink); padding: 1px 6px; 
 .lie-buy { display: flex; flex-direction: column; align-items: center; gap: 2px; }
 .lie-buy small { font-size: 13px; font-weight: 700; opacity: 0.8; }
 .lie-spent { margin: 0; text-align: center; font-size: 14px; font-weight: 800; color: #c2185b; }
+/* Truth Detector */
+.detector-btn { display: flex; flex-direction: column; align-items: center; gap: 2px; margin-top: 6px; }
+.detector-btn small { font-size: 13px; font-weight: 700; opacity: 0.8; }
+.detector-note { margin: 0; text-align: center; font-weight: 900; }
+.btn-option.ruled-out { opacity: 0.35; text-decoration: line-through; }
+.detector-badge { font-size: 0.8em; margin-left: 4px; }
+.music-credit { margin: 8px 0 0; font-size: 13px; font-weight: 600; opacity: 0.6; text-align: center; }
+.music-credit a { color: inherit; }

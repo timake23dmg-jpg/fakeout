@@ -73,6 +73,7 @@ function Landing() {
           Add Supabase keys to <code>.env</code> to play across devices.
         </p>
       )}
+      <p className="music-credit">Music: Kevin MacLeod (incompetech.com), CC BY 4.0</p>
     </main>
   )
 }

@@ -7,6 +7,7 @@ import { sfx, setVolumes, getVolumes } from '../lib/audio.js'
 import { narrate } from '../lib/narrator.js'
 import { AUTO, BROWSER_VOICE, VOICE_GROUPS, getAiVoiceState, setVoiceChoice, subscribeAiVoice } from '../lib/aiVoice.js'
 import { revealLines, winnerLines, awardLine, THANKS_LINE } from './narration.js'
+import { revealContext } from './revealContext.js'
 import { TIMERS, MIN_PLAYERS, SHORT_GAME_MIN_PLAYERS } from '../engine/constants.js'
 
 const spring = { type: 'spring', stiffness: 420, damping: 22 }
@@ -38,14 +39,17 @@ function TopBar({ pub, serverNow, label }) {
   )
 }
 
-function AvatarRow({ pub, doneIds = [] }) {
+function AvatarRow({ pub, doneIds = [], detectorIds = [] }) {
   const done = new Set(doneIds)
   return (
     <div className="avatar-row">
       {gamePlayers(pub).map((p) => (
         <div key={p.id} className={`avatar-chip ${p.connected ? '' : 'offline'}`}>
           <Avatar player={p} size={84} done={done.has(p.id)} />
-          <span className="chip-name">{p.name}</span>
+          <span className="chip-name">
+            {p.name}
+            {detectorIds.includes(p.id) && <span className="detector-badge" title="Used the Truth Detector">🔍</span>}
+          </span>
         </div>
       ))}
     </div>
@@ -131,6 +135,7 @@ export function LobbyScreen({ pub, code, engine, joinUrl, backend }) {
           <span className="hint">
             {canStart ? 'Or the VIP can start from their phone.' : `Need at least ${MIN_PLAYERS} players (3+ recommended).`}
           </span>
+          <p className="music-credit">Music: Kevin MacLeod (incompetech.com), CC BY 4.0</p>
         </div>
       </div>
     </div>
@@ -145,7 +150,7 @@ function VoicePicker() {
       <label className="slider">
         Narrator voice
         <select value={ai.choice} onChange={(e) => setVoiceChoice(e.target.value)}>
-          <option value={AUTO}>Auto (best for this computer)</option>
+          <option value={AUTO}>Auto (Heart, natural voice)</option>
           {VOICE_GROUPS.map((g) => (
             <optgroup key={g.engine} label={g.label}>
               {g.voices.map((v) => <option key={v.id} value={`${g.engine}:${v.id}`}>{v.label}</option>)}
@@ -153,7 +158,7 @@ function VoicePicker() {
           ))}
           <option value={BROWSER_VOICE}>Browser voice (robotic)</option>
         </select>
-        <button type="button" className="btn btn-ghost voice-test" onClick={() => narrate("Hi! I'm your Fakeout host. Let's play!")}>▶ Test</button>
+        <button type="button" className="btn btn-ghost voice-test" onClick={() => narrate("Hi! I'm your Fakeout host. Let's play!", { maxWait: 20000 })}>▶ Test</button>
       </label>
       {ai.text && <span className={`voice-status ${ai.tone}`}>{ai.text}</span>}
     </div>
@@ -333,7 +338,7 @@ export function PickTruthScreen({ pub, serverNow, rm }) {
           </motion.div>
         ))}
       </div>
-      <AvatarRow pub={pub} doneIds={pub.picked} />
+      <AvatarRow pub={pub} doneIds={pub.picked} detectorIds={pub.lifelines} />
     </div>
   )
 }
@@ -360,6 +365,7 @@ export function RevealScreen({ pub, serverNow, rm }) {
             elapsed={elapsed - step.at}
             players={byId(pub.players)}
             nobodyFound={pub.reveal.nobodyFound}
+            context={revealContext(pub)}
             rm={rm}
             narrating={pub.settings?.tts !== false}
           />
@@ -369,7 +375,7 @@ export function RevealScreen({ pub, serverNow, rm }) {
   )
 }
 
-function RevealStep({ step, elapsed, players, nobodyFound, rm, narrating }) {
+function RevealStep({ step, elapsed, players, nobodyFound, context, rm, narrating }) {
   const fire = useConfetti(rm)
   const isTruth = step.kind === 'truth'
   const verdictAt = isTruth ? 1000 : 1500
@@ -383,7 +389,7 @@ function RevealStep({ step, elapsed, players, nobodyFound, rm, narrating }) {
     }
   }
 
-  const lines = narrating ? revealLines(step, players, nobodyFound) : {}
+  const lines = useMemo(() => (narrating ? revealLines(step, players, nobodyFound, context) : {}), [step.optionId])
   useEffect(() => {
     once('start', () => {
       if (isTruth) nobodyFound || sfx('drumroll')

@@ -2,12 +2,15 @@ import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from
 import { AnimatePresence, MotionConfig, motion } from 'framer-motion'
 import { createHostTransport, BACKEND } from '../lib/transport/index.js'
 import { HostEngine } from '../engine/hostEngine.js'
-import { unlockAudio, enableGestureUnlock, sfx, playMusic, stopMusic, songForPhase, setVolumes } from '../lib/audio.js'
+import { unlockAudio, enableGestureUnlock, preloadMusic, sfx, playMusic, stopMusic, songForPhase, setVolumes } from '../lib/audio.js'
 import { narrate, prepareLines, stopNarration } from '../lib/narrator.js'
-import { loadAiVoice, subscribeAiVoice } from '../lib/aiVoice.js'
+import { loadAiVoice, subscribeAiVoice, voiceIsLive } from '../lib/aiVoice.js'
 import { prefersReducedMotion, MuteButton } from '../components/shared.jsx'
 import { setLobbyMusic, primeLobbyMusic } from '../lib/lobbyMusic.js'
-import { phaseLine, revealLines, winnerLines, awardLine, FIXED_LINES, TEN_SECONDS } from './narration.js'
+import {
+  phaseLine, questionLine, answerLine, revealLines, winnerLines, awardLine, lifelineLine, tenSecondsLine, playerLines, FIXED_LINES,
+} from './narration.js'
+import { revealContext } from './revealContext.js'
 import {
   LobbyScreen, IntroScreen, RoundTitleScreen, CategoryPickScreen, QuestionScreen, LieEntryScreen,
   PickTruthScreen, RevealScreen, ScoreboardScreen, WinnerScreen, AwardsScreen,
@@ -96,15 +99,30 @@ export default function HostApp() {
     await engine.start()
   }, [])
 
-  // The AI narrator voice downloads in the background (cached after the first
-  // time). Once it's ready, or the voice changes, pre-generate the stock lines.
   // Browsers only allow sound after a click: any click on the TV unlocks it.
-  useEffect(() => enableGestureUnlock(), [])
+  useEffect(() => {
+    preloadMusic()
+    return enableGestureUnlock()
+  }, [])
 
+  // The AI host voice downloads in the background (kept after the first time).
+  // Once it's ready, or the voice changes, the host's lines are generated
+  // ahead: stock lines first, then each player's name lines.
+  const namesKey = (pub?.players || []).filter((p) => !p.isAudience).map((p) => p.name).join('|')
+  const namesRef = useRef([])
+  namesRef.current = namesKey ? namesKey.split('|') : []
   useEffect(() => {
     loadAiVoice()
-    return subscribeAiVoice(() => prepareLines(FIXED_LINES))
+    const prepareAll = () => {
+      prepareLines(FIXED_LINES)
+      for (const name of namesRef.current) prepareLines(playerLines(name), { priority: 1 })
+    }
+    prepareAll()
+    return subscribeAiVoice(prepareAll)
   }, [])
+  useEffect(() => {
+    for (const name of namesRef.current) prepareLines(playerLines(name), { priority: 1 })
+  }, [namesKey])
 
   useEffect(() => {
     loadVolumes()
@@ -200,23 +218,47 @@ export default function HostApp() {
     else if (pub.phase !== 'LOBBY') stopMusic()
     if (!narrating) return
     // Lines that will be needed shortly, generated now so they're on time.
-    if (pub.phase === 'REVEAL') {
+    if (pub.phase === 'QUESTION') {
+      // The answer is said at the reveal: start on it now (only the TV knows it).
+      const answer = engineRef.current?.s.current?.question?.answer
+      if (answer) prepareLines([answerLine(answer)], { priority: 1 })
+    } else if (pub.phase === 'REVEAL') {
       const players = Object.fromEntries(pub.players.map((p) => [p.id, p]))
       for (const step of pub.reveal.steps) {
-        const l = revealLines(step, players, pub.reveal.nobodyFound)
-        prepareLines([l.start, l.verdict])
+        const l = revealLines(step, players, pub.reveal.nobodyFound, revealContext(pub))
+        prepareLines([...l.start, ...l.verdict], { priority: 1 })
       }
     } else if (pub.phase === 'WINNER') {
       const players = Object.fromEntries(pub.players.map((p) => [p.id, p]))
       const winners = (pub.winners || []).map((id) => players[id]).filter(Boolean)
-      if (winners.length) prepareLines([winnerLines(winners).verdict])
-      prepareLines((pub.awards || []).map((a) => awardLine(a, players)))
+      if (winners.length) prepareLines(winnerLines(winners).verdict, { priority: 1 })
+      prepareLines((pub.awards || []).flatMap((a) => awardLine(a, players)), { priority: 1 })
     }
-    const line = phaseLine(pub, { code })
+    if (pub.phase === 'QUESTION') {
+      // Read the question only on computers fast enough to voice it in time.
+      if (voiceIsLive()) narrate(questionLine(pub), { maxWait: 2500 })
+      else stopNarration()
+      return
+    }
+    const line = phaseLine(pub)
     // The lie prompt waits for the question to finish being read.
-    if (line) narrate(line, { queue: pub.phase === 'LIE_ENTRY' })
+    if (line.length) narrate(line, { queue: pub.phase === 'LIE_ENTRY' })
     else if (pub.phase !== 'REVEAL' && pub.phase !== 'WINNER' && pub.phase !== 'AWARDS') stopNarration()
   }, [phaseKey])
+
+  // The host calls out each Truth Detector as it's used.
+  const announced = useRef(new Set())
+  const lifelineKey = (pub?.lifelines || []).join(',')
+  useEffect(() => {
+    if (!pub || pub.phase !== 'PICK_TRUTH' || !narrating) return
+    for (const id of pub.lifelines || []) {
+      const key = `${pub.questionNo}:${id}`
+      if (announced.current.has(key)) continue
+      announced.current.add(key)
+      const name = pub.players.find((p) => p.id === id)?.name
+      if (name) narrate(lifelineLine(name), { queue: true })
+    }
+  }, [lifelineKey])
 
   // "Ten seconds left!" while players are still writing or picking.
   const waitingOn = pub?.phase === 'LIE_ENTRY' ? pub.submitted : pub?.phase === 'PICK_TRUTH' ? pub.picked : null
@@ -225,7 +267,7 @@ export default function HostApp() {
     if (!narrating || !waitingOn || allIn || pub.deadline == null) return
     const ms = pub.deadline - 10000 - transport.serverNow()
     if (ms < 0) return
-    const id = setTimeout(() => narrate(TEN_SECONDS), ms)
+    const id = setTimeout(() => narrate(tenSecondsLine()), ms)
     return () => clearTimeout(id)
   }, [phaseKey, allIn, narrating])
 
@@ -248,6 +290,7 @@ export default function HostApp() {
           {transport ? (busy ? 'Creating room…' : '📺 Create a room') : 'Connecting…'}
         </button>
         <p className="hint">This screen is the shared TV. Players join on their phones.</p>
+        <p className="music-credit">Music: Kevin MacLeod (incompetech.com), CC BY 4.0</p>
         <MuteButton className="host" onGesture={unlockAudio} />
         {error && <p className="error">{error}</p>}
       </div>

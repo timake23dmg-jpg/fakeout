@@ -2,7 +2,7 @@
 // stutters the TV's animations. The model (~90-330 MB depending on device) is
 // downloaded from Hugging Face once and then served from the browser cache.
 //
-// in:  { type: 'load' } | { type: 'generate', id, text, voice, speed } | { type: 'cancel', id }
+// in:  { type: 'load', device? } | { type: 'generate', id, text, voice, speed, urgent } | { type: 'cancel' | 'bump', id }
 // out: { type: 'progress', pct } | { type: 'ready', device } | { type: 'error', id?, message }
 //      | { type: 'audio', id, audio: Float32Array, sampleRate, ms }
 
@@ -21,10 +21,10 @@ async function hasWebGPU() {
   }
 }
 
-async function load() {
+async function load(forceDevice) {
   // WebGPU (graphics card) is fast but wants the full-precision model; the
   // CPU fallback uses the smaller 8-bit one.
-  const device = (await hasWebGPU()) ? 'webgpu' : 'wasm'
+  const device = forceDevice || ((await hasWebGPU()) ? 'webgpu' : 'wasm')
   const files = new Map()
   let lastPct = -1
   tts = await KokoroTTS.from_pretrained(MODEL, {
@@ -69,13 +69,21 @@ async function pump() {
 
 self.onmessage = ({ data }) => {
   if (data.type === 'load') {
-    load().then(pump).catch((err) => self.postMessage({ type: 'error', message: String(err?.message || err) }))
+    load(data.device).then(pump).catch((err) => self.postMessage({ type: 'error', message: String(err?.message || err) }))
   } else if (data.type === 'generate') {
     // Newest requests first: a line for what's on screen now beats a warm-up.
-    if (data.urgent) queue.unshift(data)
-    else queue.push(data)
+    // Lower priority number first (0 = needed now); FIFO within a priority.
+    const priority = data.priority ?? (data.urgent ? 0 : 2)
+    const job = { ...data, priority }
+    const at = queue.findIndex((j) => j.priority > priority)
+    if (at < 0) queue.push(job)
+    else queue.splice(at, 0, job)
     pump()
   } else if (data.type === 'cancel') {
     queue = queue.filter((j) => j.id !== data.id)
+  } else if (data.type === 'bump') {
+    // A line prepared ahead is needed now: move it to the front.
+    const i = queue.findIndex((j) => j.id === data.id)
+    if (i > 0) queue.unshift({ ...queue.splice(i, 1)[0], priority: 0 })
   }
 }
