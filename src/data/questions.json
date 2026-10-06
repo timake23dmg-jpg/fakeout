@@ -6161,5 +6161,711 @@
       "gardening"
     ],
     "isFinal": true
+  },
+  {
+    "id": "q340",
+    "category": "British TV",
+    "prompt": "Doctor Who first aired on the BBC in ______.",
+    "answer": "1963",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "1958",
+      "1966",
+      "1971",
+      "1980",
+      "1955"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q341",
+    "category": "British TV",
+    "prompt": "The TARDIS stands for \"Time And Relative ______ In Space\".",
+    "answer": "Dimension",
+    "alternateSpellings": [
+      "Dimensions"
+    ],
+    "suggestedLies": [
+      "Distance",
+      "Displacement",
+      "Destination",
+      "Drift",
+      "Direction"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q342",
+    "category": "British TV",
+    "prompt": "Coronation Street is set in the fictional town of ______.",
+    "answer": "Weatherfield",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "Walford",
+      "Bramford",
+      "Fairhaven",
+      "Kingsmere",
+      "Ashworth"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q343",
+    "category": "British TV",
+    "prompt": "EastEnders is set in the fictional London borough of ______.",
+    "answer": "Walford",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "Weatherfield",
+      "Bramley",
+      "Kingsgate",
+      "Riverton",
+      "Hollins"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q344",
+    "category": "British TV",
+    "prompt": "Blue Peter is named after a ______ that ships fly when they're about to leave port.",
+    "answer": "flag",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "sail",
+      "whistle",
+      "lantern",
+      "bell",
+      "bunting"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q345",
+    "category": "British TV",
+    "prompt": "In Only Fools and Horses, Del Boy's company is Trotters Independent ______.",
+    "answer": "Traders",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "Dealers",
+      "Merchants",
+      "Supplies",
+      "Ventures",
+      "Enterprises"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q346",
+    "category": "British TV",
+    "prompt": "Fawlty Towers made only ______ episodes.",
+    "answer": "12",
+    "alternateSpellings": [
+      "twelve"
+    ],
+    "suggestedLies": [
+      "6",
+      "18",
+      "24",
+      "40",
+      "9"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q347",
+    "category": "British TV",
+    "prompt": "Countdown was the very first programme shown on ______.",
+    "answer": "Channel 4",
+    "alternateSpellings": [
+      "Channel Four"
+    ],
+    "suggestedLies": [
+      "BBC Two",
+      "ITV",
+      "Sky One",
+      "Granada",
+      "BBC Three"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q348",
+    "category": "British TV",
+    "prompt": "Wallace's favourite cheese is ______.",
+    "answer": "Wensleydale",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "Cheddar",
+      "Stilton",
+      "Red Leicester",
+      "Double Gloucester",
+      "Caerphilly"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q349",
+    "category": "British TV",
+    "prompt": "The Wombles live on ______ Common.",
+    "answer": "Wimbledon",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "Clapham",
+      "Hampstead",
+      "Ealing",
+      "Tooting",
+      "Streatham"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q350",
+    "category": "British TV",
+    "prompt": "Postman Pat's black and white cat is called ______.",
+    "answer": "Jess",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "Tess",
+      "Jake",
+      "Ginger",
+      "Mittens",
+      "Smudge"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q351",
+    "category": "British Comedy",
+    "prompt": "Monty Python's famous dead parrot was a Norwegian ______.",
+    "answer": "Blue",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "Red",
+      "Green",
+      "Grey",
+      "Gold",
+      "Crested"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q352",
+    "category": "British Comedy",
+    "prompt": "In Monty Python, nobody expects the Spanish ______.",
+    "answer": "Inquisition",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "Armada",
+      "Ambassador",
+      "Flu",
+      "Omelette",
+      "Archer"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q353",
+    "category": "British Comedy",
+    "prompt": "The word \"spam\" for junk email comes from a Monty Python sketch full of singing ______.",
+    "answer": "Vikings",
+    "alternateSpellings": [
+      "Viking"
+    ],
+    "suggestedLies": [
+      "monks",
+      "pirates",
+      "nuns",
+      "miners",
+      "sailors"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q354",
+    "category": "British Comedy",
+    "prompt": "The Goon Show starred Spike Milligan, Harry Secombe and Peter ______.",
+    "answer": "Sellers",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "Cook",
+      "Ustinov",
+      "Cushing",
+      "Sallis",
+      "Vaughan"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q355",
+    "category": "British Comedy",
+    "prompt": "Spike Milligan's gravestone says, in Irish, \"I told you I was ______\".",
+    "answer": "ill",
+    "alternateSpellings": [
+      "sick"
+    ],
+    "suggestedLies": [
+      "right",
+      "tired",
+      "famous",
+      "bored",
+      "Irish"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q356",
+    "category": "British Comedy",
+    "prompt": "The Two Ronnies' \"Four Candles\" sketch is about a customer who wants fork ______.",
+    "answer": "handles",
+    "alternateSpellings": [
+      "handle"
+    ],
+    "suggestedLies": [
+      "lifts",
+      "spoons",
+      "knobs",
+      "picks",
+      "pegs"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q357",
+    "category": "British Comedy",
+    "prompt": "Eric Morecambe told André Previn he was playing all the right notes, but not necessarily in the right ______.",
+    "answer": "order",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "key",
+      "tune",
+      "time",
+      "place",
+      "piano"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q358",
+    "category": "British Comedy",
+    "prompt": "Mr. Bean's famous Mini is ______.",
+    "answer": "green",
+    "alternateSpellings": [
+      "lime green",
+      "citron green"
+    ],
+    "suggestedLies": [
+      "red",
+      "yellow",
+      "blue",
+      "purple",
+      "white"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q359",
+    "category": "Only in Britain",
+    "prompt": "Every year in Gloucestershire, people chase a wheel of ______ down Cooper's Hill.",
+    "answer": "cheese",
+    "alternateSpellings": [
+      "Double Gloucester",
+      "Double Gloucester cheese"
+    ],
+    "suggestedLies": [
+      "bread",
+      "pork pie",
+      "pudding",
+      "ham",
+      "butter"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q360",
+    "category": "Only in Britain",
+    "prompt": "A Welsh town hosts the World ______ Snorkelling Championships.",
+    "answer": "Bog",
+    "alternateSpellings": [
+      "Peat Bog"
+    ],
+    "suggestedLies": [
+      "Mud",
+      "Puddle",
+      "Swamp",
+      "Ditch",
+      "Pond"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q361",
+    "category": "Only in Britain",
+    "prompt": "Derbyshire hosts the World ______ Wrestling Championships.",
+    "answer": "Toe",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "Thumb",
+      "Ear",
+      "Finger",
+      "Nose",
+      "Eyebrow"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q362",
+    "category": "Only in Britain",
+    "prompt": "Lancashire hosts the World ______ Wrestling Championships.",
+    "answer": "Gravy",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "Custard",
+      "Jelly",
+      "Porridge",
+      "Mud",
+      "Trifle"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q363",
+    "category": "Only in Britain",
+    "prompt": "Cumbria's Egremont Crab Fair hosts the World ______ Championships, pulling faces through a horse collar.",
+    "answer": "Gurning",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "Grimacing",
+      "Frowning",
+      "Pouting",
+      "Scowling",
+      "Sneering"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q364",
+    "category": "Only in Britain",
+    "prompt": "In Ottery St Mary, people run through the streets carrying burning ______.",
+    "answer": "tar barrels",
+    "alternateSpellings": [
+      "tar barrel",
+      "barrels"
+    ],
+    "suggestedLies": [
+      "hay bales",
+      "pumpkins",
+      "wheels",
+      "logs",
+      "broomsticks"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q365",
+    "category": "Only in Britain",
+    "prompt": "Shetland's Up Helly Aa fire festival ends with burning a replica Viking ______.",
+    "answer": "longship",
+    "alternateSpellings": [
+      "ship",
+      "galley",
+      "boat",
+      "Viking ship"
+    ],
+    "suggestedLies": [
+      "helmet",
+      "chieftain",
+      "longhouse",
+      "dragon",
+      "throne"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q366",
+    "category": "Only in Britain",
+    "prompt": "\"Swan Upping\" is a yearly count of the swans on the River ______.",
+    "answer": "Thames",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "Severn",
+      "Avon",
+      "Cam",
+      "Trent",
+      "Wye"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q367",
+    "category": "Only in Britain",
+    "prompt": "A Cambridgeshire village hosts the World Pea ______ Championships.",
+    "answer": "Shooting",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "Throwing",
+      "Eating",
+      "Rolling",
+      "Balancing",
+      "Spitting"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q368",
+    "category": "British History",
+    "prompt": "The Great Fire of London started in a ______ on Pudding Lane.",
+    "answer": "bakery",
+    "alternateSpellings": [
+      "baker's",
+      "bakehouse",
+      "bakers"
+    ],
+    "suggestedLies": [
+      "tavern",
+      "candle shop",
+      "stable",
+      "brewery",
+      "butcher's"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q369",
+    "category": "British History",
+    "prompt": "During the Great Fire of London, Samuel Pepys buried his ______ in the garden.",
+    "answer": "Parmesan",
+    "alternateSpellings": [
+      "Parmesan cheese",
+      "cheese"
+    ],
+    "suggestedLies": [
+      "jewels",
+      "dog",
+      "hats",
+      "pies",
+      "spoons"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q370",
+    "category": "British History",
+    "prompt": "In 1950, Scottish students stole the Stone of ______ from Westminster Abbey.",
+    "answer": "Destiny",
+    "alternateSpellings": [
+      "Scone"
+    ],
+    "suggestedLies": [
+      "Fate",
+      "Kings",
+      "Power",
+      "Truth",
+      "Glory"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q371",
+    "category": "British History",
+    "prompt": "In the 1200s, a polar bear kept at the Tower of London went fishing in the ______.",
+    "answer": "Thames",
+    "alternateSpellings": [
+      "River Thames"
+    ],
+    "suggestedLies": [
+      "moat",
+      "Serpentine",
+      "sea",
+      "Tower pond",
+      "well"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q372",
+    "category": "British History",
+    "prompt": "\"Big Ben\" is really the name of the tower's ______.",
+    "answer": "bell",
+    "alternateSpellings": [
+      "great bell"
+    ],
+    "suggestedLies": [
+      "clock",
+      "clock face",
+      "spire",
+      "chime",
+      "keeper"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q373",
+    "category": "British History",
+    "prompt": "When Britain changed calendars in 1752, it skipped ______ days.",
+    "answer": "11",
+    "alternateSpellings": [
+      "eleven"
+    ],
+    "suggestedLies": [
+      "7",
+      "3",
+      "14",
+      "30",
+      "10"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q374",
+    "category": "British History",
+    "prompt": "The old Houses of Parliament burned down in 1834 after workers burned a pile of old wooden ______.",
+    "answer": "tally sticks",
+    "alternateSpellings": [
+      "tallies"
+    ],
+    "suggestedLies": [
+      "chairs",
+      "ballot boxes",
+      "maps",
+      "ledgers",
+      "benches"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q375",
+    "category": "British History",
+    "prompt": "The first widely reported railway death, in 1830, was an MP named William ______.",
+    "answer": "Huskisson",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "Gladstone",
+      "Peel",
+      "Walpole",
+      "Pitt",
+      "Wilberforce"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q376",
+    "category": "British Grub",
+    "prompt": "Marmite is made from leftover ______ from beer brewing.",
+    "answer": "yeast",
+    "alternateSpellings": [
+      "brewer's yeast"
+    ],
+    "suggestedLies": [
+      "barley",
+      "hops",
+      "malt",
+      "grapes",
+      "sugar"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q377",
+    "category": "British Grub",
+    "prompt": "A UK tribunal ruled that Jaffa Cakes are legally ______, not biscuits.",
+    "answer": "cakes",
+    "alternateSpellings": [
+      "cake"
+    ],
+    "suggestedLies": [
+      "sweets",
+      "pastries",
+      "tarts",
+      "pies",
+      "confectionery"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q378",
+    "category": "British Grub",
+    "prompt": "Throughout World War II, ______ were never rationed in Britain.",
+    "answer": "fish and chips",
+    "alternateSpellings": [
+      "fish & chips",
+      "chips"
+    ],
+    "suggestedLies": [
+      "sugar",
+      "butter",
+      "bacon",
+      "jam",
+      "eggs"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q379",
+    "category": "British Grub",
+    "prompt": "Bubble and squeak is named after the ______ it makes while frying.",
+    "answer": "noise",
+    "alternateSpellings": [
+      "sound",
+      "sounds",
+      "squeaking",
+      "noises"
+    ],
+    "suggestedLies": [
+      "shape",
+      "colour",
+      "smell",
+      "steam",
+      "splatter"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "q380",
+    "category": "British Grub",
+    "prompt": "Chicken tikka masala is widely said to have been invented in ______.",
+    "answer": "Glasgow",
+    "alternateSpellings": [],
+    "suggestedLies": [
+      "Birmingham",
+      "Bradford",
+      "Leicester",
+      "London",
+      "Manchester"
+    ],
+    "isFinal": false
+  },
+  {
+    "id": "f022",
+    "category": "Final Fakeout",
+    "prompt": "In 1957, a BBC April Fool's report showed a Swiss family harvesting ______ from trees.",
+    "answer": "spaghetti",
+    "alternateSpellings": [
+      "pasta"
+    ],
+    "suggestedLies": [
+      "teabags",
+      "sausages",
+      "crumpets",
+      "marshmallows",
+      "doughnuts"
+    ],
+    "isFinal": true
+  },
+  {
+    "id": "f023",
+    "category": "Final Fakeout",
+    "prompt": "In 1980, the BBC fooled listeners by announcing Big Ben was going ______.",
+    "answer": "digital",
+    "alternateSpellings": [
+      "to go digital"
+    ],
+    "suggestedLies": [
+      "silent",
+      "backwards",
+      "to be sold",
+      "electric",
+      "abroad"
+    ],
+    "isFinal": true
   }
 ]
