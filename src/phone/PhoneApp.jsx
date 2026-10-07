@@ -4,6 +4,7 @@ import { normalize, LIE_MAX, REJECT_MESSAGES, liePrice, lieCost } from '../lib/r
 import { rankPlayers } from '../engine/hostEngine.js'
 import { AVATARS, Avatar, MuteButton, Prompt, fmt, signed, useNow } from '../components/shared.jsx'
 import { setLobbyMusic, primeLobbyMusic, getMusicState, subscribeMusic } from '../lib/lobbyMusic.js'
+import MugshotCamera from './MugshotCamera.jsx'
 
 const CODE_KEY = 'fakeout.playerCode'
 const PROFILE_KEY = 'fakeout.profile'
@@ -24,6 +25,14 @@ function loadProfile() {
   }
 }
 
+function saveProfile(patch) {
+  try {
+    localStorage.setItem(PROFILE_KEY, JSON.stringify({ ...loadProfile(), ...patch }))
+  } catch {
+    // profile just won't persist (e.g. storage full)
+  }
+}
+
 export default function PhoneApp({ initialCode }) {
   const [transport, setTransport] = useState(null)
   const [me, setMe] = useState(null)
@@ -32,6 +41,9 @@ export default function PhoneApp({ initialCode }) {
   const [error, setError] = useState(null)
   const [checking, setChecking] = useState(true)
   const [prefill, setPrefill] = useState(initialCode)
+  // Mugshot selfie, kept on this phone so it's reused in every room.
+  const [photo, setPhoto] = useState(() => loadProfile().photo || null)
+  const [cameraOpen, setCameraOpen] = useState(false)
 
   useEffect(() => {
     let cancelled = false
@@ -49,6 +61,8 @@ export default function PhoneApp({ initialCode }) {
           if (player && !cancelled) {
             setMe(player)
             setCode(player.gameCode)
+            const saved = loadProfile().photo
+            if (saved && !player.photo && !player.isAudience) t.setPhoto(player.gameCode, saved).catch(() => {})
           }
         }
       } catch (err) {
@@ -99,7 +113,19 @@ export default function PhoneApp({ initialCode }) {
     setState(null)
   }
 
+  // After joining: reuse this phone's mugshot, or offer the camera.
+  const afterJoin = (t, player) => {
+    if (player.isAudience) return
+    const saved = loadProfile()
+    if (saved.photo) {
+      if (player.photo !== saved.photo) t.setPhoto(player.gameCode, saved.photo).catch(() => {})
+    } else if (!saved.photoSkipped) {
+      setCameraOpen(true)
+    }
+  }
+
   const joined = (player) => {
+    afterJoin(transport, player)
     localStorage.setItem(CODE_KEY, player.gameCode)
     setUrlCode(player.gameCode)
     setPrefill(player.gameCode)
@@ -123,17 +149,40 @@ export default function PhoneApp({ initialCode }) {
   if (state.phase === 'ENDED') {
     return <GameEnded transport={transport} me={meLive || me} nextCode={state.nextCode} onJoined={joined} onLeave={leave} />
   }
+  const self = { ...(meLive || me), photo }
+  if (cameraOpen && state.phase === 'LOBBY') {
+    return (
+      <MugshotCamera
+        player={self}
+        onDone={(shot) => {
+          setPhoto(shot)
+          saveProfile({ photo: shot, photoSkipped: false })
+          setCameraOpen(false)
+          transport.setPhoto(code, shot).catch(() => {})
+        }}
+        onSkip={() => {
+          saveProfile({ photoSkipped: true })
+          setCameraOpen(false)
+        }}
+      />
+    )
+  }
 
   return (
     <div className="phone">
       <header className="phone-header">
-        <Avatar player={meLive || me} size={40} flip={false} />
+        <Avatar player={self} size={40} flip={false} />
         <span className="phone-name">{(meLive || me).name}</span>
         {meLive?.isAudience ? <span className="tag">Audience</span> : <span className="phone-score">{fmt(meLive?.score ?? 0)}</span>}
         <MuteButton />
         <button className="room-chip" onClick={leave} title="Leave room">{code} ✕</button>
       </header>
       <main className="phone-main">
+        {state.phase === 'LOBBY' && !self.isAudience && (
+          <button type="button" className="mugcam-open" onClick={() => setCameraOpen(true)}>
+            📸 {photo ? 'Retake your mugshot' : 'Take your mugshot'}
+          </button>
+        )}
         <PhoneView transport={transport} code={code} me={meLive || me} state={state} />
       </main>
     </div>
@@ -158,7 +207,7 @@ function JoinForm({ transport, initialCode, error: initError, onJoined }) {
     setError(null)
     try {
       const player = await transport.joinGame(code.trim().toUpperCase(), name.trim(), avatar, audience)
-      localStorage.setItem(PROFILE_KEY, JSON.stringify({ name: name.trim(), avatar }))
+      saveProfile({ name: name.trim(), avatar })
       onJoined(player)
     } catch (err) {
       setError(err.message)

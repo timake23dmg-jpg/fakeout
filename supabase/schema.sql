@@ -61,6 +61,8 @@ create table if not exists players (
   unique (game_code, slot),
   unique (game_code, user_id)
 );
+-- Mugshot selfie (see set_photo).
+alter table players add column if not exists photo text;
 
 create table if not exists questions (
   id text primary key,
@@ -593,6 +595,22 @@ begin
   return jsonb_build_object('ok', true, 'keep', v_keep);
 end; $$;
 
+-- Mugshot selfie: a small JPEG data URL made on the phone, stored on the
+-- player's own row (deleted with the room). Mirrors isValidPhoto in rules.js.
+create or replace function set_photo(p_code text, p_photo text)
+returns jsonb language plpgsql security definer set search_path = fakeout, public as $$
+declare
+  p players;
+begin
+  select * into p from players where game_code = upper(btrim(p_code)) and user_id = auth.uid();
+  if not found then raise exception 'You are not in this room'; end if;
+  if p_photo is not null and (left(p_photo, 23) <> 'data:image/jpeg;base64,' or char_length(p_photo) > 60000) then
+    return jsonb_build_object('ok', false, 'reason', 'badPhoto');
+  end if;
+  update players set photo = p_photo where id = p.id;
+  return jsonb_build_object('ok', true);
+end; $$;
+
 create or replace function submit_pick(p_code text, p_question_no int, p_option_id text)
 returns jsonb language plpgsql security definer set search_path = fakeout, public as $$
 declare
@@ -619,11 +637,11 @@ end; $$;
 revoke execute on function create_game(jsonb), join_game(text, text, text, boolean),
   host_set_state(text, text, int, jsonb, int, boolean), host_draw_categories(text, text[]),
   host_draw_question(text, text, boolean, text[]), submit_lie(text, int, text), lie_for_me(text, int),
-  use_lifeline(text, int), submit_pick(text, int, text) from public, anon;
+  use_lifeline(text, int), set_photo(text, text), submit_pick(text, int, text) from public, anon;
 grant execute on function server_now(), create_game(jsonb), join_game(text, text, text, boolean),
   host_set_state(text, text, int, jsonb, int, boolean), host_draw_categories(text, text[]),
   host_draw_question(text, text, boolean, text[]), submit_lie(text, int, text), lie_for_me(text, int),
-  use_lifeline(text, int), submit_pick(text, int, text) to authenticated;
+  use_lifeline(text, int), set_photo(text, text), submit_pick(text, int, text) to authenticated;
 
 -- ------------------------------------------------------------- realtime
 

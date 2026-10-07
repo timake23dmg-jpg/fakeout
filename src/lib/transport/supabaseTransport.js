@@ -53,7 +53,7 @@ function unwrap({ data, error }) {
 }
 
 const toPlayer = (r) => ({
-  id: r.id, gameCode: r.game_code, name: r.name, avatar: r.avatar, slot: r.slot, isAudience: r.is_audience,
+  id: r.id, gameCode: r.game_code, name: r.name, avatar: r.avatar, slot: r.slot, isAudience: r.is_audience, photo: r.photo ?? null,
 })
 
 function baseTransport(url, anonKey) {
@@ -235,6 +235,9 @@ export function createSupabasePlayerTransport({ url, anonKey }) {
     },
     async lieForMe(code, qn) {
       return unwrap(await supabase.rpc('lie_for_me', { p_code: code, p_question_no: qn }))
+    },
+    async setPhoto(code, photo) {
+      return unwrap(await supabase.rpc('set_photo', { p_code: code, p_photo: photo }))
     },
     async useLifeline(code, qn) {
       return unwrap(await supabase.rpc('use_lifeline', { p_code: code, p_question_no: qn }))

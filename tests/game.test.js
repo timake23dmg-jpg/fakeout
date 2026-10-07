@@ -278,3 +278,17 @@ test('every phone transport method is reachable through the demo channel', async
   assert.ok(called.includes('useLifeline'))
   for (const m of called) assert.ok(PHONE_METHODS.includes(m), `${m} is missing from PHONE_METHODS`)
 })
+
+test('mugshot selfies: saved on the player, given to the TV, never in the public state', async () => {
+  const { server, engine, code, players } = await setup(['Ana', 'Ben'])
+  const [ana] = players
+  const photo = 'data:image/jpeg;base64,' + 'A'.repeat(2000)
+  assert.deepEqual(server.setPhoto(ana.userId, code, photo), { ok: true })
+  assert.equal(server.setPhoto(ana.userId, code, 'data:image/png;base64,AAAA').reason, 'badPhoto')
+  assert.equal(server.setPhoto(ana.userId, code, 'data:image/jpeg;base64,' + 'A'.repeat(70000)).reason, 'badPhoto')
+  await until(engine, () => engine.players.find((p) => p.id === ana.id)?.photo === photo)
+  assert.ok(!JSON.stringify(engine.publicState).includes('base64'), 'photos stay out of the published state')
+  assert.deepEqual(server.setPhoto(ana.userId, code, null), { ok: true })
+  await until(engine, () => engine.players.find((p) => p.id === ana.id)?.photo === null)
+  engine.stop()
+})

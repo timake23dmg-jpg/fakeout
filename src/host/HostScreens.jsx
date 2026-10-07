@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { motion, AnimatePresence, LayoutGroup } from 'framer-motion'
 import confetti from 'canvas-confetti'
 import QRCode from 'qrcode'
-import { Avatar, Prompt, TimerRing, colorFor, fmt, signed, useNow } from '../components/shared.jsx'
+import { Avatar, Mugshot, Prompt, TimerRing, colorFor, fmt, signed, useNow } from '../components/shared.jsx'
 import { sfx, setVolumes, getVolumes } from '../lib/audio.js'
 import { narrate } from '../lib/narrator.js'
 import { AUTO, BROWSER_VOICE, VOICE_GROUPS, getAiVoiceState, setVoiceChoice, subscribeAiVoice } from '../lib/aiVoice.js'
@@ -25,6 +25,22 @@ function useConfetti(rm) {
 const byId = (players) => Object.fromEntries(players.map((p) => [p.id, p]))
 const gamePlayers = (pub) => pub.players.filter((p) => !p.isAudience)
 
+// Who wears the crown (the leaders) and who cries (last place), once anyone
+// has scored. Tears only with 3+ players, so a two-player game isn't brutal.
+export function standings(pub) {
+  const players = gamePlayers(pub)
+  const none = { crown: () => false, tears: () => false }
+  if (pub.phase === 'LOBBY' || !players.length) return none
+  const scores = players.map((p) => p.score)
+  const top = Math.max(...scores)
+  const bottom = Math.min(...scores)
+  if (top <= 0) return none
+  return {
+    crown: (p) => !p.isAudience && p.score === top,
+    tears: (p) => !p.isAudience && players.length >= 3 && bottom < top && p.score === bottom,
+  }
+}
+
 // -------------------------------------------------------------- chrome
 
 function TopBar({ pub, serverNow, label }) {
@@ -41,11 +57,12 @@ function TopBar({ pub, serverNow, label }) {
 
 function AvatarRow({ pub, doneIds = [], detectorIds = [] }) {
   const done = new Set(doneIds)
+  const st = standings(pub)
   return (
     <div className="avatar-row">
       {gamePlayers(pub).map((p) => (
         <div key={p.id} className={`avatar-chip ${p.connected ? '' : 'offline'}`}>
-          <Avatar player={p} size={84} done={done.has(p.id)} />
+          <Avatar player={p} size={84} done={done.has(p.id)} crown={st.crown(p)} tears={st.tears(p)} />
           <span className="chip-name">
             {p.name}
             {detectorIds.includes(p.id) && <span className="detector-badge" title="Used the Truth Detector">🔍</span>}
@@ -100,9 +117,8 @@ export function LobbyScreen({ pub, code, engine, joinUrl, backend }) {
         <div className="lobby-players">
           {Array.from({ length: 8 }, (_, i) => players[i]).map((p, i) =>
             p ? (
-              <motion.div key={p.id} className={`lobby-slot ${p.connected ? '' : 'offline'}`} initial={{ scale: 0, rotate: 0 }} animate={{ scale: 1, rotate: TILTS[i % TILTS.length] }} transition={spring}>
-                <Avatar player={p} size={96} />
-                <span className="lobby-name">{p.name}</span>
+              <motion.div key={p.id} className={`lobby-slot mug ${p.connected ? '' : 'offline'}`} initial={{ scale: 0, rotate: 0 }} animate={{ scale: 1, rotate: TILTS[i % TILTS.length] }} transition={spring}>
+                <Mugshot player={p} width={140} />
                 {p.id === pub.vipId && <span className="vip-tag">VIP</span>}
               </motion.div>
             ) : (
@@ -507,31 +523,34 @@ export function ScoreboardScreen({ pub, rm }) {
   }, [])
   const scoreOf = (p) => (settled ? p.score : prev[p.id] ?? 0)
   const sorted = [...players].sort((a, b) => scoreOf(b) - scoreOf(a) || a.slot - b.slot)
-  const max = Math.max(1, ...players.map((p) => Math.max(p.score, prev[p.id] ?? 0)))
+  // The line-up: crown and tears appear once the new scores have settled.
+  const st = settled ? standings(pub) : standings({ ...pub, phase: 'LOBBY' })
+  const width = players.length > 6 ? 190 : players.length > 4 ? 230 : 270
   return (
     <div className="screen scoreboard">
-      <h2 className="screen-title">Scores</h2>
+      <h2 className="screen-title">The usual suspects</h2>
       {pub.truth && <p className="truth-recap">The truth: <strong>{pub.truth}</strong> ✓</p>}
       <LayoutGroup>
-        <div className="score-rows">
-          {sorted.map((p) => (
-            <motion.div layout={!rm} key={p.id} className="score-row" transition={spring}>
-              <Avatar player={p} size={72} />
-              <span className="score-name">{p.name}</span>
-              <div className="score-bar-track">
-                <motion.div
-                  className="score-bar"
-                  style={{ background: colorFor(p.slot) }}
-                  initial={{ width: `${(Math.max(0, prev[p.id] ?? 0) / max) * 100}%` }}
-                  animate={{ width: `${(Math.max(0, scoreOf(p)) / max) * 100}%` }}
-                  transition={{ duration: rm ? 0 : 0.8 }}
-                />
-              </div>
-              <span className="score-num">{fmt(scoreOf(p))}</span>
-              <span className={`score-delta ${(deltas[p.id] ?? 0) < 0 ? 'neg' : ''}`}>
-                {deltas[p.id] ? signed(deltas[p.id]) : ''}
-                {charges[p.id] > 0 && <small className="lie-charge">💸 −{fmt(charges[p.id])} for lies</small>}
-              </span>
+        <div className="lineup">
+          {sorted.map((p, i) => (
+            <motion.div layout={!rm} key={p.id} className="lineup-slot" transition={spring} style={{ rotate: `${TILTS[i % TILTS.length] / 2}deg` }}>
+              <Mugshot
+                player={p}
+                width={width}
+                crown={st.crown(p)}
+                tears={st.tears(p)}
+                tag={`#${i + 1}`}
+                tagTone={st.crown(p) ? 'gold' : st.tears(p) ? 'blue' : 'plain'}
+                footer={
+                  <div className="lineup-score">
+                    <span className="score-num">{fmt(scoreOf(p))}</span>
+                    <span className={`score-delta ${(deltas[p.id] ?? 0) < 0 ? 'neg' : ''}`}>
+                      {deltas[p.id] ? signed(deltas[p.id]) : ''}
+                      {charges[p.id] > 0 && <small className="lie-charge">💸 −{fmt(charges[p.id])} for lies</small>}
+                    </span>
+                  </div>
+                }
+              />
             </motion.div>
           ))}
         </div>
@@ -563,9 +582,7 @@ export function WinnerScreen({ pub, rm }) {
       <div className="winners">
         {winners.map((w, i) => (
           <motion.div key={w.id} className="winner" initial={{ scale: 0.3, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ ...spring, delay: rm ? 0 : 1.2 + i * 0.2 }}>
-            <motion.div className="crown" initial={{ y: -300 }} animate={{ y: 0 }} transition={{ ...spring, delay: rm ? 0 : 1.6 + i * 0.2 }}>👑</motion.div>
-            <Avatar player={w} size={220} />
-            <div className="winner-name">{w.name}</div>
+            <Mugshot player={w} width={winners.length > 1 ? 260 : 320} crown tag="LIAR OF THE YEAR" tagTone="gold" />
             <div className="winner-score">{fmt(w.score)} pts</div>
           </motion.div>
         ))}

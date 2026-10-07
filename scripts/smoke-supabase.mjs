@@ -76,6 +76,16 @@ async function main() {
 
   await until((s) => s.players.length === 3 && s.players.every((p) => p.connected))
   console.log('all 3 players online via presence')
+
+  // Mugshot selfie: saved through set_photo, reaches the host, stays out of the public state.
+  const photo = 'data:image/jpeg;base64,' + 'A'.repeat(2000)
+  assert.equal(ok(await ana.sb.rpc('set_photo', { p_code: code, p_photo: 'data:image/png;base64,AA' })).reason, 'badPhoto')
+  assert.ok(ok(await ana.sb.rpc('set_photo', { p_code: code, p_photo: photo })).ok)
+  for (let t0 = Date.now(); engine.players.find((p) => p.id === ana.id)?.photo !== photo; await wait(100)) {
+    if (Date.now() - t0 > 15000) throw new Error('photo never reached the host')
+  }
+  assert.ok(!JSON.stringify(pub).includes('base64'), 'photos must stay out of the public state')
+  console.log('mugshot reached the host')
   ok(await ana.sb.from('commands').insert({ game_code: code, player_id: ana.id, cmd: 'start', payload: {} }))
   await until((s) => s.phase === 'INTRO')
   console.log('started by VIP via realtime command')

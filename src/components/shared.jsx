@@ -50,7 +50,9 @@ export function useNow(serverNow, interval = 100) {
   return now
 }
 
-export function Avatar({ player, size = 64, done = false, dim = false, flip = true }) {
+// A player's badge: their mugshot selfie if they took one, else their emoji.
+// `crown`: in the lead. `tears`: in last place.
+export function Avatar({ player, size = 64, done = false, dim = false, flip = true, crown = false, tears = false }) {
   if (!player) return null
   return (
     <div
@@ -59,9 +61,67 @@ export function Avatar({ player, size = 64, done = false, dim = false, flip = tr
       title={player.name}
     >
       <div className="avatar-inner">
-        <div className="avatar-face avatar-front">{player.avatar}</div>
+        <div className={`avatar-face avatar-front ${player.photo ? 'has-photo' : ''}`}>
+          {player.photo ? <img className="avatar-photo" src={player.photo} alt="" /> : player.avatar}
+          {tears && <Tears />}
+        </div>
         <div className="avatar-face avatar-back">✓</div>
       </div>
+      {crown && <Crown />}
+    </div>
+  )
+}
+
+// Gold crown that sits on a badge or mugshot (the leader).
+export function Crown() {
+  return (
+    <svg className="crown" viewBox="0 0 110 76" aria-label="In the lead" role="img">
+      <path d="M8 66 L4 18 L30 40 L55 6 L80 40 L106 18 L102 66 Z" fill="#FFC928" stroke="#231A45" strokeWidth="5" strokeLinejoin="round" />
+      <rect x="8" y="58" width="94" height="14" fill="#E9A800" stroke="#231A45" strokeWidth="5" />
+      <circle cx="55" cy="38" r="6" fill="#FF4F8B" stroke="#231A45" strokeWidth="3" />
+      <circle cx="30" cy="65" r="4" fill="#5AB8FF" />
+      <circle cx="80" cy="65" r="4" fill="#5AB8FF" />
+    </svg>
+  )
+}
+
+// Tears rolling down from both eyes (last place). Positions match the face
+// guide on the phone's mugshot camera.
+export function Tears() {
+  return (
+    <span className="tears" aria-label="In last place" role="img">
+      <i style={{ left: '38%', animationDelay: '0s' }} />
+      <i style={{ left: '38%', animationDelay: '0.8s' }} />
+      <i style={{ left: '62%', animationDelay: '0.4s' }} />
+      <i style={{ left: '62%', animationDelay: '1.2s' }} />
+    </span>
+  )
+}
+
+// Four-digit "case number" for a player, stable for their id.
+export function suspectNumber(player) {
+  let h = 7
+  for (const ch of String(player?.id ?? '')) h = (h * 31 + ch.charCodeAt(0)) % 9000
+  return String(1000 + h)
+}
+
+// A police mugshot card: photo (or emoji) on a height chart, with a placard.
+export function Mugshot({ player, width = 220, crown = false, tears = false, tag = null, tagTone = 'plain', footer = null, dim = false }) {
+  if (!player) return null
+  return (
+    <div className={`mugshot ${dim ? 'mugshot-dim' : ''}`} style={{ '--w': `${width}px`, '--ring': colorFor(player.slot) }}>
+      {tag && <div className={`mugshot-tag ${tagTone}`}>{tag}</div>}
+      <div className="mugshot-frame">
+        {player.photo ? <img className="mugshot-photo" src={player.photo} alt={`${player.name}'s mugshot`} /> : <span className="mugshot-emoji">{player.avatar}</span>}
+        <span className="mugshot-chart" aria-hidden="true" />
+        {tears && <Tears />}
+        {crown && <Crown />}
+      </div>
+      <div className="mugshot-placard">
+        <span>SUSPECT {suspectNumber(player)}</span>
+        <strong>{player.name}</strong>
+      </div>
+      {footer}
     </div>
   )
 }

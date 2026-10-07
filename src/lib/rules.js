@@ -70,6 +70,12 @@ export function lieCost(bought, count) {
   return total
 }
 
+// Mugshot selfies: small black-and-white JPEGs made on the phone, stored on
+// the player's row for the room's lifetime. Mirrored in SQL (set_photo).
+export const PHOTO_PREFIX = 'data:image/jpeg;base64,'
+export const PHOTO_MAX = 60000 // characters of data URL (about 44 KB of image)
+export const isValidPhoto = (p) => typeof p === 'string' && p.startsWith(PHOTO_PREFIX) && p.length <= PHOTO_MAX
+
 export const REJECT_MESSAGES = {
   isTruth: "That's actually the truth! Try another lie.",
   tooLong: `Keep it under ${LIE_MAX} characters.`,

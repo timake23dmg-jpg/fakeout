@@ -299,7 +299,11 @@ export default function HostApp() {
 
   const joinUrl = `${window.location.origin}${window.location.pathname}#/play?code=${code}`
   const serverNow = transport.serverNow
-  const props = { pub, serverNow, rm, engine: engineRef.current }
+  // Mugshot selfies live on the players' rows (the engine has them); they're
+  // kept out of the published state, which phones download on every change.
+  const photoOf = Object.fromEntries((engineRef.current?.players || []).map((p) => [p.id, p.photo || null]))
+  const view = { ...pub, players: pub.players.map((p) => ({ ...p, photo: photoOf[p.id] ?? null })) }
+  const props = { pub: view, serverNow, rm, engine: engineRef.current }
   const screens = {
     LOBBY: <LobbyScreen {...props} code={code} joinUrl={joinUrl} backend={BACKEND} />,
     INTRO: <IntroScreen {...props} />,

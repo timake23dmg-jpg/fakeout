@@ -2,7 +2,7 @@
 // tests. Every method mirrors an RPC or table access in supabase/schema.sql,
 // including its checks (host-only, phase/question guards, lie validation).
 
-import { normalize, validateLie, liePrice, lieCost } from '../rules.js'
+import { normalize, validateLie, liePrice, lieCost, isValidPhoto } from '../rules.js'
 
 const CHARSET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'
 const MAX_PLAYERS = 8
@@ -174,6 +174,17 @@ export class LocalServer {
     return publicPlayer(player)
   }
 
+  // A player's mugshot selfie (or null to remove it).
+  setPhoto(userId, code, photo) {
+    const g = this.game(code)
+    const p = this.playerFor(userId, g.code)
+    if (!p) throw new Error('You are not in this room')
+    if (photo !== null && !isValidPhoto(photo)) return { ok: false, reason: 'badPhoto' }
+    p.photo = photo
+    this.emit('players', g.code, publicPlayer(p))
+    return { ok: true }
+  }
+
   findMyPlayer(userId, code) {
     const g = this.db.games[String(code || '').trim().toUpperCase()]
     if (!g) return null
@@ -307,10 +318,10 @@ function shuffleCopy(list) {
 }
 
 function publicPlayer(p) {
-  return { id: p.id, gameCode: p.gameCode, name: p.name, avatar: p.avatar, slot: p.slot, isAudience: p.isAudience }
+  return { id: p.id, gameCode: p.gameCode, name: p.name, avatar: p.avatar, slot: p.slot, isAudience: p.isAudience, photo: p.photo ?? null }
 }
 
 // Methods phones may call over the local channel (everything else is host-only).
 export const PHONE_METHODS = [
-  'joinGame', 'findMyPlayer', 'fetchGame', 'submitLie', 'lieForMe', 'submitPick', 'useLifeline', 'setLike', 'sendCommand', 'fetchMine',
+  'joinGame', 'findMyPlayer', 'fetchGame', 'submitLie', 'lieForMe', 'submitPick', 'useLifeline', 'setPhoto', 'setLike', 'sendCommand', 'fetchMine',
 ]
