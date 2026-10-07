@@ -944,3 +944,313 @@ code { background: var(--card); border: 2px solid var(--ink); padding: 1px 6px; 
   background: var(--card); border: 3px solid var(--ink); border-radius: 14px; box-shadow: 3px 3px 0 var(--ink);
   font: inherit; font-weight: 900; font-size: 16px; color: var(--ink);
 }
+
+/* =====================================================================
+   INK & LIES theme (v2). Overrides the Fakeout cartoon theme above:
+   newsprint, ink, tabloid red and highlighter yellow; square print cards;
+   Anton headlines, Oswald labels, Caslon body, typewriter for players'
+   words, blackletter masthead.
+   ===================================================================== */
+:root {
+  --paper: #F3EDDF;
+  --paper-2: #2A2420;
+  --card: #FFFDF6;
+  --ink: #141414;
+  --muted: #5A5249;
+  --line: #CDBFA6;
+  --pink: #E1262D;      /* lies, buttons, the masthead */
+  --pink-soft: #F7D9D5;
+  --mint: #FFD83A;      /* the truth: highlighter yellow */
+  --gold: #FFC21A;      /* points */
+  --sky: #9BD3F5;
+  --lilac: #D8CCEB;
+  --grey: #D9D2C3;
+  --red: #E1262D;
+  --yellow: #FFD83A;
+  --display: 'Anton', Impact, 'Arial Narrow', sans-serif;
+  --body: 'Oswald', 'Arial Narrow', system-ui, sans-serif;
+  --serif: 'Libre Caslon Text', Georgia, serif;
+  --type: 'Special Elite', 'Courier New', monospace;
+  --mast: 'Grenze Gotisch', 'Old English Text MT', serif;
+  --shadow: 6px 6px 0 var(--ink);
+  --shadow-sm: 4px 4px 0 var(--ink);
+}
+body { font-weight: 500; }
+::selection { background: var(--yellow); }
+
+/* Newsprint with photocopy grain, everywhere. */
+body, .stage, .host-start, .paper-dots {
+  background-color: var(--paper);
+  background-image:
+    radial-gradient(rgba(20, 20, 20, 0.07) 0.8px, transparent 1.2px),
+    radial-gradient(rgba(120, 90, 40, 0.05) 1px, transparent 1.6px);
+  background-size: 4px 4px, 9px 9px;
+  background-position: 0 0, 2px 3px;
+}
+.stage-wrap { background: var(--paper-2); }
+
+/* Square print shapes instead of rounded stickers. */
+.btn, .sticker, .landing-join, .code-input, .room-tag, .sound-banner, .new-room, .end-confirm, .host-error,
+.category-label, .mult-badge, .join-box, .qr, .lobby-slot, .vip-tag, .settings, .rule, .category-card,
+.question-text, .instruction, .option-card, .reveal-card, .truth-banner, .stamp, .author-line,
+.truth-recap strong, .score-row, .score-bar-track, .winner-score, .award-card, .award-title, .final-list,
+.phone-header, .tag, .room-chip, .field input:not(.code-input), .avatar-pick, .waiting-name, .big-score,
+.phone-award, .phone-timer, .phone-question, .lie-input, .like-row, .like-btn, .mute-btn, .party-grid,
+.party-tip, .now-playing, .tagline, .scoreboard .lineup, .mugcam-open, .detector-note {
+  border-radius: 3px;
+}
+
+/* Wordmark: a blackletter masthead, not a cartoon logo. */
+.logo {
+  font-family: var(--mast); font-weight: 400; color: var(--ink);
+  -webkit-text-stroke: 0; text-shadow: none; transform: none; letter-spacing: 0;
+  font-size: clamp(60px, 15vw, 170px); line-height: 1;
+}
+.logo span { color: var(--red); font-family: var(--serif); font-style: italic; font-size: 0.8em; padding: 0 0.06em; }
+.logo.small { font-size: 64px; }
+.lobby-left .logo.small { font-size: 132px; }
+.intro .logo { font-size: 220px; }
+.tagline {
+  background: transparent; border: 0; border-top: 3px solid var(--ink); border-bottom: 3px solid var(--ink);
+  box-shadow: none; font-family: var(--serif); font-style: italic; font-size: 26px; padding: 6px 18px;
+}
+.tagline.big { font-size: 46px; padding: 10px 30px; border-width: 4px; box-shadow: none; }
+.hint, .demo-note, .waiting p { font-family: var(--serif); font-style: italic; }
+
+/* Buttons: inky print blocks, labels in caps. */
+.btn {
+  font-family: var(--display); letter-spacing: 0.03em; text-transform: uppercase;
+  border-width: 3px; box-shadow: var(--shadow-sm); background: var(--card);
+}
+.btn-pink { background: var(--red); color: #fff; }
+.btn-xl { border-width: 4px; }
+.btn-big { background: var(--yellow); }
+.btn-big:nth-child(2) { background: var(--card); }
+.btn-big:nth-child(3) { background: var(--sky); }
+.btn-option { font-family: var(--display); font-weight: 400; letter-spacing: 0.02em; font-size: 22px; }
+.btn-option:active:not(:disabled) { background: var(--yellow); }
+.code-input, .field .code-input { font-family: var(--display); background: var(--card); }
+
+/* ------------------------------------------------------- TV masthead + ticker */
+.masthead {
+  position: absolute; z-index: 6; left: 0; right: 0; top: 0; height: 104px;
+  display: flex; align-items: center; justify-content: space-between; padding: 0 56px;
+  background: var(--red); color: #fff; border-bottom: 8px solid var(--ink);
+}
+.masthead-title { font-family: var(--mast); font-size: 80px; line-height: 1; }
+.masthead-side { width: 560px; font-family: var(--body); font-weight: 700; font-size: 24px; letter-spacing: 0.14em; }
+.masthead-side.right { text-align: right; }
+.ticker {
+  position: absolute; z-index: 6; left: 0; right: 0; bottom: 0; height: 62px;
+  display: flex; align-items: stretch; background: var(--ink); color: #fff; overflow: hidden;
+  font-family: var(--body); font-weight: 500; font-size: 26px; letter-spacing: 0.02em;
+}
+.ticker-label {
+  flex: none; display: flex; align-items: center; padding: 0 28px; background: var(--red);
+  font-weight: 700; letter-spacing: 0.18em; position: relative; z-index: 1;
+}
+.ticker-window { flex: 1; overflow: hidden; display: flex; align-items: center; }
+.ticker-run { display: flex; gap: 28px; white-space: nowrap; padding-left: 28px; animation: ticker-scroll linear infinite; }
+.ticker-copy { display: flex; gap: 28px; }
+.ticker-dot { color: var(--yellow); }
+@keyframes ticker-scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+/* Screens sit between the masthead and the ticker. */
+.screen { padding: 140px 80px 92px; }
+.host-topbar { top: 128px; }
+.avatar-row { bottom: 84px; }
+.skip { bottom: 96px; }
+.pick-truth { padding-top: 230px; }
+.reveal-stage { inset: 250px 0 70px 0; }
+.mute-btn.host, .new-room, .host-error { bottom: 74px; }
+.room-tag { display: none; }
+
+/* --------------------------------------------------------------- headlines */
+.huge, .screen-title, .winner-name, .waiting h2, .party-title {
+  font-family: var(--display); color: var(--ink); -webkit-text-stroke: 0; text-shadow: none;
+  text-transform: uppercase; letter-spacing: 0.01em;
+}
+.screen-title, .huge {
+  background: linear-gradient(transparent 52%, var(--yellow) 52%, var(--yellow) 92%, transparent 92%);
+  padding: 0 18px; transform: rotate(-1deg);
+}
+.huge { font-size: 230px; }
+.waiting h2, .party-title { transform: none; }
+
+/* Category label, multiplier, timer */
+.category-label {
+  background: var(--ink); color: #fff; font-family: var(--display); border: 0; box-shadow: 5px 5px 0 var(--red);
+  transform: rotate(-1deg); letter-spacing: 0.06em;
+}
+.mult-badge { background: var(--yellow); border-width: 5px; transform: rotate(-4deg); }
+.timer-track { fill: var(--card); }
+.timer-bar { stroke: var(--ink); }
+.timer-urgent .timer-bar { stroke: var(--red); }
+.timer-num, .timer-urgent .timer-num { font-family: var(--display); }
+.timer-urgent .timer-num { color: var(--red); }
+
+/* Intro "rules" as three short news items */
+.rule { font-family: var(--serif); font-weight: 700; font-size: 38px; border-width: 4px; background: var(--card); }
+.rule:nth-child(1) { background: var(--card); }
+.rule-icon {
+  font-family: var(--display); font-size: 40px; letter-spacing: 0.1em; color: #fff; background: var(--red);
+  padding: 2px 18px;
+}
+
+/* Category pick: three front pages to choose from */
+.picker-text { font-family: var(--serif); font-weight: 700; }
+.picker-text strong { font-family: var(--display); color: var(--red); -webkit-text-stroke: 0; text-transform: uppercase; }
+.category-card {
+  position: relative; background: var(--card) !important; border-width: 5px; font-size: 64px; text-transform: uppercase;
+  line-height: 1; padding: 70px 30px 30px; box-shadow: 10px 10px 0 var(--ink);
+}
+.category-card::before {
+  content: 'EXTRA!'; position: absolute; left: 0; right: 0; top: 0; padding: 8px 0;
+  background: var(--red); color: #fff; font-family: var(--body); font-weight: 700; font-size: 24px; letter-spacing: 0.3em;
+}
+.category-card:nth-child(2)::before { content: 'BREAKING'; background: var(--ink); }
+.category-card:nth-child(3)::before { content: 'EXCLUSIVE'; background: var(--red); }
+
+/* Questions as newspaper clippings; the blank is redacted. */
+.question-text, .phone-question {
+  font-family: var(--serif); font-weight: 700; background: var(--card);
+  border: 0; box-shadow: 0 14px 28px rgba(0, 0, 0, 0.28), 0 0 0 1px rgba(20, 20, 20, 0.15);
+  transform: rotate(-0.8deg);
+}
+.question-text.small { box-shadow: 0 10px 22px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(20, 20, 20, 0.15); border: 0; }
+.blank {
+  min-width: 4.2em; height: 0.82em; vertical-align: -0.06em; border-bottom: 0; background: var(--ink);
+  animation: none;
+}
+.phone-question .blank { min-width: 3.2em; }
+.instruction { background: var(--yellow); font-family: var(--display); text-transform: uppercase; border-width: 4px; }
+
+/* Pick the truth: headline clippings */
+.option-card {
+  background: var(--card); border: 0; box-shadow: 0 10px 22px rgba(0, 0, 0, 0.28), 0 0 0 1px rgba(20, 20, 20, 0.15);
+  font-family: var(--display); padding: 18px 32px;
+}
+.option-card:nth-child(3n) { font-family: var(--serif); font-weight: 700; text-transform: none; }
+
+/* Reveal: rubber stamps */
+.reveal-card { border: 0; box-shadow: 0 16px 34px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(20, 20, 20, 0.15); }
+.truth-card.glow { background: var(--yellow); }
+.truth-card.grey { background: var(--grey); }
+.reveal-stage.dim::before { background: rgba(20, 16, 12, 0.6); }
+.stamp {
+  background: rgba(255, 253, 246, 0.25); color: var(--red); border: 9px double var(--red); box-shadow: none;
+  font-family: var(--display); font-size: 76px; transform: rotate(-12deg); mix-blend-mode: multiply; right: -40px;
+}
+.stamp small { font-family: var(--type); font-size: 26px; color: var(--ink); }
+.stamp.decoy { color: var(--ink); border-color: var(--ink); background: rgba(255, 216, 58, 0.55); }
+.truth-banner {
+  background: transparent; color: #1F4FD1; border: 9px double #1F4FD1; box-shadow: none;
+  font-family: var(--display); transform: rotate(-4deg);
+}
+.truth-banner.grey { color: var(--muted); border-color: var(--muted); background: transparent; }
+.fooled-bubble { font-family: var(--display); font-weight: 400; border-radius: 18px; }
+.points { font-family: var(--display); -webkit-text-stroke: 0; color: #18804f; }
+.points.neg { color: var(--red); }
+.points.gold { color: var(--red); }
+.author-line { background: var(--yellow); border-width: 4px; font-family: var(--serif); font-weight: 700; }
+.picked-by { font-family: var(--serif); font-style: italic; }
+
+/* Scores, winner, awards */
+.truth-recap { font-family: var(--serif); font-weight: 700; }
+.truth-recap strong { background: var(--yellow); border-width: 3px; font-family: var(--display); font-weight: 400; }
+.scoreboard .lineup {
+  background:
+    repeating-linear-gradient(to bottom, rgba(20, 20, 20, 0.2) 0 3px, transparent 3px 60px),
+    #3B3F3A;
+  border-color: var(--ink);
+}
+.scoreboard .lineup .lineup-score { color: #fff; }
+.winner-score { background: var(--yellow); }
+.award-card { border-width: 5px; }
+.award-title { background: var(--yellow); text-transform: uppercase; }
+.award-stat, .award-player { font-family: var(--serif); }
+.final-list { border-width: 4px; }
+.count { color: var(--red); }
+.spotlight { background: radial-gradient(ellipse at top, rgba(255, 216, 58, 0.35), transparent 65%); }
+
+/* Lobby: a "now hiring" classified ad */
+.join-box { background: var(--card); border-width: 5px; transform: rotate(-1deg); }
+.join-label { font-family: var(--body); font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; }
+.join-url { font-family: var(--type); font-weight: 400; }
+.room-code { color: var(--red); font-family: var(--display); }
+.vip-tag { background: var(--yellow); color: var(--ink); border-width: 3px; }
+.settings { border-width: 4px; font-family: var(--body); font-weight: 500; }
+.settings input[type='checkbox'] { accent-color: var(--red); }
+
+/* ------------------------------------------------------------------- phone */
+.phone-header { background: var(--red); color: #fff; border: 0; box-shadow: 0 4px 0 var(--ink); margin-top: 10px; }
+.phone-header .phone-score { font-family: var(--display); }
+.phone-header .room-chip { background: rgba(255, 255, 255, 0.92); }
+.phone-name { font-family: var(--display); font-weight: 400; letter-spacing: 0.02em; text-transform: uppercase; }
+.lie-input {
+  font-family: var(--type); font-weight: 400; box-shadow: none; border-width: 3px;
+  background: #fff repeating-linear-gradient(transparent 0 31px, rgba(31, 79, 209, 0.18) 31px 32px);
+}
+.like-row { font-family: var(--display); font-weight: 400; letter-spacing: 0.02em; border-width: 3px; }
+.like-row.chosen { background: var(--yellow); }
+.like-btn.on { background: var(--yellow); }
+.phone-timer { font-family: var(--display); border-width: 3px; }
+.phone-timer.urgent { background: var(--red); color: #fff; }
+.choose h2, .pick-list h2 { font-family: var(--display); text-transform: uppercase; }
+.big-score { background: var(--yellow); }
+.big-score.neg { background: var(--red); color: #fff; }
+.phone-award { background: var(--yellow); }
+.party-grid { border-width: 3px; }
+.party-tip { background: var(--card); font-family: var(--serif); font-weight: 400; font-style: italic; }
+.now-playing { background: var(--yellow); }
+.tag { background: var(--yellow); }
+.field { font-family: var(--body); font-weight: 600; letter-spacing: 0.04em; }
+.avatar-pick.selected { background: var(--yellow); }
+.mute-btn { background: var(--yellow); border-radius: 3px; }
+.mute-btn.blocked { background: var(--red); color: #fff; }
+.landing .logo { margin-top: 10px; }
+.music-credit { font-family: var(--serif); font-style: italic; }
+
+/* Ink & Lies: lobby, readable masthead, leftover rounded corners */
+.logo, .masthead-title { font-weight: 800; }
+.question-text.small, .tagline.big, .rule, .option-card, .options-grid.dense .option-card { border-radius: 3px; }
+.lobby { gap: 60px; }
+.lobby-left { flex: 0 0 700px; gap: 34px; }
+.hiring-title {
+  margin: 0; font-family: var(--display); font-weight: 400; font-size: 104px; line-height: 0.92; text-transform: uppercase;
+}
+.hiring-title span { background: linear-gradient(transparent 50%, var(--yellow) 50%, var(--yellow) 92%, transparent 92%); padding: 0 10px; }
+.hiring-sub { margin: 10px 0 0; font-family: var(--serif); font-style: italic; font-size: 30px; }
+.lobby-right { gap: 18px; justify-content: center; }
+.lobby-players { grid-template-columns: repeat(4, 168px); justify-content: space-between; gap: 26px 0; }
+.lobby-slot.mug { min-height: 0; }
+.lobby-slot.vacancy {
+  height: auto; min-height: 0; background: transparent; border: 0; box-shadow: none; padding: 0;
+  display: flex; flex-direction: column; align-items: stretch; gap: 8px; width: 168px; opacity: 0.6;
+}
+.vacancy-frame {
+  aspect-ratio: 5 / 6; display: grid; place-items: center; border: 4px dashed rgba(20, 20, 20, 0.45);
+  font-family: var(--display); font-size: 80px; color: rgba(20, 20, 20, 0.3);
+}
+.vacancy-label {
+  background: rgba(20, 20, 20, 0.55); color: var(--paper); text-align: center; padding: 5px 0;
+  font-family: var(--body); font-weight: 700; font-size: 16px; letter-spacing: 0.2em;
+}
+.settings-drawer { border: 4px solid var(--ink); background: var(--card); box-shadow: var(--shadow-sm); border-radius: 3px; }
+.settings-drawer > summary {
+  cursor: pointer; padding: 12px 20px; font-family: var(--body); font-weight: 700; font-size: 24px; letter-spacing: 0.06em;
+  text-transform: uppercase; list-style-position: inside;
+}
+.settings-drawer[open] > summary { border-bottom: 3px solid var(--ink); }
+.settings-drawer .settings { border: 0; box-shadow: none; padding: 16px 22px; }
+.lobby-start { flex-direction: row; align-items: center; flex-wrap: wrap; gap: 10px 24px; }
+.lobby-start .btn-xl { font-size: 34px; min-height: 80px; padding: 12px 40px; }
+.lobby-start .music-credit { flex-basis: 100%; margin: 0; }
+
+/* Ink & Lies: layout fixes from the screenshot pass */
+.reveal-stage { inset: 380px 0 70px 0; gap: 30px; }
+.reveal-card { font-size: 96px; padding: 28px 70px; }
+.reveal-pickers { min-height: 150px; }
+/* Leave room for the crown above a mugshot's tag. */
+.mugshot:has(.crown) .mugshot-tag { margin-bottom: calc(var(--w) * 0.16); }
+.scoreboard .lineup .score-delta { color: #6BEB9E; }
+.scoreboard .lineup .score-delta.neg { color: #FF7A7A; }

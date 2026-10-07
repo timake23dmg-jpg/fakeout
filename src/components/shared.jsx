@@ -162,6 +162,15 @@ export function TimerRing({ deadline, startedAt, serverNow, size = 120, onTick }
 }
 
 // Splits a prompt around its blank ("______") so the blank can be styled.
+// The game's name as a newspaper masthead.
+export function Wordmark({ className = '' }) {
+  return <h1 className={`logo ${className}`}>Ink <span>&amp;</span> Lies</h1>
+}
+
+// Category names as shown to players ("Final Fakeout" is the bank's
+// internal name for the last-question pool).
+export const displayCategory = (c) => (c === 'Final Fakeout' ? 'The Final Edition' : c)
+
 export function Prompt({ text, fill = null, className = '' }) {
   const parts = String(text || '').split(/_{2,}/)
   return (

@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { motion, AnimatePresence, LayoutGroup } from 'framer-motion'
 import confetti from 'canvas-confetti'
 import QRCode from 'qrcode'
-import { Avatar, Mugshot, Prompt, TimerRing, colorFor, fmt, signed, useNow } from '../components/shared.jsx'
+import { Avatar, Mugshot, Prompt, TimerRing, Wordmark, colorFor, displayCategory, fmt, signed, useNow } from '../components/shared.jsx'
 import { sfx, setVolumes, getVolumes } from '../lib/audio.js'
 import { narrate } from '../lib/narrator.js'
 import { AUTO, BROWSER_VOICE, VOICE_GROUPS, getAiVoiceState, setVoiceChoice, subscribeAiVoice } from '../lib/aiVoice.js'
@@ -46,7 +46,7 @@ export function standings(pub) {
 function TopBar({ pub, serverNow, label }) {
   return (
     <div className="host-topbar">
-      <div className="category-label">{label ?? pub.question?.category}</div>
+      <div className="category-label">{label ?? displayCategory(pub.question?.category)}</div>
       <div className="topbar-right">
         {pub.multiplier > 1 && <div className="mult-badge small">×{pub.multiplier}</div>}
         <TimerRing deadline={pub.deadline} startedAt={pub.startedAt} serverNow={serverNow} onTick={() => sfx('tick')} />
@@ -100,7 +100,10 @@ export function LobbyScreen({ pub, code, engine, joinUrl, backend }) {
   return (
     <div className="screen lobby">
       <div className="lobby-left">
-        <h1 className="logo small">FAKE<span>OUT</span></h1>
+        <div className="hiring">
+          <h1 className="hiring-title">Now hiring: <span>liars</span></h1>
+          <p className="hiring-sub">No experience needed. Must keep a straight face.</p>
+        </div>
         <div className="join-box">
           {qr && <img className="qr" src={qr} alt={`QR code to join room ${code}`} />}
           <div>
@@ -118,18 +121,21 @@ export function LobbyScreen({ pub, code, engine, joinUrl, backend }) {
           {Array.from({ length: 8 }, (_, i) => players[i]).map((p, i) =>
             p ? (
               <motion.div key={p.id} className={`lobby-slot mug ${p.connected ? '' : 'offline'}`} initial={{ scale: 0, rotate: 0 }} animate={{ scale: 1, rotate: TILTS[i % TILTS.length] }} transition={spring}>
-                <Mugshot player={p} width={140} />
-                {p.id === pub.vipId && <span className="vip-tag">VIP</span>}
+                <Mugshot player={p} width={168} />
+                {p.id === pub.vipId && <span className="vip-tag">EDITOR</span>}
               </motion.div>
             ) : (
-              <div key={`empty-${i}`} className="lobby-slot empty">
-                <span className="lobby-name">Join!</span>
+              <div key={`empty-${i}`} className="lobby-slot vacancy" style={{ rotate: `${TILTS[i % TILTS.length]}deg` }}>
+                <span className="vacancy-frame">?</span>
+                <span className="vacancy-label">VACANCY</span>
               </div>
             ),
           )}
         </div>
         <div className="audience-count">{audience.length > 0 && `👀 Audience: ${audience.length}`}</div>
 
+        <details className="settings-drawer">
+          <summary>Settings · sound, narrator, game length</summary>
         <div className="settings">
           <label className={players.length < SHORT_GAME_MIN_PLAYERS ? 'disabled' : ''}>
             <input type="checkbox" checked={!!s.shortGame} disabled={players.length < SHORT_GAME_MIN_PLAYERS} onChange={() => toggle('shortGame')} />
@@ -143,10 +149,11 @@ export function LobbyScreen({ pub, code, engine, joinUrl, backend }) {
           <VoicePicker />
           <label className="slider">Voice <input type="range" min="0" max="1" step="0.05" value={vol.voice ?? 1} onChange={(e) => changeVol('voice', +e.target.value)} /></label>
         </div>
+        </details>
 
         <div className="lobby-start">
           <button className="btn btn-pink btn-xl" disabled={!canStart} onClick={() => engine.startGame()}>
-            Everybody's in — start!
+            Stop the presses — start!
           </button>
           <span className="hint">
             {canStart ? 'Or the VIP can start from their phone.' : `Need at least ${MIN_PLAYERS} players (3+ recommended).`}
@@ -174,7 +181,7 @@ function VoicePicker() {
           ))}
           <option value={BROWSER_VOICE}>Browser voice (robotic)</option>
         </select>
-        <button type="button" className="btn btn-ghost voice-test" onClick={() => narrate("Hi! I'm your Fakeout host. Let's play!", { maxWait: 20000 })}>▶ Test</button>
+        <button type="button" className="btn btn-ghost voice-test" onClick={() => narrate("Hi! I'm your Ink and Lies host. Let's play!", { maxWait: 20000 })}>▶ Test</button>
       </label>
       {ai.text && <span className={`voice-status ${ai.tone}`}>{ai.text}</span>}
     </div>
@@ -185,16 +192,16 @@ function VoicePicker() {
 
 export function IntroScreen({ engine }) {
   const rules = [
-    ['✍️', 'Write a believable lie'],
-    ['🔍', 'Spot the real answer'],
-    ['🏆', 'Fool friends for points'],
+    ['No. 1', 'Write a believable lie'],
+    ['No. 2', 'Spot the real story'],
+    ['No. 3', 'Fool friends for points'],
   ]
   return (
     <div className="screen intro">
       <motion.h1 className="logo" initial={{ scale: 0.6, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={spring}>
-        FAKE<span>OUT</span>
+        Ink <span>&amp;</span> Lies
       </motion.h1>
-      <p className="tagline big">Lie. Spot. Win.</p>
+      <p className="tagline big">All the lies that fit to print.</p>
       <div className="rules">
         {rules.map(([icon, text], i) => (
           <motion.div key={text} className="rule" initial={{ y: 60, opacity: 0, rotate: 0 }} animate={{ y: 0, opacity: 1, rotate: TILTS[i] }} transition={{ ...spring, delay: 0.4 + i * 0.15 }}>
@@ -210,7 +217,7 @@ export function IntroScreen({ engine }) {
 
 export function RoundTitleScreen({ pub, final = false }) {
   useEffect(() => sfx('drum'), [])
-  const title = final ? 'FINAL FAKEOUT' : `ROUND ${pub.round}`
+  const title = final ? 'THE FINAL EDITION' : `ROUND ${pub.round}`
   const sub = final ? 'Triple points!' : pub.round === 2 ? 'Double points!' : 'Lie. Spot. Win.'
   return (
     <div className="screen round-title">
@@ -253,7 +260,7 @@ export function CategoryPickScreen({ pub, serverNow }) {
       <div className="category-cards">
         {(pub.categoryOptions || []).map((c, i) => (
           <motion.div key={c} className="category-card" initial={{ y: 400, opacity: 0, rotate: 0 }} animate={{ y: 0, opacity: 1, rotate: TILTS[i] * 1.5 }} transition={{ ...spring, delay: i * 0.1 }}>
-            {c}
+            {displayCategory(c)}
           </motion.div>
         ))}
       </div>
@@ -443,14 +450,14 @@ function RevealStep({ step, elapsed, players, nobodyFound, context, rm, narratin
     >
       {isTruth && showVerdict && (
         <motion.div className={`truth-banner ${nobodyFound ? 'grey' : ''}`} initial={{ y: -60, opacity: 0 }} animate={{ y: 0, opacity: 1 }}>
-          {nobodyFound ? 'Nobody found the truth!' : '✓ THE TRUTH'}
+          {nobodyFound ? 'Nobody found the truth!' : 'TRUE STORY'}
         </motion.div>
       )}
       <div className={`reveal-card ${cardClass}`}>
         {step.text}
         {!isTruth && showVerdict && (
           <motion.div className={`stamp ${step.kind === 'decoy' ? 'decoy' : ''}`} initial={rm ? { opacity: 0, rotate: 10 } : { scale: 3, opacity: 0, rotate: 10 }} animate={{ scale: 1, opacity: 1, rotate: 10 }} transition={{ duration: 0.25 }}>
-            {step.kind === 'decoy' ? 'HOUSE LIE!' : 'BUSTED!'}
+            {step.kind === 'decoy' ? 'HOUSE LIE!' : 'FAKE NEWS!'}
             <small>{step.kind === 'decoy' ? 'nobody wrote it' : "it's a lie"}</small>
           </motion.div>
         )}

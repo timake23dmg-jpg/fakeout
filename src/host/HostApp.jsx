@@ -5,7 +5,8 @@ import { HostEngine } from '../engine/hostEngine.js'
 import { unlockAudio, enableGestureUnlock, preloadMusic, sfx, playMusic, stopMusic, songForPhase, setVolumes } from '../lib/audio.js'
 import { narrate, prepareLines, stopNarration } from '../lib/narrator.js'
 import { loadAiVoice, subscribeAiVoice, voiceIsLive } from '../lib/aiVoice.js'
-import { prefersReducedMotion, MuteButton } from '../components/shared.jsx'
+import { prefersReducedMotion, MuteButton, Wordmark } from '../components/shared.jsx'
+import { Masthead, Ticker } from './Chrome.jsx'
 import { setLobbyMusic, primeLobbyMusic } from '../lib/lobbyMusic.js'
 import {
   phaseLine, questionLine, answerLine, revealLines, winnerLines, awardLine, lifelineLine, tenSecondsLine, playerLines, FIXED_LINES,
@@ -274,7 +275,7 @@ export default function HostApp() {
   if (error && !pub) {
     return (
       <div className="center-fill host-start">
-        <h1 className="logo">FAKE<span>OUT</span></h1>
+        <Wordmark />
         <p className="error">{error}</p>
         <button className="btn btn-pink btn-xl" onClick={() => window.location.reload()}>Try again</button>
       </div>
@@ -284,7 +285,7 @@ export default function HostApp() {
   if (!pub) {
     return (
       <div className="center-fill host-start">
-        <h1 className="logo">FAKE<span>OUT</span></h1>
+        <Wordmark />
         <p className="tagline">Lie. Spot. Win.</p>
         <button className="btn btn-pink btn-xl" disabled={!transport || busy} onClick={createRoom}>
           {transport ? (busy ? 'Creating room…' : '📺 Create a room') : 'Connecting…'}
@@ -325,7 +326,8 @@ export default function HostApp() {
   return (
     <MotionConfig reducedMotion={rm ? 'always' : 'never'}>
       <Stage>
-        {phase !== 'LOBBY' && <div className="room-tag">Room {code}</div>}
+        <Masthead pub={view} code={code} />
+        <Ticker pub={view} code={code} />
         {hidden ? (
           <div key={phaseKey} className="phase-layer">{screens[phase]}</div>
         ) : (

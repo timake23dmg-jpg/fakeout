@@ -24,8 +24,8 @@ function seeded(seed) {
 // Ordered roughly by when they're first needed, so the earliest are ready first.
 
 const L = {
-  welcome: ['Welcome to Fakeout! Grab your phones and join with the room code on screen.'],
-  intro: ['Welcome to Fakeout! Write a lie that sounds true, spot the real answer, and fool your friends for points.'],
+  welcome: ['Welcome to Ink and Lies! Grab your phones and join with the room code on screen.'],
+  intro: ['Welcome to Ink and Lies! Write a lie that sounds true, spot the real story, and fool your friends for points.'],
   roundOne: ['Round one! Let the lying begin.', "Round one! Let's see who's a natural liar."],
   randomCategory: ['Picking a random category.'],
   lowestPicks: ['Lowest score picks.'],
@@ -47,13 +47,13 @@ const L = {
   tied: ["It's neck and neck at the top!"],
   ouch: ['Ouch. Somebody went backwards.'],
   roundTwo: ['Round two! Everything is worth double.', 'Round two! Double points. Time to get sneaky.'],
-  final: ['The Final Fakeout! One question, triple points. Anyone can win this.', 'The Final Fakeout! Triple points. This is where legends lie.'],
+  final: ['The Final Edition! One question, triple points. Anyone can win this.', 'The Final Edition! Triple points. This is where legends lie.'],
   winnerIs: ['And the winner is…', 'Your champion liar is…'],
   tie: ["It's a tie!"],
   neverTrust: ['Never trust them again.', 'What a liar.'],
   awards: ['Biggest Liar!', 'Truth Seeker!', 'Crowd Favourite!', 'Most Gullible!'],
   awardQuips: ['Never lend them money.', 'Impossible to fool.', 'The people have spoken.', 'Bless.'],
-  thanks: ['Thanks for playing Fakeout! Play again, or head back to the lobby.'],
+  thanks: ['Thanks for playing Ink and Lies! Play again, or head back to the lobby.'],
 }
 export const THANKS_LINE = L.thanks[0]
 export const FIXED_LINES = Object.values(L).flat()
@@ -115,7 +115,7 @@ function categoryPickLine(pub) {
 }
 
 // The question, read aloud only if the voice gets it ready in time.
-export const questionLine = (pub) => `${pub.question.category}. ${pub.question.prompt}`
+export const questionLine = (pub) => `${pub.question.category === 'Final Fakeout' ? 'The Final Edition' : pub.question.category}. ${pub.question.prompt}`
 // The answer word, prepared as soon as the question is drawn.
 export const answerLine = (answer) => `${answer}!`
 export const tenSecondsLine = () => [pick(L.tenSeconds)]

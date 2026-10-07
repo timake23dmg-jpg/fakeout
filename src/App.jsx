@@ -1,7 +1,7 @@
 import React, { Suspense, lazy, useEffect, useState } from 'react'
 import { BACKEND } from './lib/transport/index.js'
 import { setLobbyMusic } from './lib/lobbyMusic.js'
-import { MuteButton } from './components/shared.jsx'
+import { MuteButton, Wordmark } from './components/shared.jsx'
 
 const HostApp = lazy(() => import('./host/HostApp.jsx'))
 const PhoneApp = lazy(() => import('./phone/PhoneApp.jsx'))
@@ -40,7 +40,7 @@ function Landing() {
   return (
     <main className="landing">
       <MuteButton className="floating" />
-      <h1 className="logo">FAKE<span>OUT</span></h1>
+      <Wordmark />
       <p className="tagline">Lie. Spot. Win.</p>
       <form
         className="landing-join"

@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { createPlayerTransport } from '../lib/transport/index.js'
 import { normalize, LIE_MAX, REJECT_MESSAGES, liePrice, lieCost } from '../lib/rules.js'
 import { rankPlayers } from '../engine/hostEngine.js'
-import { AVATARS, Avatar, MuteButton, Prompt, fmt, signed, useNow } from '../components/shared.jsx'
+import { AVATARS, Avatar, MuteButton, Prompt, Wordmark, fmt, signed, useNow } from '../components/shared.jsx'
 import { setLobbyMusic, primeLobbyMusic, getMusicState, subscribeMusic } from '../lib/lobbyMusic.js'
 import MugshotCamera from './MugshotCamera.jsx'
 
@@ -183,7 +183,7 @@ export default function PhoneApp({ initialCode }) {
             📸 {photo ? 'Retake your mugshot' : 'Take your mugshot'}
           </button>
         )}
-        <PhoneView transport={transport} code={code} me={meLive || me} state={state} />
+        <PhoneView transport={transport} code={code} me={self} state={state} />
       </main>
     </div>
   )
@@ -219,7 +219,7 @@ function JoinForm({ transport, initialCode, error: initError, onJoined }) {
   return (
     <form className="phone join" onSubmit={submit}>
       <MuteButton className="floating" />
-      <h1 className="logo small">FAKE<span>OUT</span></h1>
+      <Wordmark className="small" />
       <label className="field">
         <span>Room code</span>
         <input className="code-input" value={code} maxLength={4} autoCapitalize="characters" autoComplete="off" placeholder="ABCD"
@@ -361,7 +361,7 @@ function PhoneView({ transport, code, me, state }) {
 
     case 'ROUND_TITLE':
     case 'FINAL_TITLE':
-      return <Waiting title="Look at the screen" sub={state.phase === 'FINAL_TITLE' ? 'Final Fakeout — triple points!' : `Round ${state.round}${state.round === 2 ? ' — double points!' : ''}`} />
+      return <Waiting title="Look at the screen" sub={state.phase === 'FINAL_TITLE' ? 'The Final Edition — triple points!' : `Round ${state.round}${state.round === 2 ? ' — double points!' : ''}`} />
 
     case 'CATEGORY_PICK':
       if (state.pickerId === me.id) {
@@ -656,7 +656,7 @@ const TIPS = [
   'Match the style of the question: if it wants a number, give it a number.',
   'Your first "Lie for me" each game is free. After that, lies cost points!',
   'Fool your friends for points. Finding the truth pays too.',
-  'Points double in Round 2 and triple in the Final Fakeout!',
+  'Points double in Round 2 and triple in the Final Edition!',
   'Tap 👍 on lies you love: the Crowd Favourite gets an award.',
 ]
 
@@ -669,7 +669,7 @@ function NowPlaying() {
   return (
     <p className="now-playing">
       <span className="eq" aria-hidden="true"><i /><i /><i /></span>
-      Now playing: the Fakeout theme
+      Now playing: Monkeys Spinning Monkeys
     </p>
   )
 }
@@ -693,7 +693,7 @@ function PartyLobby({ me, state, code, players, audienceCount, isVip, vipName, o
         {players.map((p, i) => (
           <div key={p.id} className={`party-player ${p.id === me.id ? 'me' : ''}`} style={{ '--delay': `${(i % 4) * 0.15}s` }}>
             {p.id === state.vipId && <span className="party-crown" aria-label="VIP">👑</span>}
-            <div className="party-bounce"><Avatar player={p} size={56} flip={false} /></div>
+            <div className="party-bounce"><Avatar player={p.id === me.id ? { ...p, photo: me.photo } : p} size={56} flip={false} /></div>
             <span className="party-name">{p.id === me.id ? 'You' : p.name}</span>
           </div>
         ))}

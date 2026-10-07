@@ -1,4 +1,4 @@
-# Fakeout
+# Ink & Lies (v2 of Fakeout)
 
 A bluffing trivia party game (see `Fakeout — Game Spec.pdf`). One shared TV
 screen hosts; everyone plays on their phone. Players write believable lies to
