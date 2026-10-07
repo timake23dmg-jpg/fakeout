@@ -1254,3 +1254,5 @@ body, .stage, .host-start, .paper-dots {
 .mugshot:has(.crown) .mugshot-tag { margin-bottom: calc(var(--w) * 0.16); }
 .scoreboard .lineup .score-delta { color: #6BEB9E; }
 .scoreboard .lineup .score-delta.neg { color: #FF7A7A; }
+.scoreboard .lineup { padding-top: 54px; padding-bottom: 22px; }
+.join-url { font-size: 26px; word-break: normal; overflow-wrap: normal; line-height: 1.25; }

@@ -108,7 +108,11 @@ export function LobbyScreen({ pub, code, engine, joinUrl, backend }) {
           {qr && <img className="qr" src={qr} alt={`QR code to join room ${code}`} />}
           <div>
             <div className="join-label">Join on your phone at</div>
-            <div className="join-url">{joinUrl.replace(/^https?:\/\//, '').replace(/\?.*$/, '')}</div>
+            <div className="join-url">
+              {joinUrl.replace(/^https?:\/\//, '').replace(/\?.*$/, '').split('/').map((part, i) => (
+                <React.Fragment key={i}>{i > 0 && <>/<wbr /></>}{part}</React.Fragment>
+              ))}
+            </div>
             <div className="join-label">Room code</div>
             <div className="room-code">{code}</div>
           </div>
@@ -532,7 +536,7 @@ export function ScoreboardScreen({ pub, rm }) {
   const sorted = [...players].sort((a, b) => scoreOf(b) - scoreOf(a) || a.slot - b.slot)
   // The line-up: crown and tears appear once the new scores have settled.
   const st = settled ? standings(pub) : standings({ ...pub, phase: 'LOBBY' })
-  const width = players.length > 6 ? 190 : players.length > 4 ? 230 : 270
+  const width = players.length > 6 ? 170 : players.length > 4 ? 210 : 240
   return (
     <div className="screen scoreboard">
       <h2 className="screen-title">The usual suspects</h2>
