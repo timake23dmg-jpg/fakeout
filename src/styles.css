@@ -708,8 +708,9 @@ code { background: var(--card); border: 2px solid var(--ink); padding: 1px 6px; 
 }
 .like-btn.on { background: var(--pink); filter: none; opacity: 1; }
 
+:root.rm *, :root.rm *::before, :root.rm *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.2s !important; }
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.2s !important; }
+  .phone *, .phone *::before, .phone *::after { animation-duration: 0.01ms !important; transition-duration: 0.2s !important; }
 }
 
 /* ---------------------------------------------------------- mute button */
@@ -890,10 +891,8 @@ code { background: var(--card); border: 2px solid var(--ink); padding: 1px 6px; 
   font-family: var(--display); font-weight: 400; font-size: calc(var(--w) * 0.12); letter-spacing: 0.02em;
   max-width: 62%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
-@media (prefers-reduced-motion: reduce) {
-  .avatar .crown, .mugshot-frame .crown { animation: none; transform: rotate(-6deg); }
-  .tears i { animation: none; opacity: 1; translate: 0 calc(var(--size, 220px) * 0.12); }
-}
+:root.rm .avatar .crown, :root.rm .mugshot-frame .crown { animation: none; transform: rotate(-6deg); }
+:root.rm .tears i { animation: none; opacity: 1; translate: 0 calc(var(--size, 220px) * 0.12); }
 .lobby-slot.mug { height: auto; min-height: 210px; background: transparent; border: 0; box-shadow: none; padding: 0; }
 .lobby-slot.mug .vip-tag { top: -16px; right: 2px; z-index: 3; }
 /* Scoreboard as a police line-up on a height chart. */
@@ -1256,3 +1255,197 @@ body, .stage, .host-start, .paper-dots {
 .scoreboard .lineup .score-delta.neg { color: #FF7A7A; }
 .scoreboard .lineup { padding-top: 54px; padding-bottom: 22px; }
 .join-url { font-size: 26px; word-break: normal; overflow-wrap: normal; line-height: 1.25; }
+
+/* ================================================ Ink & Lies: motion pass
+   Idle motion uses the individual `translate` / `rotate` / `scale`
+   properties, so it stacks on top of Framer Motion's inline transforms. */
+@keyframes il-bob { 0%, 100% { translate: 0 0; } 50% { translate: 0 -14px; } }
+@keyframes il-float { 0%, 100% { translate: 0 0; } 50% { translate: 0 -7px; } }
+@keyframes il-sway { 0%, 100% { rotate: -1.6deg; } 50% { rotate: 1.6deg; } }
+@keyframes il-shake { 0%, 100% { translate: 0 0; } 15% { translate: -12px 6px; } 30% { translate: 10px -7px; } 45% { translate: -7px 4px; } 60% { translate: 5px -3px; } 80% { translate: -2px 1px; } }
+@keyframes il-jolt { 0%, 100% { translate: 0 0; } 30% { translate: 0 -18px; } 60% { translate: 0 4px; } }
+@keyframes il-flash { 0% { opacity: 0; } 8% { opacity: 0.95; } 100% { opacity: 0; } }
+@keyframes il-swipe { from { background-size: 0% 100%; } to { background-size: 100% 100%; } }
+@keyframes il-spin { 0% { transform: rotate(-900deg) scale(0.04); opacity: 0; } 15% { opacity: 1; } 78% { transform: rotate(6deg) scale(1.05); } 100% { transform: rotate(-1.5deg) scale(1); opacity: 1; } }
+@keyframes il-slam { 0% { scale: 1.8; opacity: 0; } 70% { scale: 0.97; opacity: 1; } 100% { scale: 1; opacity: 1; } }
+@keyframes il-drop { 0% { translate: 0 -700px; opacity: 0; } 70% { translate: 0 10px; opacity: 1; } 100% { translate: 0 0; opacity: 1; } }
+@keyframes il-pop { 0% { scale: 0; } 70% { scale: 1.25; } 100% { scale: 1; } }
+@keyframes il-wiggle { 0%, 100% { rotate: -5deg; } 50% { rotate: 5deg; } }
+@keyframes il-blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
+@keyframes il-splat { 0% { scale: 0; opacity: 0; } 40% { scale: 1.25; opacity: 0.9; } 100% { scale: 1; opacity: 0.75; } }
+@keyframes il-twinkle { 0%, 100% { scale: 0.2; opacity: 0; } 50% { scale: 1; opacity: 1; } }
+@keyframes il-slide-left { from { translate: -500px 0; opacity: 0; } to { translate: 0 0; opacity: 1; } }
+@keyframes il-slide-right { from { translate: 500px 0; opacity: 0; } to { translate: 0 0; opacity: 1; } }
+@keyframes il-stamp { 0% { scale: 2.8; opacity: 0; } 60% { scale: 0.93; opacity: 1; } 100% { scale: 1; opacity: 1; } }
+@keyframes il-jiggle { 0%, 100% { translate: 0 0; } 25% { translate: 0 -3px; } 75% { translate: 0 2px; } }
+
+/* Camera flash when a mugshot appears. */
+.mug-flash { position: absolute; inset: 0; background: #fff; opacity: 0; pointer-events: none; z-index: 4; animation: il-flash 0.6s ease-out both; }
+
+/* Lobby: mugshots hang and sway; the headline gets highlighted; vacancies blink. */
+.sway { transform-origin: 50% 0; animation: il-sway 4.2s ease-in-out infinite; }
+.hiring-title span { background: linear-gradient(var(--yellow), var(--yellow)) no-repeat 0 62% / 100% 46%; animation: il-swipe 0.6s 0.5s ease-out both; }
+@keyframes il-swipe-hl { from { background-size: 0% 46%; } to { background-size: 100% 46%; } }
+.hiring-title span { animation-name: il-swipe-hl; }
+.hiring { animation: il-float 5s ease-in-out infinite; }
+.vacancy-frame { animation: il-blink 2.4s ease-in-out infinite; }
+.lobby-slot.vacancy:nth-child(even) .vacancy-frame { animation-delay: -1.2s; }
+.room-code { animation: il-float 3s ease-in-out infinite; }
+
+/* Round titles: a front page spins in, then the room shakes. */
+.screen.round-title { animation: il-shake 0.4s 1.1s ease-out both; }
+.fp-spin {
+  background: var(--card, #FFFBF0); border: 5px solid var(--ink); box-shadow: 12px 12px 0 var(--ink);
+  padding: 0 0 40px; display: flex; flex-direction: column; align-items: center; min-width: 1100px;
+  animation: il-spin 1.1s cubic-bezier(0.2, 0.7, 0.3, 1) both;
+}
+.fp-mast {
+  align-self: stretch; display: flex; justify-content: space-between; align-items: center; gap: 30px;
+  background: var(--red); color: #fff; padding: 10px 30px; border-bottom: 5px solid var(--ink); margin-bottom: 26px;
+  font-family: var(--body); font-weight: 700; letter-spacing: 0.16em; font-size: 22px;
+}
+.fp-mast b { font-family: var(--mast); font-weight: 800; font-size: 64px; letter-spacing: 0; line-height: 1; }
+.fp-spin .huge { font-size: 190px; margin: 0; padding: 0 50px; line-height: 1; }
+.swipe { background: linear-gradient(var(--yellow), var(--yellow)) no-repeat 0 70% / 0% 46%; padding: 0 16px; animation: il-swipe-hl 0.5s 1.25s ease-out both; }
+.round-title .mult-badge { animation: il-pop 0.45s 1.6s cubic-bezier(0.3, 0.6, 0.4, 1.4) both; }
+.round-title .tagline { animation: il-slide-left 0.45s 1.5s ease-out both; }
+
+/* Category pick: the front pages bob while the picker decides. */
+.category-card.bob { animation: il-bob 3s ease-in-out infinite; }
+.category-pick .picker .avatar { animation: il-wiggle 1.2s ease-in-out infinite; }
+
+/* Question: the clipping slams down and shakes the table. */
+.screen.question .question-text.big { animation: il-slam 0.45s cubic-bezier(0.3, 0.6, 0.4, 1.3) both; }
+.screen.question .question-body { animation: il-shake 0.35s 0.4s ease-out both; }
+
+/* Lie entry: waiting players scribble; finished ones pop. */
+.screen.lie-entry .question-text { animation: il-float 4.5s ease-in-out infinite; }
+.screen.lie-entry .instruction { animation: il-blink 2s ease-in-out infinite; }
+.avatar-chip.is-waiting .avatar { animation: il-wiggle 0.7s ease-in-out infinite; animation-delay: calc(var(--i, 0) * -0.17s); }
+.avatar-chip.is-done .avatar { animation: il-pop 0.4s cubic-bezier(0.3, 0.6, 0.4, 1.4) both; }
+.screen.reveal .avatar-chip .avatar, .screen.scoreboard .avatar { animation: none; }
+
+/* Pick the truth: headlines drift. */
+.option-card.float { animation: il-float 3.2s ease-in-out infinite; }
+
+/* Reveal: the stamp shakes the table and splatters ink; the truth makes it jump. */
+.reveal-stage.shake { animation: il-shake 0.4s ease-out both; }
+.reveal-stage.jolt { animation: il-jolt 0.5s ease-out both; }
+.reveal-card { position: relative; }
+.splats { position: absolute; inset: 0; pointer-events: none; }
+.splats i { position: absolute; border-radius: 50%; background: rgba(225, 38, 45, 0.6); mix-blend-mode: multiply; animation: il-splat 0.3s ease-out both; }
+.splats i:nth-child(1) { width: 80px; height: 80px; left: 6%; top: 18%; }
+.splats i:nth-child(2) { width: 38px; height: 38px; right: 9%; bottom: 14%; animation-delay: 0.05s; }
+.splats i:nth-child(3) { width: 20px; height: 20px; right: 18%; top: 8%; animation-delay: 0.08s; }
+.splats i:nth-child(4) { width: 14px; height: 14px; left: 22%; bottom: 10%; animation-delay: 0.1s; }
+.truth-card.glow { animation: il-float 2.4s ease-in-out infinite; }
+.author-line { transform-style: preserve-3d; }
+
+/* Scoreboard: suspects drop in one by one under a camera flash, then sway. */
+.scoreboard .lineup-slot { rotate: var(--tilt, 0deg); transform-origin: 50% 0; animation: il-drop 0.55s cubic-bezier(0.3, 0.6, 0.4, 1.2) both, il-sway-tilt 5s ease-in-out infinite; }
+@keyframes il-sway-tilt { 0%, 100% { rotate: calc(var(--tilt, 0deg) - 1.2deg); } 50% { rotate: calc(var(--tilt, 0deg) + 1.2deg); } }
+.scoreboard .truth-recap strong { display: inline-block; animation: il-pop 0.4s 0.3s cubic-bezier(0.3, 0.6, 0.4, 1.4) both; }
+
+/* Thanks for playing: the final standings slide in. */
+.final-row { animation: il-slide-left 0.45s ease-out both; }
+
+/* ======================================== Winner: the big picture (MS4) */
+.screen.winner.big-picture {
+  flex-direction: row; align-items: center; justify-content: center; gap: 80px; padding: 150px 80px 100px;
+  background-color: #1E1C1A; background-image: radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1.5px); background-size: 6px 6px;
+}
+.big-picture .mugshot { margin-top: 0; }
+.bp-hero { position: relative; flex-shrink: 0; }
+.bp-heroes { display: flex; gap: 40px; align-items: flex-end; }
+.bp-hero-card { position: relative; rotate: var(--tilt, -2deg); animation: il-slam 0.6s cubic-bezier(0.3, 0.6, 0.4, 1.2) both; }
+.bp-hero-card .mugshot-frame { border: 10px solid #F2EBDA; box-shadow: 0 22px 50px rgba(0, 0, 0, 0.6); }
+.bp-hero-card .mugshot-placard { background: #F2EBDA; color: var(--ink); }
+.twinkle {
+  position: absolute; width: 26px; height: 26px; background: #FFF6C2; z-index: 5; pointer-events: none;
+  clip-path: polygon(50% 0, 62% 38%, 100% 50%, 62% 62%, 50% 100%, 38% 62%, 0 50%, 38% 38%);
+  animation: il-twinkle 1.4s ease-in-out infinite;
+}
+.twinkle.a { left: 18%; top: -5%; }
+.twinkle.b { right: 15%; top: -1%; width: 32px; height: 32px; animation-delay: 0.6s; }
+.bp-stamp {
+  position: absolute; right: -70px; top: 44%; z-index: 6; rotate: -12deg; white-space: nowrap;
+  border: 8px double #FF3B42; color: #FF3B42; font-family: var(--display); font-size: 66px; line-height: 1; padding: 6px 20px;
+  background: rgba(30, 28, 26, 0.35); animation: il-stamp 0.4s 2.2s cubic-bezier(0.5, 0, 0.75, 0) both;
+}
+.bp-story { width: 920px; display: flex; flex-direction: column; gap: 22px; }
+.ransom { margin: 0; display: flex; flex-wrap: wrap; gap: 8px 30px; rotate: 1deg; }
+.ransom-word { display: flex; gap: 5px; }
+.ransom-ch {
+  display: inline-block; font-size: 80px; line-height: 1.1; padding: 2px 9px; box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.45);
+  animation: il-pop 0.35s cubic-bezier(0.3, 0.6, 0.4, 1.4) both, il-jiggle 2.6s ease-in-out infinite;
+}
+.ransom-ch.r0 { background: #F2EBDA; color: #121212; font-family: Anton, sans-serif; rotate: -4deg; }
+.ransom-ch.r1 { background: #E1262D; color: #fff; font-family: 'Bodoni Moda', serif; font-weight: 900; rotate: 3deg; }
+.ransom-ch.r2 { background: #FFD83A; color: #121212; font-family: Rye, serif; font-size: 74px; rotate: -2deg; }
+.ransom-ch.r3 { background: #F2EBDA; color: #121212; font-family: 'Special Elite', monospace; rotate: 5deg; }
+.ransom-ch.r4 { background: #fff; color: #1F4FD1; font-family: 'Grenze Gotisch', serif; font-weight: 800; rotate: -5deg; }
+.ransom-ch.r5 { background: #E6D3A8; color: #121212; font-family: Oswald, sans-serif; font-weight: 700; rotate: 2deg; }
+.bp-clipping {
+  background: #F2EBDA; color: #121212; padding: 20px 28px; rotate: -1deg;
+  clip-path: polygon(0 3%, 100% 0, 99% 97%, 1% 100%); animation: il-slide-right 0.5s 1.3s ease-out both;
+}
+.bp-paper { font-family: var(--mast); font-weight: 800; font-size: 40px; line-height: 1; }
+.bp-clipping p { margin: 10px 0 0; font-family: var(--serif); font-size: 29px; line-height: 1.4; }
+.bp-also { font-family: var(--body); font-weight: 700; font-size: 22px; letter-spacing: 0.2em; color: #F2EBDA; text-transform: uppercase; margin-top: 8px; animation: il-slide-right 0.4s 2.2s ease-out both; }
+.bp-lineup { display: flex; gap: 30px; }
+.bp-mini { display: flex; flex-direction: column; align-items: center; gap: 8px; animation: il-drop 0.5s cubic-bezier(0.3, 0.6, 0.4, 1.2) both; }
+.bp-mini .mugshot-frame { border-color: #F2EBDA; }
+.bp-place { font-family: var(--display); font-size: 30px; color: #F2EBDA; letter-spacing: 0.04em; }
+.bp-place.last { color: #8AD3FF; }
+
+/* ============================================= WANTED poster (MS3) */
+.screen.awards.wanted-wall {
+  justify-content: flex-start; padding: 128px 80px 80px; overflow: hidden;
+  background-color: #3B2A1F;
+  background-image: repeating-linear-gradient(90deg, rgba(0, 0, 0, 0.2) 0 4px, transparent 4px 150px), repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.03) 0 1px, transparent 1px 11px);
+}
+.wanted-row { display: flex; gap: 60px; align-items: flex-start; }
+.wanted { transform-origin: 50% 0; animation: il-drop 0.7s cubic-bezier(0.3, 0.6, 0.4, 1.2) both, il-sway 5s ease-in-out infinite; }
+.wanted.small { zoom: 0.8; }
+.wanted-paper {
+  position: relative; width: 580px; box-sizing: border-box; padding: 26px 44px 28px; color: #2A1A10;
+  background: #E4CFA2; box-shadow: 0 18px 40px rgba(0, 0, 0, 0.55);
+  clip-path: polygon(0 1%, 3% 0, 50% 0.6%, 97% 0, 100% 1.5%, 99.4% 50%, 100% 97%, 96% 100%, 88% 98.6%, 80% 100%, 50% 99.2%, 4% 100%, 0 98%, 0.6% 50%);
+  display: flex; flex-direction: column; align-items: center; text-align: center;
+}
+.wanted-paper::before {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background-image: radial-gradient(circle at 82% 80%, transparent 54px, rgba(110, 70, 25, 0.28) 56px, rgba(110, 70, 25, 0.1) 62px, transparent 66px), radial-gradient(circle at 14% 12%, rgba(110, 70, 25, 0.2), transparent 130px), radial-gradient(rgba(60, 35, 10, 0.18) 0.8px, transparent 1.2px);
+  background-size: auto, auto, 4px 4px;
+}
+.wanted-pin { position: absolute; top: 14px; width: 16px; height: 16px; border-radius: 50%; background: #4A3A2C; box-shadow: inset -2px -2px 0 rgba(0, 0, 0, 0.4); }
+.wanted-pin.left { left: 18px; } .wanted-pin.right { right: 18px; }
+.wanted-tape { position: absolute; top: -6px; left: 50%; width: 130px; height: 32px; margin-left: -65px; background: rgba(240, 230, 190, 0.7); rotate: -3deg; }
+.wanted-title { position: relative; font-family: Rye, serif; font-size: 104px; line-height: 0.95; letter-spacing: 0.04em; text-shadow: 3px 2px 0 rgba(158, 42, 34, 0.55); }
+.wanted-for { position: relative; font-family: var(--body); font-weight: 700; font-size: 23px; letter-spacing: 0.3em; margin-top: 6px; }
+.wanted-rule { position: relative; height: 3px; background: #2A1A10; align-self: stretch; margin: 12px 0; }
+.wanted-photo { position: relative; width: 260px; height: 312px; border: 6px solid #2A1A10; overflow: hidden; background: #C9B48A; }
+.wanted-photo img { width: 100%; height: 100%; object-fit: cover; display: block; filter: grayscale(1) sepia(0.55) contrast(1.4) brightness(1.02); }
+.wanted-photo::after { content: ''; position: absolute; inset: 0; box-shadow: inset 0 0 70px rgba(40, 20, 5, 0.65); background-image: radial-gradient(rgba(40, 20, 5, 0.35) 0.7px, transparent 1.1px); background-size: 3px 3px; }
+.wanted-emoji { display: grid; place-items: center; height: 100%; font-size: 170px; filter: sepia(0.8) saturate(0.7); }
+.wanted-aka { position: relative; font-family: 'Special Elite', monospace; font-size: 22px; margin-top: 12px; }
+.wanted-name { position: relative; font-family: var(--display); font-size: 62px; line-height: 1; text-transform: uppercase; }
+.wanted-crimes { position: relative; font-family: 'Special Elite', monospace; font-size: 19px; line-height: 1.5; margin-top: 8px; }
+.wanted-reward { position: relative; font-family: Rye, serif; font-size: 62px; line-height: 1; color: #9E2A22; text-shadow: 2px 2px 0 rgba(42, 26, 16, 0.35); animation: il-stamp 0.4s 1.2s cubic-bezier(0.5, 0, 0.75, 0) both; }
+.notice {
+  position: absolute; width: 270px; padding: 20px 18px 24px; box-sizing: border-box; text-align: center; color: #2A1A10;
+  background: #DCD3BE; box-shadow: 0 10px 20px rgba(0, 0, 0, 0.45);
+}
+.notice.missing { left: 110px; top: 230px; rotate: -6deg; animation: il-slide-left 0.5s 0.6s ease-out both; }
+.notice.lost { right: 110px; top: 520px; rotate: 5deg; background: #E8E0C8; animation: il-slide-right 0.5s 0.8s ease-out both; }
+.notice-title { font-family: var(--display); font-size: 58px; line-height: 1; }
+.notice-what { font-family: 'Special Elite', monospace; font-size: 22px; margin-top: 10px; }
+.notice-note { font-family: var(--serif); font-style: italic; font-size: 17px; margin-top: 10px; }
+
+/* Award cards show mugshots now. */
+.award-players .mugshot-placard strong { max-width: 70%; }
+.wanted-title { font-size: 96px; }
+.wanted-photo { width: 240px; height: 288px; }
+.wanted-reward { font-size: 54px; white-space: nowrap; }
+.wanted-paper { width: 600px; padding-top: 22px; padding-bottom: 24px; }
+.wanted-rule { margin: 10px 0; }

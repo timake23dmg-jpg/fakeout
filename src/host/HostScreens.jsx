@@ -26,7 +26,7 @@ const byId = (players) => Object.fromEntries(players.map((p) => [p.id, p]))
 const gamePlayers = (pub) => pub.players.filter((p) => !p.isAudience)
 
 // Who wears the crown (the leaders) and who cries (last place), once anyone
-// has scored. Tears only with 3+ players, so a two-player game isn't brutal.
+// has scored. Nobody cries while everyone is tied.
 export function standings(pub) {
   const players = gamePlayers(pub)
   const none = { crown: () => false, tears: () => false }
@@ -37,7 +37,7 @@ export function standings(pub) {
   if (top <= 0) return none
   return {
     crown: (p) => !p.isAudience && p.score === top,
-    tears: (p) => !p.isAudience && players.length >= 3 && bottom < top && p.score === bottom,
+    tears: (p) => !p.isAudience && players.length >= 2 && bottom < top && p.score === bottom,
   }
 }
 
@@ -61,7 +61,7 @@ function AvatarRow({ pub, doneIds = [], detectorIds = [] }) {
   return (
     <div className="avatar-row">
       {gamePlayers(pub).map((p) => (
-        <div key={p.id} className={`avatar-chip ${p.connected ? '' : 'offline'}`}>
+        <div key={p.id} className={`avatar-chip ${p.connected ? '' : 'offline'} ${done.has(p.id) ? 'is-done' : 'is-waiting'}`} style={{ '--i': gamePlayers(pub).indexOf(p) }}>
           <Avatar player={p} size={84} done={done.has(p.id)} crown={st.crown(p)} tears={st.tears(p)} />
           <span className="chip-name">
             {p.name}
@@ -71,6 +71,22 @@ function AvatarRow({ pub, doneIds = [], detectorIds = [] }) {
       ))}
     </div>
   )
+}
+
+// Points that tick up from zero.
+function Tally({ value, rm }) {
+  const [n, setN] = useState(rm ? value : 0)
+  useEffect(() => {
+    if (rm) return
+    const start = Date.now()
+    const id = setInterval(() => {
+      const k = Math.min(1, (Date.now() - start) / 600)
+      setN(Math.round(value * k))
+      if (k >= 1) clearInterval(id)
+    }, 30)
+    return () => clearInterval(id)
+  }, [value])
+  return <>{fmt(n)}</>
 }
 
 // --------------------------------------------------------------- LOBBY
@@ -125,7 +141,9 @@ export function LobbyScreen({ pub, code, engine, joinUrl, backend }) {
           {Array.from({ length: 8 }, (_, i) => players[i]).map((p, i) =>
             p ? (
               <motion.div key={p.id} className={`lobby-slot mug ${p.connected ? '' : 'offline'}`} initial={{ scale: 0, rotate: 0 }} animate={{ scale: 1, rotate: TILTS[i % TILTS.length] }} transition={spring}>
-                <Mugshot player={p} width={168} />
+                <div className="sway" style={{ animationDelay: `${-i * 0.7}s` }}>
+                  <Mugshot player={p} width={168} flash={0.25} />
+                </div>
                 {p.id === pub.vipId && <span className="vip-tag">EDITOR</span>}
               </motion.div>
             ) : (
@@ -225,9 +243,10 @@ export function RoundTitleScreen({ pub, final = false }) {
   const sub = final ? 'Triple points!' : pub.round === 2 ? 'Double points!' : 'Lie. Spot. Win.'
   return (
     <div className="screen round-title">
-      <motion.h1 className="huge" initial={{ scale: 0, rotate: -6 }} animate={{ scale: 1, rotate: 0 }} transition={spring}>
-        {title}
-      </motion.h1>
+      <div className="fp-spin">
+        <div className="fp-mast"><span>{final ? 'LATE EDITION' : 'MORNING EDITION'}</span><b>Ink &amp; Lies</b><span>EXTRA! EXTRA!</span></div>
+        <h1 className="huge"><span className="swipe">{title}</span></h1>
+      </div>
       {pub.multiplier > 1 && (
         <motion.div className="mult-badge" initial={{ scale: 3, opacity: 0 }} animate={{ scale: 1, opacity: 1, x: [0, -10, 10, -6, 6, 0] }} transition={{ delay: 0.5, duration: 0.6 }}>
           ×{pub.multiplier}
@@ -263,7 +282,7 @@ export function CategoryPickScreen({ pub, serverNow }) {
       </div>
       <div className="category-cards">
         {(pub.categoryOptions || []).map((c, i) => (
-          <motion.div key={c} className="category-card" initial={{ y: 400, opacity: 0, rotate: 0 }} animate={{ y: 0, opacity: 1, rotate: TILTS[i] * 1.5 }} transition={{ ...spring, delay: i * 0.1 }}>
+          <motion.div key={c} className="category-card bob" style={{ animationDelay: `${1 + i * 0.4}s` }} initial={{ y: 400, opacity: 0, rotate: 0 }} animate={{ y: 0, opacity: 1, rotate: TILTS[i] * 1.5 }} transition={{ ...spring, delay: i * 0.1 }}>
             {displayCategory(c)}
           </motion.div>
         ))}
@@ -356,7 +375,8 @@ export function PickTruthScreen({ pub, serverNow, rm }) {
         {pub.options.map((o, i) => (
           <motion.div
             key={o.id}
-            className="option-card"
+            className="option-card float"
+            style={{ animationDelay: `${-i * 0.9}s` }}
             initial={rm ? { opacity: 0, rotate: i % 2 ? 1 : -1 } : { scale: 0.6, opacity: 0, rotate: 0 }}
             animate={{ scale: 1, opacity: 1, rotate: i % 2 ? 1 : -1 }}
             transition={rm ? { duration: 0.2 } : { ...spring, delay: order.indexOf(i) * 0.08 }}
@@ -446,19 +466,22 @@ function RevealStep({ step, elapsed, players, nobodyFound, context, rm, narratin
 
   return (
     <motion.div
-      className={`reveal-stage ${isTruth && !showVerdict ? 'dim' : ''}`}
+      className={`reveal-stage ${isTruth && !showVerdict ? 'dim' : ''} ${showVerdict && !rm ? (isTruth ? 'jolt' : 'shake') : ''}`}
       initial={rm ? { opacity: 0 } : { scale: 0.5, opacity: 0 }}
       animate={{ scale: 1, opacity: 1 }}
       exit={rm ? { opacity: 0 } : { x: -300, opacity: 0 }}
       transition={rm ? { duration: 0.2 } : spring}
     >
       {isTruth && showVerdict && (
-        <motion.div className={`truth-banner ${nobodyFound ? 'grey' : ''}`} initial={{ y: -60, opacity: 0 }} animate={{ y: 0, opacity: 1 }}>
+        <motion.div className={`truth-banner ${nobodyFound ? 'grey' : ''}`} initial={rm ? { opacity: 0 } : { scale: 3, opacity: 0, rotate: -8 }} animate={{ scale: 1, opacity: 1, rotate: -3 }} transition={{ duration: 0.28, ease: [0.5, 0, 0.75, 0] }}>
           {nobodyFound ? 'Nobody found the truth!' : 'TRUE STORY'}
         </motion.div>
       )}
       <div className={`reveal-card ${cardClass}`}>
         {step.text}
+        {!isTruth && showVerdict && step.kind === 'lie' && !rm && (
+          <span className="splats" aria-hidden="true"><i /><i /><i /><i /></span>
+        )}
         {!isTruth && showVerdict && (
           <motion.div className={`stamp ${step.kind === 'decoy' ? 'decoy' : ''}`} initial={rm ? { opacity: 0, rotate: 10 } : { scale: 3, opacity: 0, rotate: 10 }} animate={{ scale: 1, opacity: 1, rotate: 10 }} transition={{ duration: 0.25 }}>
             {step.kind === 'decoy' ? 'HOUSE LIE!' : 'FAKE NEWS!'}
@@ -495,7 +518,7 @@ function RevealStep({ step, elapsed, players, nobodyFound, context, rm, narratin
       </div>
 
       {!isTruth && showAuthor && (
-        <motion.div className="author-line" initial={rm ? { opacity: 0, rotate: 1.5 } : { x: 300, opacity: 0, rotate: 1.5 }} animate={{ x: 0, opacity: 1, rotate: 1.5 }} transition={spring}>
+        <motion.div className="author-line" initial={rm ? { opacity: 0, rotate: 1.5 } : { rotateY: 95, opacity: 0, rotate: 1.5 }} animate={{ rotateY: 0, opacity: 1, rotate: 1.5 }} transition={{ duration: 0.5, ease: [0.2, 0.7, 0.3, 1] }}>
           {step.kind === 'decoy' ? (
             <span>A house lie: nobody wrote it.</span>
           ) : (
@@ -509,7 +532,7 @@ function RevealStep({ step, elapsed, players, nobodyFound, context, rm, narratin
               <span>{step.bought?.length ? 'bought this lie!' : 'wrote this!'}</span>
               {step.bought?.length > 0 && <span className="bought-tag">💸 Lie for me</span>}
               <motion.span className="points gold" initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.2 }}>
-                {signed(step.deltas[authors[0]?.id] ?? 0)}{authors.length > 1 ? ' each' : ''}
+                +<Tally value={step.deltas[authors[0]?.id] ?? 0} rm={rm} />{authors.length > 1 ? ' each' : ''}
               </motion.span>
             </>
           )}
@@ -544,10 +567,11 @@ export function ScoreboardScreen({ pub, rm }) {
       <LayoutGroup>
         <div className="lineup">
           {sorted.map((p, i) => (
-            <motion.div layout={!rm} key={p.id} className="lineup-slot" transition={spring} style={{ rotate: `${TILTS[i % TILTS.length] / 2}deg` }}>
+            <motion.div layout={!rm} key={p.id} className="lineup-slot" transition={spring} style={{ '--tilt': `${TILTS[i % TILTS.length] / 2}deg`, animationDelay: `${0.1 + i * 0.15}s, ${-i * 0.8}s` }}>
               <Mugshot
                 player={p}
                 width={width}
+                flash={0.15 + i * 0.15}
                 crown={st.crown(p)}
                 tears={st.tears(p)}
                 tag={`#${i + 1}`}
@@ -566,121 +590,6 @@ export function ScoreboardScreen({ pub, rm }) {
           ))}
         </div>
       </LayoutGroup>
-    </div>
-  )
-}
-
-// ----------------------------------------------------------------- WINNER
-
-export function WinnerScreen({ pub, rm }) {
-  const fire = useConfetti(rm)
-  const players = byId(pub.players)
-  const winners = (pub.winners || []).map((id) => players[id]).filter(Boolean)
-  useEffect(() => {
-    const lines = pub.settings?.tts !== false && winners.length ? winnerLines(winners) : null
-    if (lines) narrate(lines.start)
-    const t = setTimeout(() => {
-      if (lines) narrate(lines.verdict, { queue: true })
-      sfx('cheer')
-      fire({ particleCount: 300, spread: 160, origin: { y: 0.4 } })
-    }, rm ? 0 : 1400)
-    return () => clearTimeout(t)
-  }, [])
-  return (
-    <div className="screen winner">
-      {!rm && <motion.div className="spotlight" initial={{ x: '-60%' }} animate={{ x: ['-60%', '60%', '0%'] }} transition={{ duration: 1.4 }} />}
-      <h2 className="screen-title">{winners.length > 1 ? "It's a tie!" : 'The winner is…'}</h2>
-      <div className="winners">
-        {winners.map((w, i) => (
-          <motion.div key={w.id} className="winner" initial={{ scale: 0.3, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ ...spring, delay: rm ? 0 : 1.2 + i * 0.2 }}>
-            <Mugshot player={w} width={winners.length > 1 ? 260 : 320} crown tag="LIAR OF THE YEAR" tagTone="gold" />
-            <div className="winner-score">{fmt(w.score)} pts</div>
-          </motion.div>
-        ))}
-      </div>
-    </div>
-  )
-}
-
-// ----------------------------------------------------------------- AWARDS
-
-function CountUp({ value, rm }) {
-  const [n, setN] = useState(rm ? value : 0)
-  useEffect(() => {
-    if (rm) return
-    let i = 0
-    const id = setInterval(() => {
-      i++
-      setN(Math.round((value * i) / 15))
-      if (i >= 15) clearInterval(id)
-    }, 40)
-    return () => clearInterval(id)
-  }, [value])
-  return <span className="count">{n}</span>
-}
-
-export function AwardsScreen({ pub, serverNow, engine, rm }) {
-  const now = useNow(serverNow, 200)
-  const players = byId(pub.players)
-  const awards = pub.awards || []
-  const idx = Math.floor((now - pub.startedAt) / TIMERS.AWARD_CARD)
-  const done = idx >= awards.length
-  const award = awards[Math.min(idx, awards.length - 1)]
-  const narrating = pub.settings?.tts !== false
-  useEffect(() => {
-    if (!done && award) {
-      sfx('chime')
-      if (narrating) narrate(awardLine(award, players))
-    } else if (narrating) narrate(THANKS_LINE)
-  }, [idx >= awards.length ? -1 : idx])
-
-  if (done || !award) {
-    const ranked = [...gamePlayers(pub)].sort((a, b) => b.score - a.score)
-    return (
-      <div className="screen awards-done">
-        <h2 className="screen-title">Thanks for playing!</h2>
-        <div className="final-list">
-          {ranked.map((p) => (
-            <div key={p.id} className="final-row">
-              <Avatar player={p} size={60} /> <span>{p.name}</span> <strong>{fmt(p.score)}</strong>
-            </div>
-          ))}
-        </div>
-        <div className="end-buttons">
-          <button className="btn btn-pink btn-xl" onClick={() => engine.playAgain()}>Play again</button>
-          <button className="btn btn-ghost btn-xl" onClick={() => engine.backToLobby()}>Back to lobby</button>
-        </div>
-        <p className="hint">…or the VIP can choose on their phone.</p>
-      </div>
-    )
-  }
-
-  const value = Number(award.stat.match(/\d+/)?.[0] ?? 0)
-  return (
-    <div className="screen awards">
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={award.key}
-          className="award-card"
-          initial={rm ? { opacity: 0 } : { rotateY: 90, opacity: 0 }}
-          animate={{ rotateY: 0, opacity: 1 }}
-          exit={rm ? { opacity: 0 } : { rotateY: -90, opacity: 0 }}
-          transition={{ duration: rm ? 0.2 : 0.5 }}
-        >
-          <div className="award-title">{award.title}</div>
-          <div className="award-players">
-            {award.playerIds.map((id) => players[id] && (
-              <div key={id} className="award-player">
-                <Avatar player={players[id]} size={150} />
-                <span>{players[id].name}</span>
-              </div>
-            ))}
-          </div>
-          <div className="award-stat">
-            {award.stat.split(/\d+/)[0]}<CountUp value={value} rm={rm} />{award.stat.split(/\d+/).slice(1).join('')}
-          </div>
-        </motion.div>
-      </AnimatePresence>
     </div>
   )
 }

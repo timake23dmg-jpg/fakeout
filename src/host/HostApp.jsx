@@ -5,7 +5,7 @@ import { HostEngine } from '../engine/hostEngine.js'
 import { unlockAudio, enableGestureUnlock, preloadMusic, sfx, playMusic, stopMusic, songForPhase, setVolumes } from '../lib/audio.js'
 import { narrate, prepareLines, stopNarration } from '../lib/narrator.js'
 import { loadAiVoice, subscribeAiVoice, voiceIsLive } from '../lib/aiVoice.js'
-import { prefersReducedMotion, MuteButton, Wordmark } from '../components/shared.jsx'
+import { MuteButton, Wordmark } from '../components/shared.jsx'
 import { Masthead, Ticker } from './Chrome.jsx'
 import { setLobbyMusic, primeLobbyMusic } from '../lib/lobbyMusic.js'
 import {
@@ -14,8 +14,9 @@ import {
 import { revealContext } from './revealContext.js'
 import {
   LobbyScreen, IntroScreen, RoundTitleScreen, CategoryPickScreen, QuestionScreen, LieEntryScreen,
-  PickTruthScreen, RevealScreen, ScoreboardScreen, WinnerScreen, AwardsScreen,
+  PickTruthScreen, RevealScreen, ScoreboardScreen,
 } from './HostScreens.jsx'
+import { WinnerScreen, AwardsScreen } from './EndScreens.jsx'
 
 const HOST_CODE_KEY = 'fakeout.hostCode'
 const PLAYED_KEY = 'fakeout.playedQuestions'
@@ -198,7 +199,11 @@ export default function HostApp() {
   }
 
   const phase = pub?.phase
-  const rm = !!pub?.settings?.reducedMotion || prefersReducedMotion()
+  // Party game on a TV: full motion unless the host ticks Reduced motion in the lobby.
+  const rm = !!pub?.settings?.reducedMotion
+  useEffect(() => {
+    document.documentElement.classList.toggle('rm', rm)
+  }, [rm])
 
   // The lobby theme plays from the moment the TV opens (start screen and
   // lobby) and hands over to the game music when the game starts.

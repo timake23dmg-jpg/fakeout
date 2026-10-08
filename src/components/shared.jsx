@@ -106,7 +106,8 @@ export function suspectNumber(player) {
 }
 
 // A police mugshot card: photo (or emoji) on a height chart, with a placard.
-export function Mugshot({ player, width = 220, crown = false, tears = false, tag = null, tagTone = 'plain', footer = null, dim = false }) {
+// `flash`: a camera flash goes off when it appears (delay in seconds, or true).
+export function Mugshot({ player, width = 220, crown = false, tears = false, tag = null, tagTone = 'plain', footer = null, dim = false, flash = false, caption = null }) {
   if (!player) return null
   return (
     <div className={`mugshot ${dim ? 'mugshot-dim' : ''}`} style={{ '--w': `${width}px`, '--ring': colorFor(player.slot) }}>
@@ -116,9 +117,10 @@ export function Mugshot({ player, width = 220, crown = false, tears = false, tag
         <span className="mugshot-chart" aria-hidden="true" />
         {tears && <Tears />}
         {crown && <Crown />}
+        {flash !== false && <span className="mug-flash" style={{ animationDelay: `${flash === true ? 0 : flash}s` }} aria-hidden="true" />}
       </div>
       <div className="mugshot-placard">
-        <span>SUSPECT {suspectNumber(player)}</span>
+        <span>{caption ?? `SUSPECT ${suspectNumber(player)}`}</span>
         <strong>{player.name}</strong>
       </div>
       {footer}

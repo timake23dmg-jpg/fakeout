@@ -7,7 +7,7 @@
 // demo server, or a test harness.
 
 import {
-  TIMERS, REVEAL_TIMING, SCORES, AWARDS, MIN_PLAYERS, MIN_OPTIONS,
+  TIMERS, REVEAL_TIMING, SCORES, AWARDS, MIN_PLAYERS, MIN_OPTIONS, awardsDuration,
   SHORT_GAME_MIN_PLAYERS, questionsInRound,
 } from './constants.js'
 import { normalize, matchesTruth, lieCost } from '../lib/rules.js'
@@ -30,7 +30,7 @@ export function shuffle(list) {
   return a
 }
 
-const blankStats = () => ({ fooled: 0, truths: 0, likes: 0, gotFooled: 0, lieBuys: 0, lifelineUsed: false })
+const blankStats = () => ({ fooled: 0, liePoints: 0, truths: 0, likes: 0, gotFooled: 0, lieBuys: 0, lifelineUsed: false })
 
 export function initialState(settings = {}) {
   return {
@@ -217,6 +217,8 @@ export class HostEngine {
           score: p.isAudience ? 0 : scoreFor(p.id),
           lieBuys: s.scores[p.id]?.stats.lieBuys ?? 0,
           lifelineUsed: !!s.scores[p.id]?.stats.lifelineUsed,
+          fooled: s.scores[p.id]?.stats.fooled ?? 0,
+          liePoints: s.scores[p.id]?.stats.liePoints ?? 0,
           connected: this.isOnline(p.id),
         })),
     }
@@ -587,6 +589,7 @@ export class HostEngine {
           if (!scored.has(a)) continue
           deltas[a] = SCORES.fool[m] * pickers.length
           stats(a).fooled += pickers.length
+          stats(a).liePoints = (stats(a).liePoints || 0) + deltas[a]
         }
         for (const id of pickers) stats(id).gotFooled++
       }
@@ -686,6 +689,6 @@ export class HostEngine {
     const s = this.s
     s.phase = 'AWARDS'
     // Cards cycle for this long; after that the screen waits for the VIP.
-    await this.publish(Math.max(1, s.awards.length) * TIMERS.AWARD_CARD)
+    await this.publish(Math.max(TIMERS.AWARD_CARD, awardsDuration(s.awards)))
   }
 }

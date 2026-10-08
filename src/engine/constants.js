@@ -12,7 +12,12 @@ export const TIMERS = {
   FINAL_TITLE: 4000,
   WINNER: 8000,
   AWARD_CARD: 3000,
+  WANTED_CARD: 8000, // the Biggest Liar's WANTED poster stays up longer
 }
+
+// How long each award card stays on screen, and all of them together.
+export const awardDuration = (award) => (award?.key === 'biggestLiar' ? TIMERS.WANTED_CARD : TIMERS.AWARD_CARD)
+export const awardsDuration = (awards) => (awards || []).reduce((t, a) => t + awardDuration(a), 0)
 
 export const REVEAL_TIMING = { LEAD_IN: 600, LIE: 3500, TRUTH: 4000, NOBODY: 3000, TAIL: 800 }
 
