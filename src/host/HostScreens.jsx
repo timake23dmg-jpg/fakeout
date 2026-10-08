@@ -401,6 +401,16 @@ export function RevealScreen({ pub, serverNow, rm }) {
     if (elapsed >= s.at) index = i
   })
   const step = steps[index]
+  const players = byId(pub.players)
+  // Each author's nose before this lie: their total so far, minus what this
+  // lie and the ones still to come add.
+  const noseFrom = {}
+  if (step) {
+    for (const a of step.authors) {
+      const toCome = steps.slice(index).reduce((n, s) => n + (s.kind === 'lie' && s.authors.includes(a) ? s.pickers.length : 0), 0)
+      noseFrom[a] = Math.max(0, (players[a]?.fooled || 0) - toCome)
+    }
+  }
   return (
     <div className="screen reveal">
       <p className="question-text small"><Prompt text={pub.question.prompt} /></p>
@@ -410,7 +420,8 @@ export function RevealScreen({ pub, serverNow, rm }) {
             key={step.optionId}
             step={step}
             elapsed={elapsed - step.at}
-            players={byId(pub.players)}
+            players={players}
+            noseFrom={noseFrom}
             nobodyFound={pub.reveal.nobodyFound}
             context={revealContext(pub)}
             rm={rm}
@@ -422,7 +433,7 @@ export function RevealScreen({ pub, serverNow, rm }) {
   )
 }
 
-function RevealStep({ step, elapsed, players, nobodyFound, context, rm, narrating }) {
+function RevealStep({ step, elapsed, players, noseFrom, nobodyFound, context, rm, narrating }) {
   const fire = useConfetti(rm)
   const isTruth = step.kind === 'truth'
   const verdictAt = isTruth ? 1000 : 1500
@@ -460,6 +471,12 @@ function RevealStep({ step, elapsed, players, nobodyFound, context, rm, narratin
     if (showAuthor && !isTruth && step.kind === 'lie') once('author', () => sfx('chaChing'))
   }, [showVerdict, showAuthor])
 
+  // The author's Pinocchio nose grows a notch for each person this lie fooled.
+  const liarNose = (id) => {
+    const from = noseFrom[id] ?? 0
+    const fools = from + (step.kind === 'lie' ? step.pickers.length : 0)
+    return fools > 0 ? { from, fools, size: 140, delay: 0.3, gap: 330, max: 1.3, flip: true } : null
+  }
   const pickers = step.pickers.map((id) => players[id]).filter(Boolean)
   const authors = step.authors.map((id) => players[id]).filter(Boolean)
   const cardClass = isTruth ? (showVerdict ? (nobodyFound ? 'truth-card grey' : 'truth-card glow') : 'dimmed-card') : 'lie-card'
@@ -526,7 +543,7 @@ function RevealStep({ step, elapsed, players, nobodyFound, context, rm, narratin
               {authors.map((a, i) => (
                 <span key={a.id} className="author">
                   {i > 0 && <span>&amp;</span>}
-                  <Avatar player={a} size={72} /> {a.name}
+                  <Avatar player={a} size={96} nose={liarNose(a.id)} /> {a.name}
                 </span>
               ))}
               <span>{step.bought?.length ? 'bought this lie!' : 'wrote this!'}</span>
@@ -544,6 +561,9 @@ function RevealStep({ step, elapsed, players, nobodyFound, context, rm, narratin
 
 // ------------------------------------------------------------- SCOREBOARD
 
+// How long each player's nose was on the last scoreboard this TV showed.
+const noseSeen = new Map()
+
 export function ScoreboardScreen({ pub, rm }) {
   const [settled, setSettled] = useState(rm)
   const players = gamePlayers(pub)
@@ -560,6 +580,11 @@ export function ScoreboardScreen({ pub, rm }) {
   // The line-up: crown and tears appear once the new scores have settled.
   const st = settled ? standings(pub) : standings({ ...pub, phase: 'LOBBY' })
   const width = players.length > 6 ? 170 : players.length > 4 ? 210 : 240
+  // Noses grow from where they were on the last scoreboard.
+  const [noseFrom] = useState(() => Object.fromEntries(players.map((p) => [p.id, noseSeen.get(p.id) ?? 0])))
+  useEffect(() => {
+    for (const p of players) noseSeen.set(p.id, p.fooled || 0)
+  }, [])
   return (
     <div className="screen scoreboard">
       <h2 className="screen-title">The usual suspects</h2>
@@ -574,6 +599,7 @@ export function ScoreboardScreen({ pub, rm }) {
                 flash={0.15 + i * 0.15}
                 crown={st.crown(p)}
                 tears={st.tears(p)}
+                nose={p.fooled > 0 ? { from: noseFrom[p.id], fools: p.fooled, delay: 1 + i * 0.2, max: 0.8 } : null}
                 tag={`#${i + 1}`}
                 tagTone={st.crown(p) ? 'gold' : st.tears(p) ? 'blue' : 'plain'}
                 footer={

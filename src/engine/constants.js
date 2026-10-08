@@ -19,7 +19,7 @@ export const TIMERS = {
 export const awardDuration = (award) => (award?.key === 'biggestLiar' ? TIMERS.WANTED_CARD : TIMERS.AWARD_CARD)
 export const awardsDuration = (awards) => (awards || []).reduce((t, a) => t + awardDuration(a), 0)
 
-export const REVEAL_TIMING = { LEAD_IN: 600, LIE: 3500, TRUTH: 4000, NOBODY: 3000, TAIL: 800 }
+export const REVEAL_TIMING = { LEAD_IN: 600, LIE: 3500, PER_FOOL: 400, TRUTH: 4000, NOBODY: 3000, TAIL: 800 }
 
 // index = round - 1 (round 3 is the Final)
 export const SCORES = {

@@ -191,6 +191,18 @@ const SOUNDS = {
     tone({ freq: 330, to: 300, type: 'sawtooth', dur: 1.1, vol: 0.12, at: 1.26 })
   },
   blip: () => tone({ freq: 700 + Math.random() * 500, dur: 0.07, vol: 0.15 }),
+  // The liar's nose growing: a wooden creak, then a springy boing.
+  creak: () => {
+    noise({ dur: 0.32, vol: 0.22, from: 220, to: 700, q: 14 })
+    tone({ freq: 140, to: 260, type: 'sawtooth', dur: 0.28, vol: 0.06 })
+    tone({ freq: 260, to: 620, type: 'triangle', dur: 0.12, vol: 0.22, at: 0.26 })
+    tone({ freq: 620, to: 420, type: 'triangle', dur: 0.3, vol: 0.12, at: 0.38 })
+  },
+  // A press camera's shutter.
+  shutter: () => {
+    noise({ dur: 0.05, vol: 0.35, from: 4000, to: 6000, q: 2 })
+    noise({ dur: 0.07, vol: 0.25, from: 2500, to: 1800, q: 2, at: 0.07 })
+  },
   cheer: () => {
     noise({ dur: 2.2, vol: 0.2, from: 800, to: 1800, q: 0.5 })
     SOUNDS.fanfare()
@@ -296,9 +308,13 @@ const SONGS = {
   },
 }
 
+// Stand-ins for the news theme and the round sting while they load.
+SONGS.news = SONGS.bounce
+SONGS.sting = SONGS.bounce
+
 // Which song each game phase gets (no entry = silence).
 const PHASE_SONGS = {
-  INTRO: 'bounce', ROUND_TITLE: 'bounce', FINAL_TITLE: 'tense', CATEGORY_PICK: 'bounce', QUESTION: 'bounce',
+  INTRO: 'news', ROUND_TITLE: 'sting', FINAL_TITLE: 'sting', CATEGORY_PICK: 'bounce', QUESTION: 'bounce',
   LIE_ENTRY: 'think', PICK_TRUTH: 'tense', REVEAL: 'reveal', SCOREBOARD: 'bounce',
   WINNER: 'victory', AWARDS: 'victory',
 }
@@ -431,13 +447,18 @@ function playStep(song, out, step, t, sixteenth) {
 // resumes where it left off, so short phases don't keep restarting it.
 // Music by Kevin MacLeod (incompetech.com), licensed under CC BY 4.0.
 
+// The Ink & Lies soundtrack: 70s cop-show funk and film-noir jazz.
 const TRACKS = {
-  lobby: 'music/lobby.mp3', // "Monkeys Spinning Monkeys"
-  bounce: 'music/bounce.mp3', // "Local Forecast - Elevator"
-  think: 'music/think.mp3', // "Sneaky Snitch"
-  tense: 'music/tense.mp3', // "Investigations"
-  victory: 'music/victory.mp3', // "Fluffing a Duck"
+  lobby: 'music/lobby.mp3', // "Hard Boiled"
+  news: 'music/news.mp3', // "News Theme"
+  sting: 'music/sting.mp3', // "NewsSting"
+  bounce: 'music/bounce.mp3', // "Private Eye"
+  think: 'music/think.mp3', // "Covert Affair"
+  tense: 'music/tense.mp3', // "Dances and Dames"
+  victory: 'music/victory.mp3', // "Hot Swing"
 }
+// Short news stings always start from the top (the rest resume where they left off).
+const FROM_TOP = new Set(['news', 'sting'])
 const TRACK_LEVEL = 1.6 // matches the procedural songs' loudness
 const fetched = {} // name -> Promise<ArrayBuffer>
 const decoded = {} // name -> { buffer, start, end } (start/end trim the MP3's silent padding)
@@ -487,7 +508,7 @@ function startTrack(name) {
   src.loopStart = start
   src.loopEnd = end
   src.connect(out)
-  const offset = resumeAt[name] ?? start
+  const offset = FROM_TOP.has(name) ? start : resumeAt[name] ?? start
   src.start(ctx.currentTime, offset)
   const startedAt = ctx.currentTime
   playing = {

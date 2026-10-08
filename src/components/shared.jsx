@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { getMusicState, subscribeMusic, setMuted } from '../lib/lobbyMusic.js'
+import Nose from './Nose.jsx'
 
 // Mute toggle for this device. If the browser blocked autoplay, the first
 // tap starts the music instead (the tap itself unlocks audio).
@@ -51,8 +52,8 @@ export function useNow(serverNow, interval = 100) {
 }
 
 // A player's badge: their mugshot selfie if they took one, else their emoji.
-// `crown`: in the lead. `tears`: in last place.
-export function Avatar({ player, size = 64, done = false, dim = false, flip = true, crown = false, tears = false }) {
+// `crown`: in the lead. `tears`: in last place. `nose`: Nose props (a liar).
+export function Avatar({ player, size = 64, done = false, dim = false, flip = true, crown = false, tears = false, nose = null }) {
   if (!player) return null
   return (
     <div
@@ -68,6 +69,7 @@ export function Avatar({ player, size = 64, done = false, dim = false, flip = tr
         <div className="avatar-face avatar-back">✓</div>
       </div>
       {crown && <Crown />}
+      {nose && <Nose size={size} {...nose} />}
     </div>
   )
 }
@@ -107,7 +109,7 @@ export function suspectNumber(player) {
 
 // A police mugshot card: photo (or emoji) on a height chart, with a placard.
 // `flash`: a camera flash goes off when it appears (delay in seconds, or true).
-export function Mugshot({ player, width = 220, crown = false, tears = false, tag = null, tagTone = 'plain', footer = null, dim = false, flash = false, caption = null }) {
+export function Mugshot({ player, width = 220, crown = false, tears = false, tag = null, tagTone = 'plain', footer = null, dim = false, flash = false, caption = null, nose = null }) {
   if (!player) return null
   return (
     <div className={`mugshot ${dim ? 'mugshot-dim' : ''}`} style={{ '--w': `${width}px`, '--ring': colorFor(player.slot) }}>
@@ -117,6 +119,7 @@ export function Mugshot({ player, width = 220, crown = false, tears = false, tag
         <span className="mugshot-chart" aria-hidden="true" />
         {tears && <Tears />}
         {crown && <Crown />}
+        {nose && <Nose size={width} {...nose} />}
         {flash !== false && <span className="mug-flash" style={{ animationDelay: `${flash === true ? 0 : flash}s` }} aria-hidden="true" />}
       </div>
       <div className="mugshot-placard">

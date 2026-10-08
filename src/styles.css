@@ -1449,3 +1449,18 @@ body, .stage, .host-start, .paper-dots {
 .wanted-reward { font-size: 54px; white-space: nowrap; }
 .wanted-paper { width: 600px; padding-top: 22px; padding-bottom: 24px; }
 .wanted-rule { margin: 10px 0; }
+
+/* ------------------------------------------------- Pinocchio nose */
+/* Pinned to the tip of the face's nose (where the phone camera's face guide
+   puts it); grows to the right. */
+.nose { position: absolute; left: 50%; top: 57%; width: 0; height: 0; z-index: 3; pointer-events: none; transform-origin: 0 0; }
+.avatar .nose { top: 58%; }
+.nose-svg { position: absolute; left: 0; top: 0; overflow: visible; animation: il-nose-idle 3.2s ease-in-out infinite; transform-origin: 0 0; }
+@keyframes il-nose-idle { 0%, 100% { rotate: 0deg; } 30% { rotate: -3deg; } 65% { rotate: 2deg; } }
+:root.rm .nose-svg { animation: none; }
+.lineup-slot { position: relative; }
+.lineup-slot:has(.nose) { z-index: 3; }
+.nose.flip .nose-svg { scale: -1 1; }
+.wanted-photo-wrap { position: relative; }
+.wanted-photo-wrap .nose { top: 57%; }
+.author .avatar { margin-left: 8px; }

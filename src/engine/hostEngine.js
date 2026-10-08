@@ -612,7 +612,10 @@ export class HostEngine {
     let at = REVEAL_TIMING.LEAD_IN
     for (const step of steps) {
       step.at = Math.round(at * this.timeScale)
-      const dur = step.kind === 'truth' ? (nobodyFound ? REVEAL_TIMING.NOBODY : REVEAL_TIMING.TRUTH) : REVEAL_TIMING.LIE
+      // A lie that fooled several people gets longer, so the liar's nose can grow a notch per person.
+      const dur = step.kind === 'truth'
+        ? (nobodyFound ? REVEAL_TIMING.NOBODY : REVEAL_TIMING.TRUTH)
+        : REVEAL_TIMING.LIE + (step.kind === 'lie' ? REVEAL_TIMING.PER_FOOL * Math.max(0, step.pickers.length - 1) : 0)
       step.dur = Math.round(dur * this.timeScale)
       at += dur
     }

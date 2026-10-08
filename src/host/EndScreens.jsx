@@ -5,6 +5,7 @@ import React, { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import confetti from 'canvas-confetti'
 import { Avatar, Mugshot, fmt, useNow } from '../components/shared.jsx'
+import Nose from '../components/Nose.jsx'
 import { sfx } from '../lib/audio.js'
 import { narrate } from '../lib/narrator.js'
 import { winnerLines, awardLine, THANKS_LINE } from './narration.js'
@@ -168,8 +169,11 @@ function WantedPoster({ player, rm, index = 0, small = false }) {
         <div className="wanted-title">WANTED</div>
         <div className="wanted-for">FOR LYING TO FRIENDS</div>
         <div className="wanted-rule" />
-        <div className="wanted-photo">
-          {player.photo ? <img src={player.photo} alt={`${player.name}'s mugshot`} /> : <span className="wanted-emoji">{player.avatar}</span>}
+        <div className="wanted-photo-wrap">
+          <div className="wanted-photo">
+            {player.photo ? <img src={player.photo} alt={`${player.name}'s mugshot`} /> : <span className="wanted-emoji">{player.avatar}</span>}
+          </div>
+          {player.fooled > 0 && <Nose size={240} from={0} fools={player.fooled} delay={rm ? 0 : 1.2 + index * 0.4} max={1.1} />}
         </div>
         <div className="wanted-aka">a.k.a. “{nickname(player)}”</div>
         <div className="wanted-name">{player.name}</div>
